@@ -1,0 +1,13 @@
+{
+  "name": "turn-based-game",
+  "version-string": "1.0",
+  "dependencies": [
+		{
+			"name": "freetype"
+		},
+        "openal-soft",
+        "sfml",
+        "imgui-sfml",
+        "gtest"
+    ]
+}

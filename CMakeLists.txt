@@ -1,0 +1,99 @@
+cmake_minimum_required(VERSION 3.22)
+project(turn_based_game)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(PORT "44444" CACHE STRING "Set the port")
+set(HOST_NAME "localhost" CACHE STRING "Set the host name")
+
+add_definitions("-DPORT=${PORT}")
+add_definitions("-DHOST_NAME=\"${HOST_NAME}\"")
+
+find_package(SFML COMPONENTS system graphics window network audio REQUIRED)
+find_package(ImGui-SFML CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
+
+# Add a CMake option to enable or disable Tracy Profiler
+option(USE_TRACY "Use Tracy Profiler" OFF)
+
+if (USE_TRACY)
+    # Enable Tracy profiling by setting the preprocessor directive
+    add_compile_definitions(TRACY_ENABLE)
+    # Include Tracy's headers for the entire project
+    include_directories(externals/tracy_profiler/tracy)
+
+    # Add the Tracy source code as part of the project
+    add_library(tracyClient STATIC externals/tracy_profiler/TracyClient.cpp)
+endif()
+
+# Create the Math library
+file(GLOB_RECURSE MATH_SRC_FILES libs/math/include/*.h libs/math/src/*.cpp)
+add_library(math ${MATH_SRC_FILES})
+set_target_properties(math PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(math PUBLIC libs/math/include/)
+
+# Create the Common library with Math as a dependency
+file(GLOB_RECURSE COMMON_SRC_FILES common/include/*.h common/src/*.cpp)
+add_library(common ${COMMON_SRC_FILES})
+set_target_properties(common PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(common PUBLIC common/include/)
+target_link_libraries(common PRIVATE math)
+
+# Create the physics library with math and common as dependencies.
+file(GLOB_RECURSE PHYSICS_SRC_FILES physics_engine/include/*.h physics_engine/src/*.cpp)
+add_library(physics ${PHYSICS_SRC_FILES})
+set_target_properties(physics PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(physics PUBLIC physics_engine/include/)
+target_include_directories(math PUBLIC libs/math/include/)
+target_link_libraries(physics PRIVATE math common)
+if (USE_TRACY)
+    target_compile_definitions(physics PUBLIC TRACY_ENABLE)
+    # Link the TracyClient library
+    target_link_libraries(physics PRIVATE tracyClient)
+endif()
+
+# Create the network library.
+file(GLOB_RECURSE NETWORK_SRC_FILES network/include/*.h network/src/*.cpp)
+add_library(network ${NETWORK_SRC_FILES})
+set_target_properties(network PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(network PUBLIC network/include/)
+target_link_libraries(network PRIVATE sfml-network)
+
+add_executable(server server_entry_point.cpp)
+target_link_libraries(server PRIVATE physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+if (USE_TRACY)
+    target_compile_definitions(server PRIVATE TRACY_ENABLE)
+    # Link the TracyClient library
+    target_link_libraries(server PRIVATE tracyClient)
+endif()
+
+add_executable(client client_entry_point.cpp)
+target_link_libraries(client PRIVATE physics common math network sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+if (USE_TRACY)
+    target_compile_definitions(client PRIVATE TRACY_ENABLE)
+    # Link the TracyClient library
+    target_link_libraries(client PRIVATE tracyClient)
+endif()
+
+## Tests physics library.
+#file(GLOB_RECURSE PHYSICS_TEST_FILES physics_engine/tests/*.cpp)
+#foreach(test_file ${PHYSICS_TEST_FILES} )
+#    get_filename_component(test_name ${test_file} NAME_WE)
+#
+#    add_executable(${test_name} ${test_file})
+#
+#    target_link_libraries(${test_name} PRIVATE physics common math)
+#    target_link_libraries(${test_name} PRIVATE GTest::gtest GTest::gtest_main)
+#endforeach()
+#
+#
+## Tests common library.
+#file(GLOB_RECURSE COMMON_TEST_FILES common/tests/*.cpp)
+#foreach(test_file ${COMMON_TEST_FILES} )
+#    get_filename_component(test_name ${test_file} NAME_WE)
+#
+#    add_executable(${test_name} ${test_file})
+#
+#    target_link_libraries(${test_name} PRIVATE common math)
+#    target_link_libraries(${test_name} PRIVATE GTest::gtest GTest::gtest_main)
+#endforeach()
