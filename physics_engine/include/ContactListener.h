@@ -19,7 +19,8 @@ namespace PhysicsEngine
     class ContactListener
     {
     public:
-       /**
+      virtual ~ContactListener() = default;
+      /**
        * @brief OnTriggerEnter is an abstract method that is called when two colliders begin intersecting and
        * at least one of them is in trigger state.
        * @param colliderRefA The collider reference of the first collider in the world.

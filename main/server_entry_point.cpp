@@ -7,7 +7,7 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  server.RunServer();
+  server.Run();
 
   return EXIT_SUCCESS;
 }

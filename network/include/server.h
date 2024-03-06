@@ -12,12 +12,12 @@ class Server {
 public:
   ReturnStatus Init(unsigned short port) noexcept;
 
-  void RunServer() noexcept;
+  void Run() noexcept;
 
  private:
   static constexpr int kMaxClientCount_ = 2;
 
-  sf::TcpListener listener_;
+  sf::TcpListener listener_{};
   sf::SocketSelector socket_selector_{};
 
   std::array<sf::TcpSocket, kMaxClientCount_> clients_{};

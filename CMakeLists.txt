@@ -59,16 +59,23 @@ set_target_properties(network PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(network PUBLIC network/include/)
 target_link_libraries(network PRIVATE sfml-network)
 
-add_executable(server server_entry_point.cpp)
-target_link_libraries(server PRIVATE physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+# Create the main library.
+file(GLOB_RECURSE MAIN_SRC_FILES main/include/*.h main/src/*.cpp)
+add_library(main ${MAIN_SRC_FILES})
+set_target_properties(main PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(main PUBLIC main/include/)
+target_link_libraries(main PRIVATE physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+
+add_executable(server main/server_entry_point.cpp)
+target_link_libraries(server PRIVATE main physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
 if (USE_TRACY)
     target_compile_definitions(server PRIVATE TRACY_ENABLE)
     # Link the TracyClient library
     target_link_libraries(server PRIVATE tracyClient)
 endif()
 
-add_executable(client client_entry_point.cpp)
-target_link_libraries(client PRIVATE physics common math network sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+add_executable(client main/client_entry_point.cpp)
+target_link_libraries(client PRIVATE main physics common math network sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
 if (USE_TRACY)
     target_compile_definitions(client PRIVATE TRACY_ENABLE)
     # Link the TracyClient library

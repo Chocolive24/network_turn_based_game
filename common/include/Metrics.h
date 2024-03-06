@@ -35,7 +35,7 @@ namespace Metrics
     /**
      * @brief PixelsToMeters is a method that converts a position in pixels to its equivalent value in meters
      * based on the predefined pixels/meters ratio.
-     * @param pixels The position in pixels that you want to convert to meters.
+     * @param pixelPos The position in pixels that you want to convert to meters.
      * @return The converted position in meters of the input 'pixels'.
      */
     template <typename T>
@@ -47,7 +47,7 @@ namespace Metrics
     /**
      * @brief MetersToPixels is a method that converts a value in meters to its equivalent value in pixels
      * based on the predefined pixels/meters ratio.
-     * @param pixels The value in pixels that you want to convert to meters.
+     * @param meters The value in pixels that you want to convert to meters.
      * @return The converted value in meters of the input 'pixels'.
      */
     template<typename T>
@@ -59,7 +59,7 @@ namespace Metrics
     /**
      * @brief MetersToPixels is a method that converts a position in meters to its equivalent position in pixels
      * based on the predefined pixels/meters ratio.
-     * @param pixels The position in pixels that you want to convert to meters.
+     * @param meterPos The position in pixels that you want to convert to meters.
      * @return The converted position in meters of the input 'pixels'.
      */
     template <typename T>

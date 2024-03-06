@@ -36,6 +36,7 @@ namespace PhysicsEngine
         Math::Vec2F _forces = Math::Vec2F::Zero();
         float _mass = -1.f;
         float _inverseMass = -1.f;
+        float _damping = 0.f;
         BodyType _bodyType = BodyType::Dynamic;
 
     public:
@@ -96,6 +97,26 @@ namespace PhysicsEngine
          * @return The inverse mass of the body.
          */
         [[nodiscard]] constexpr float InverseMass() const noexcept { return _inverseMass; }
+
+        /**
+         * @brief Damping is a method that gives the damping factor of the
+         * body.
+         * @return The damping factor of the body.
+         */
+        [[nodiscard]] constexpr float Damping() const noexcept {
+            return _damping;
+        }
+
+        /**
+         * @brief SetDamping is a method that replaces the current damping factor of
+         * the body with the new damping factor given in parameter.
+         * It also recalculates the inverse mass of the body with the newMass.
+         * @param new_damping The new damping factor for the body.
+         */
+        void constexpr SetDamping(const float new_damping) noexcept 
+        { 
+            _damping = new_damping;
+        }
 
         /**
          * @brief ApplyForce is a method that applies a force to the body and adds it to the sum of the body's forces

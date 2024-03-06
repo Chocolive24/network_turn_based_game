@@ -2,7 +2,7 @@
 
 ReturnStatus Server::Init(const unsigned short port) noexcept {
   if (listener_.listen(port) != sf::Socket::Done) {
-    std::cerr << "Could not listen to port.\n";
+    std::cerr << "Could not listen to port : " << port << '.' << '\n';
     return ReturnStatus::kFailure;
   }
 
@@ -13,10 +13,10 @@ ReturnStatus Server::Init(const unsigned short port) noexcept {
   return ReturnStatus::kSuccess;
 }
 
-void Server::RunServer() noexcept {
+void Server::Run() noexcept {
   while (true) {
     // Make the selector wait for data on any socket.
-    if (socket_selector_.wait(sf::seconds(1.f))) {
+    if (socket_selector_.wait(sf::seconds(5.f))) {
       // Test the listener
       if (socket_selector_.isReady(listener_)) {
         // The listener is ready: there is a pending connection.
@@ -36,39 +36,39 @@ void Server::RunServer() noexcept {
           client_index_++;
         }
       }
-
-      // Check for data from clients.
-      // ----------------------------
-      for (auto& client : clients_) {
-        if (socket_selector_.isReady(client)) {
-          sf::Vector2i circle_pos{};
-          sf::Packet packet_received;
-          if (client.receive(packet_received) != sf::Socket::Done) {
-            std::cerr << "Could not receive packet from client.\n";
-          }
-          else {
-            if (!(packet_received >> circle_pos.x >> circle_pos.y)) {
-              std::cerr << "Could not extract data from client's packet.\n";
-            }
-          }
-
-          // Send received data to other clients
-          for (auto& other_client : clients_) {
-            if (&other_client != &client) {
-              sf::Packet packet;
-              if (!(packet << circle_pos.x << circle_pos.y)) {
-                std::cerr << "Could not insert data in packet.\n";
+      else {
+        // Check for data from clients.
+        // ----------------------------
+        for (auto& client : clients_) {
+          if (socket_selector_.isReady(client)) {
+            sf::Vector2i circle_pos{};
+            sf::Packet packet_received;
+            if (client.receive(packet_received) != sf::Socket::Done) {
+              std::cerr << "Could not receive packet from client.\n";
+            } else {
+              if (!(packet_received >> circle_pos.x >> circle_pos.y)) {
+                std::cerr << "Could not extract data from client's packet.\n";
               }
-              else {
-                if (other_client.send(packet) != sf::Socket::Done) {
-                  std::cerr << "Could not send data to other client.\n";
+            }
+
+            // Send received data to other clients
+            for (auto& other_client : clients_) {
+              if (&other_client != &client) {
+                sf::Packet packet;
+                if (!(packet << circle_pos.x << circle_pos.y)) {
+                  std::cerr << "Could not insert data in packet.\n";
+                } else {
+                  if (other_client.send(packet) != sf::Socket::Done) {
+                    std::cerr << "Could not send data to other client.\n";
+                  }
                 }
               }
             }
-          }
-        }
-      }
-    } else {
+          } // for auto client
+        } // else
+      } // if selector.wait()
+    }
+    else {
       // Handle other server tasks or timeout operations here.
       std::cout << "Waiting for activity...\n";
     }
