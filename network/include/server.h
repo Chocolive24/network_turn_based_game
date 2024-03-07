@@ -22,4 +22,7 @@ public:
 
   std::array<sf::TcpSocket, kMaxClientCount_> clients_{};
   int client_index_ = 0;
+
+  void AcceptClient() noexcept;
+  void CommunicatePacketBetweenClients() noexcept;
 };
