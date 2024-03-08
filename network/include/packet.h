@@ -7,6 +7,7 @@ enum class PacketType : std::int16_t {
   kNone = 0,
   KNotReady,
   KStartGame,
+  kNewTurn,
   kForceAppliedToBall,
 };
 
@@ -26,12 +27,3 @@ inline sf::Packet& operator>>(sf::Packet& packet, PacketType& type) {
   type = static_cast<PacketType>(value);
   return packet;
 }
-
-
-//class Packet {
-//public:
-//  Packet(void* data, const std::size_t& size) noexcept;
-//
-//  void* data = nullptr;
-//  std::size_t size = 0;
-//};

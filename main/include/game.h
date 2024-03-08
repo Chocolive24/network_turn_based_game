@@ -17,6 +17,7 @@ public:
   ~Game() override = default;
 
   void Run() noexcept;
+  void CreateWalls();
 
   void OnTriggerEnter(
       PhysicsEngine::ColliderRef colliderRefA,
@@ -27,7 +28,8 @@ public:
                      PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
   void OnCollisionEnter(
       PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {
+  }
   void OnCollisionExit(
       PhysicsEngine::ColliderRef colliderRefA,
       PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
@@ -36,13 +38,17 @@ public:
   // Game attributes.
   // ----------------
   static constexpr std::int16_t kBallCount_ = 16;
-  static constexpr float kPixelRadius_ = 15.f;
-  static constexpr float kMeterRadius_ = 0.15f;
+  static constexpr float kPixelRadius_ = 17.5f;
+  static constexpr float kMeterRadius_ = 0.175f;
 
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
 
+  sf::Color wall_color_ = sf::Color::Blue;
+
   Math::Vec2F force_applied_to_ball_;
 
+  bool has_game_started = false;
+  bool has_played_ = false;
   bool is_player_turn_ = false;
 
   bool is_mouse_pressed_ = false;
@@ -53,6 +59,7 @@ public:
 
   // Common attributes.
   // ------------------
+  static constexpr float kFixedTimeStep = 1.f / 60.f;
   Timer timer_{};
 
   // Network attributes.
@@ -62,13 +69,15 @@ public:
   // Physics attributes.
   // -------------------
   PhysicsEngine::World world_{};
-  std::array<PhysicsEngine::BodyRef, kBallCount_> body_refs_{};
-  std::array<PhysicsEngine::ColliderRef, kBallCount_> collider_refs_{};
+  std::array<PhysicsEngine::BodyRef, kBallCount_> ball_body_refs_{};
+  std::array<PhysicsEngine::ColliderRef, kBallCount_> ball_collider_refs_{};
+  std::array<PhysicsEngine::BodyRef, 4> wall_body_refs_{};
+  std::array<PhysicsEngine::ColliderRef, 4> wall_col_refs_{};
 
   // Graphics attributes.
   // --------------------
   static constexpr int kWindowWidth_ = 750;
-  static constexpr int kWindowHeight_ = 1080;
+  static constexpr int kWindowHeight_ = 1000;
 
   static constexpr int kTriangleHeight_ = 300;
 

@@ -3,6 +3,13 @@ project(turn_based_game)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# For GCC:
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
+# For Clang:
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
+# For MSVC:
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+
 set(PORT "44444" CACHE STRING "Set the port")
 set(HOST_NAME "localhost" CACHE STRING "Set the host name")
 
