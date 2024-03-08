@@ -106,9 +106,9 @@ void Game::Update() noexcept {
     was_mouse_pressed_ = is_mouse_pressed_;
 
     // Send current position to server.
-    sf::Packet packet;
+    Packet packet(PacketType::kForceAppliedToBall);
     sf::Vector2i sf_pos(cue_ball_body.Position().X, cue_ball_body.Position().Y);
-    if (!(packet << sf_pos.x << sf_pos.y)) {
+    if (!(packet << PacketType::kForceAppliedToBall << sf_pos.x << sf_pos.y)) {
       std::cerr << "Failed to set data into packet." << '\n';
     }
     else {
@@ -117,9 +117,14 @@ void Game::Update() noexcept {
 
     // Receive position from the server.
     sf::Packet received_packet;
-    client_.ReceivePacket(received_packet);
-    if (!(received_packet >> other_circle_pos_.x >> other_circle_pos_.y)) {
-      std::cerr << "Failed to extract data from packet." << '\n';
+    switch(client_.ReceivePacket(received_packet)) {
+    case PacketType::kNone:
+        std::cerr << "Packed received has no type. \n";
+      break;
+    case PacketType::kForceAppliedToBall:
+      std::cout << "Received\n";
+      received_packet >> other_circle_pos_.x >> other_circle_pos_.y;
+      break;
     }
 
     Draw();

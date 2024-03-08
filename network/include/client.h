@@ -14,10 +14,10 @@ public:
   ReturnStatus ConnectToServer(const sf::IpAddress& remote_address, 
 	                             unsigned short remote_port, bool blocking = true) noexcept;
 
-  void SendPacket(const Packet& packet) noexcept;
+  //void SendPacket(const Packet& packet) noexcept;
   void SendPacket(sf::Packet& packet) noexcept;
-  void ReceivePacket(const Packet& packet) noexcept;
-  void ReceivePacket(sf::Packet& packet) noexcept;
+  //void ReceivePacket(const Packet& packet) noexcept;
+  [[nodiscard]] PacketType ReceivePacket(sf::Packet& packet) noexcept;
 
   [[nodiscard]] sf::IpAddress remote_address() const noexcept {
     return socket_.getRemoteAddress();
