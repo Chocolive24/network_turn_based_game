@@ -52,29 +52,31 @@ ReturnStatus Game::Init() noexcept {
   return ReturnStatus::kSuccess;
 }
 
+void Game::HandleWindowEvents() {
+  sf::Event event;
+  while (window_.pollEvent(event)) {
+    switch (event.type) {
+    case sf::Event::Closed:
+      window_.close();
+      break;
+    case sf::Event::MouseButtonPressed:
+      is_mouse_pressed_ = true;
+      is_mouse_released_ = false;
+      break;
+    case sf::Event::MouseButtonReleased:
+      is_mouse_released_ = true;
+      is_mouse_pressed_ = false;
+    default:
+      break;
+    }
+  }
+}
+
 void Game::Update() noexcept {
   auto& cue_ball_body = world_.GetBody(body_refs_[0]);
-  auto& rnd_ball_body = world_.GetBody(body_refs_[1]);
 
   while (window_.isOpen()) {
-    // Handle events.
-    sf::Event event;
-    while (window_.pollEvent(event)) {
-      switch (event.type) {
-        case sf::Event::Closed:
-          window_.close();
-          break;
-        case sf::Event::MouseButtonPressed:
-          is_mouse_pressed_ = true;
-          is_mouse_released_ = false;
-          break;
-        case sf::Event::MouseButtonReleased:
-          is_mouse_released_ = true;
-          is_mouse_pressed_ = false;
-        default:
-          break;
-      }
-    }
+    HandleWindowEvents();
 
     CheckForReceivedPackets();
 
@@ -82,8 +84,6 @@ void Game::Update() noexcept {
         was_mouse_pressed_ == false && is_mouse_pressed_ == true;
 
     timer_.Tick();
-
-    world_.Update(timer_.DeltaTime());
 
     if (is_player_turn_) {
       const auto mouse_pos = Math::Vec2F(sf::Mouse::getPosition(window_).x,
@@ -100,11 +100,21 @@ void Game::Update() noexcept {
       if (is_charging && is_mouse_released_) {
         is_charging = false;
 
-        const auto force = Metrics::PixelsToMeters(distance);
+        force_applied_to_ball_ = -Metrics::PixelsToMeters(distance);
 
-        cue_ball_body.SetVelocity(Math::Vec2F(-force));
+        cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
+        sf::Packet force_applied_packet;
+        force_applied_packet << PacketType::kForceAppliedToBall
+                             << force_applied_to_ball_.X
+                             << force_applied_to_ball_.Y;
+        client_.SendPacket(force_applied_packet);
       }
     }
+
+    std::cout << force_applied_to_ball_.X << " " << force_applied_to_ball_.Y
+              << '\n';
+
+    world_.Update(timer_.DeltaTime());
 
     was_mouse_pressed_ = is_mouse_pressed_;
 
@@ -178,6 +188,7 @@ void Game::CalculateStartBallPositions() noexcept {
 
 void Game::CheckForReceivedPackets() noexcept {
   sf::Packet received_packet;
+  auto& cue_ball_body = world_.GetBody(body_refs_[0]);
   switch (client_.ReceivePacket(received_packet)) {
     case PacketType::kNone:
       std::cerr << "Packed received has no type. \n";
@@ -185,8 +196,8 @@ void Game::CheckForReceivedPackets() noexcept {
     case PacketType::KNotReady:
       break;
     case PacketType::kForceAppliedToBall:
-      std::cout << "Received\n";
-      received_packet >> other_circle_pos_.x >> other_circle_pos_.y;
+      received_packet >> force_applied_to_ball_.X >> force_applied_to_ball_.Y;
+      cue_ball_body.SetVelocity(force_applied_to_ball_);
       break;
     case PacketType::KStartGame:
       received_packet >> is_player_turn_;

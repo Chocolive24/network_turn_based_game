@@ -41,7 +41,7 @@ public:
 
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
 
-  sf::Vector2i other_circle_pos_;
+  Math::Vec2F force_applied_to_ball_;
 
   bool is_player_turn_ = false;
 
@@ -77,6 +77,7 @@ public:
   // Methods.
   // --------
   [[nodiscrad]] ReturnStatus Init() noexcept;
+  void HandleWindowEvents();
   void Update() noexcept;
   void Draw() noexcept;
   void Deinit() noexcept;
