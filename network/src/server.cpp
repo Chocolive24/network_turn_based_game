@@ -1,10 +1,14 @@
 #include "server.h"
 
+#include "packet.h"
+
 ReturnStatus Server::Init(const unsigned short port) noexcept {
   if (listener_.listen(port) != sf::Socket::Done) {
     std::cerr << "Could not listen to port : " << port << '.' << '\n';
     return ReturnStatus::kFailure;
   }
+
+  listener_.setBlocking(false);
 
   std::cout << "Server is listening to port : " << port << '\n';
 
@@ -24,14 +28,28 @@ void Server::Run() noexcept {
         // number of clients.
         if (client_index_ < kMaxClientCount_) {
           AcceptClient();
+
+          if (client_index_ == kMaxClientCount_) {
+            sf::Packet p1_start_packet;
+            p1_start_packet << PacketType::KStartGame << true;
+            if (clients_[0].send(p1_start_packet) != sf::Socket::Done) {
+              std::cerr << "Could not send start game packet to player1.\n";
+            }
+
+            sf::Packet p2_start_packet;
+            p1_start_packet << PacketType::KStartGame << false;
+            if (clients_[1].send(p2_start_packet) != sf::Socket::Done) {
+              std::cerr << "Could not send start game packet to player2.\n";
+            }
+          }
         }
       }
       else {
         // Check for data from clients.
         // ----------------------------
         CommunicatePacketBetweenClients();
-      } // if selector.wait()
-    }
+      } 
+    } // if selector.wait()
     else {
       // Handle other server tasks or timeout operations here.
       std::cout << "Waiting for activity...\n";
@@ -44,7 +62,7 @@ void Server::AcceptClient() noexcept {
     std::cerr << "Could not accept client.\n";
   }
 
-  clients_[client_index_].setBlocking(true);
+  clients_[client_index_].setBlocking(false);
   socket_selector_.add(clients_[client_index_]);
 
   std::cout << "Client " << clients_[client_index_].getRemoteAddress() << ':'
@@ -68,6 +86,6 @@ void Server::CommunicatePacketBetweenClients() noexcept {
           }
         }
       }
-    }  // for auto client
-  } // else
+    }  
+  }
 }

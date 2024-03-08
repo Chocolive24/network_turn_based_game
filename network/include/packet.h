@@ -3,8 +3,10 @@
 #include <cstddef>
 #include <SFML/Network/Packet.hpp>
 
-enum class PacketType : std::int16_t{
+enum class PacketType : std::int16_t {
   kNone = 0,
+  KNotReady,
+  KStartGame,
   kForceAppliedToBall,
 };
 

@@ -22,6 +22,8 @@ ReturnStatus Game::Init() noexcept {
     return ReturnStatus::kFailure;
   }
 
+  client_.SetBlocking(false);
+
   CalculateStartBallPositions();
 
   for (int i = 0; i < kBallCount_; i++) {
@@ -74,6 +76,8 @@ void Game::Update() noexcept {
       }
     }
 
+    CheckForReceivedPackets();
+
     bool is_mouse_just_pressed =
         was_mouse_pressed_ == false && is_mouse_pressed_ == true;
 
@@ -81,51 +85,38 @@ void Game::Update() noexcept {
 
     world_.Update(timer_.DeltaTime());
 
-    const auto mouse_pos = Math::Vec2F(sf::Mouse::getPosition(window_).x,
-                                       sf::Mouse::getPosition(window_).y);
-    const auto ball_pos_in_pix = Metrics::MetersToPixels(
-        Math::Vec2F(cue_ball_body.Position().X, cue_ball_body.Position().Y));
-    const auto distance = mouse_pos - ball_pos_in_pix;
+    if (is_player_turn_) {
+      const auto mouse_pos = Math::Vec2F(sf::Mouse::getPosition(window_).x,
+                                         sf::Mouse::getPosition(window_).y);
+      const auto ball_pos_in_pix = Metrics::MetersToPixels(
+          Math::Vec2F(cue_ball_body.Position().X, cue_ball_body.Position().Y));
+      const auto distance = mouse_pos - ball_pos_in_pix;
 
-    if (distance.Length<float>() <= kPixelRadius_ && is_mouse_just_pressed) {
-      std::cout << "mouse on circle\n";
-      is_charging = true;
-    }
+      if (distance.Length<float>() <= kPixelRadius_ && is_mouse_just_pressed) {
+        std::cout << "mouse on circle\n";
+        is_charging = true;
+      }
 
-    if (is_charging && is_mouse_released_) {
-      is_charging = false;
+      if (is_charging && is_mouse_released_) {
+        is_charging = false;
 
-      std::cout << Metrics::PixelsToMeters(distance).X << " "
-                << Metrics::PixelsToMeters(distance).Y << '\n';
+        const auto force = Metrics::PixelsToMeters(distance);
 
-      const auto force = Metrics::PixelsToMeters(distance);
-
-      cue_ball_body.SetVelocity(Math::Vec2F(-force));
+        cue_ball_body.SetVelocity(Math::Vec2F(-force));
+      }
     }
 
     was_mouse_pressed_ = is_mouse_pressed_;
 
     // Send current position to server.
-    Packet packet(PacketType::kForceAppliedToBall);
-    sf::Vector2i sf_pos(cue_ball_body.Position().X, cue_ball_body.Position().Y);
-    if (!(packet << PacketType::kForceAppliedToBall << sf_pos.x << sf_pos.y)) {
-      std::cerr << "Failed to set data into packet." << '\n';
-    }
-    else {
-      client_.SendPacket(packet);
-    }
-
-    // Receive position from the server.
-    sf::Packet received_packet;
-    switch(client_.ReceivePacket(received_packet)) {
-    case PacketType::kNone:
-        std::cerr << "Packed received has no type. \n";
-      break;
-    case PacketType::kForceAppliedToBall:
-      std::cout << "Received\n";
-      received_packet >> other_circle_pos_.x >> other_circle_pos_.y;
-      break;
-    }
+    //Packet packet(PacketType::kForceAppliedToBall);
+    //sf::Vector2i sf_pos(cue_ball_body.Position().X, cue_ball_body.Position().Y);
+    //if (!(packet << PacketType::kForceAppliedToBall << sf_pos.x << sf_pos.y)) {
+    //  std::cerr << "Failed to set data into packet." << '\n';
+    //}
+    //else {
+    //  client_.SendPacket(packet);
+    //}
 
     Draw();
   }
@@ -182,5 +173,24 @@ void Game::CalculateStartBallPositions() noexcept {
     }
 
     height += space * sqrt(3.0) / 2.0;
+  }
+}
+
+void Game::CheckForReceivedPackets() noexcept {
+  sf::Packet received_packet;
+  switch (client_.ReceivePacket(received_packet)) {
+    case PacketType::kNone:
+      std::cerr << "Packed received has no type. \n";
+      break;
+    case PacketType::KNotReady:
+      break;
+    case PacketType::kForceAppliedToBall:
+      std::cout << "Received\n";
+      received_packet >> other_circle_pos_.x >> other_circle_pos_.y;
+      break;
+    case PacketType::KStartGame:
+      received_packet >> is_player_turn_;
+      std::cout << "YOUR TURN\n";
+      break;
   }
 }

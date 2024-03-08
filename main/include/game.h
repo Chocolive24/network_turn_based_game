@@ -43,6 +43,8 @@ public:
 
   sf::Vector2i other_circle_pos_;
 
+  bool is_player_turn_ = false;
+
   bool is_mouse_pressed_ = false;
   bool was_mouse_pressed_ = false;
   bool is_mouse_released_ = false;
@@ -80,4 +82,6 @@ public:
   void Deinit() noexcept;
 
   void CalculateStartBallPositions() noexcept;
+
+  void CheckForReceivedPackets() noexcept;
 };

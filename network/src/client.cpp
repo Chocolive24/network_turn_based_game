@@ -35,8 +35,8 @@ ReturnStatus Client::ConnectToServer(const sf::IpAddress& remote_address,
 //}
 
 void Client::SendPacket(sf::Packet& packet) noexcept {
-  if (socket_.send(packet) != sf::Socket::Done) {
-    std::cerr << "Could not send packet.\n";
+  if (socket_.send(packet) == sf::Socket::Done) {
+    std::cerr << "Packet send.\n";
   }
 }
 
@@ -48,8 +48,8 @@ void Client::SendPacket(sf::Packet& packet) noexcept {
 //}
 
 PacketType Client::ReceivePacket(sf::Packet& packet) noexcept {
-  if (socket_.receive(packet) != sf::Socket::Done) {
-    std::cerr << "Could not receive packet.\n";
+  if (socket_.receive(packet) == sf::Socket::NotReady) {
+    return PacketType::KNotReady;
   }
 
   PacketType packet_type = PacketType::kNone;
