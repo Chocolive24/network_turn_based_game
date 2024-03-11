@@ -33,8 +33,16 @@ public:
   static constexpr Math::Vec2F kCueBallStartPos =
       Math::Vec2F(kWindowSizeInMeters.X * 0.5f, kWindowSizeInMeters.Y * 0.66f);
 
+  static constexpr float max_amplitude_ = 1000.f;
+  static constexpr float max_aim_dist = 200.f;
+
+  float force_percentage_ = 0.f;
+  sf::RectangleShape charging_rect_{};
+
   int player_index_ = -1;
   std::int16_t score_ = 0;
+  std::int16_t opponent_score_ = 0;
+  bool has_win_ = false;
 
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
 
@@ -43,6 +51,7 @@ public:
   Math::Vec2F force_applied_to_ball_;
 
   bool has_game_started = false;
+  bool is_game_finished_ = false;
   bool has_played_ = false;
   bool is_player_turn_ = false;
 
@@ -76,6 +85,8 @@ public:
   // --------------------
   sf::RenderWindow window_{};
 
+  sf::Font font_{};
+
   // Methods.
   // --------
   [[nodiscrad]] ReturnStatus Init() noexcept;
@@ -84,12 +95,15 @@ public:
   void CheckEndTurnCondition();
   void HandleWindowEvents();
   void Update() noexcept;
+  void DrawTexts();
   void Draw() noexcept;
   void Deinit() noexcept;
 
   void CreateBalls() noexcept;
   void CreateWalls();
   void CreateHoles() noexcept;
+
+  void UpdateScores() noexcept;
 
   void DrawBalls();
   void DrawWalls();

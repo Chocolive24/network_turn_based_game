@@ -17,8 +17,7 @@ ReturnStatus Game::Init() noexcept {
   world_.Init(Math::Vec2F::Zero(), kBallCount_);
   world_.SetContactListener(this);
 
-  if (client_.ConnectToServer(HOST_NAME, PORT) == 
-     ReturnStatus::kFailure) {
+  if (client_.ConnectToServer(HOST_NAME, PORT) == ReturnStatus::kFailure) {
     return ReturnStatus::kFailure;
   }
   client_.SetBlocking(false);
@@ -32,8 +31,10 @@ ReturnStatus Game::Init() noexcept {
   sf::ContextSettings window_settings;
   window_settings.antialiasingLevel = 4;
   window_.create(sf::VideoMode(kWindowWidth_, kWindowHeight_), "Pool",
-                sf::Style::Close, window_settings);
+                 sf::Style::Close, window_settings);
   window_.setVerticalSyncEnabled(true);
+
+  font_.loadFromFile("data/Payback.otf");
 
   return ReturnStatus::kSuccess;
 }
@@ -42,19 +43,35 @@ void Game::HandleWindowEvents() {
   sf::Event event;
   while (window_.pollEvent(event)) {
     switch (event.type) {
-    case sf::Event::Closed:
-      window_.close();
-      break;
-    case sf::Event::MouseButtonPressed:
-      is_mouse_pressed_ = true;
-      is_mouse_released_ = false;
-      break;
-    case sf::Event::MouseButtonReleased:
-      is_mouse_released_ = true;
-      is_mouse_pressed_ = false;
-      break;
-    default:
-      break;
+      case sf::Event::Closed:
+        window_.close();
+        break;
+      case sf::Event::MouseButtonPressed:
+        is_mouse_pressed_ = true;
+        is_mouse_released_ = false;
+        break;
+      case sf::Event::MouseButtonReleased:
+        is_mouse_released_ = true;
+        is_mouse_pressed_ = false;
+        break;
+      case sf::Event::KeyPressed:
+        switch (event.key.code) {
+          case sf::Keyboard::W: {
+            static int idx = 2 + player_index_;
+            if (idx > 15) idx = 1;
+            const auto& b_ref =
+                world_.GetCollider(ball_collider_refs_[idx]).GetBodyRef();
+            auto& b = world_.GetBody(b_ref);
+            b.SetPosition(world_.GetBody(hole_body_refs_[0]).Position());
+            idx += 2;
+            break;
+          }
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
     }
   }
 }
@@ -78,19 +95,27 @@ void Game::CheckForReceivedPackets() noexcept {
       cue_ball_body.SetVelocity(force_applied_to_ball_);
       break;
     }
-    case PacketType::KStartGame:
+    case PacketType::KStartGame: {
       received_packet >> has_game_started >> player_index_;
       break;
-    case PacketType::kNewTurn:
+    }
+    case PacketType::kNewTurn: {
       received_packet >> is_player_turn_;
+      const auto cue_ball_b_ref =
+          world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
+      auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);
+      cue_ball_body.SetVelocity(Math::Vec2F::Zero());
       break;
+    }
     case PacketType::kBallPositionsPacket: {
       for (const auto& col_ref : ball_collider_refs_) {
         const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
         auto& body = world_.GetBody(body_ref);
         Math::Vec2F ball_pos = Math::Vec2F::Zero();
-        received_packet >> ball_pos.X >> ball_pos.Y;
+        bool enabled = false;
+        received_packet >> ball_pos.X >> ball_pos.Y >> enabled;
         body.SetPosition(ball_pos);
+        world_.GetCollider(col_ref).SetEnabled(enabled);
       }
       break;
     }
@@ -99,37 +124,59 @@ void Game::CheckForReceivedPackets() noexcept {
 
 void Game::HandlePlayerTurn() {
   const auto cue_ball_body_ref =
-    world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
+      world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
   auto& cue_ball_body = world_.GetBody(cue_ball_body_ref);
 
   if (is_player_turn_ && !has_played_) {
-      
     const auto mouse_pos = Math::Vec2F(sf::Mouse::getPosition(window_).x,
                                        sf::Mouse::getPosition(window_).y);
     const auto ball_pos_in_pix = Metrics::MetersToPixels(
-      Math::Vec2F(cue_ball_body.Position().X, cue_ball_body.Position().Y));
-    const auto distance = mouse_pos - ball_pos_in_pix;
-      
-    if (distance.Length<float>() <= kPixelRadius_ && is_mouse_just_pressed_) {
+        Math::Vec2F(cue_ball_body.Position().X, cue_ball_body.Position().Y));
+    const auto ball_to_mouse_vec = mouse_pos - ball_pos_in_pix;
+
+    if (ball_to_mouse_vec.Length<float>() <= kPixelRadius_ && is_mouse_just_pressed_) {
       is_charging = true;
     }
 
-    if (is_charging && is_mouse_released_) {
-      is_charging = false;
-        
-      force_applied_to_ball_ = -Metrics::PixelsToMeters(distance);
-      force_applied_to_ball_ *= 3.f;
-      cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
-      sf::Packet force_applied_packet;
-      force_applied_packet << PacketType::kForceAppliedToBall
-        << force_applied_to_ball_.X
-        << force_applied_to_ball_.Y;
-      client_.SendPacket(force_applied_packet);
+    if (is_charging) {
+      const auto distance = ball_to_mouse_vec.Length() > max_aim_dist
+                                ? max_aim_dist
+                                : ball_to_mouse_vec.Length();
 
-      std::cout << "Sent: " << force_applied_to_ball_.X << " " << force_applied_to_ball_.Y
-        << '\n';
+      force_percentage_ = distance / max_aim_dist;
 
-      has_played_ = true;
+      const auto aim_direction = -ball_to_mouse_vec.Normalized();
+
+      // Set up rectangle properties
+      charging_rect_ = sf::RectangleShape(sf::Vector2f(distance * 0.5f + kPixelRadius_, 10.f));
+      charging_rect_.setOrigin(0.f, charging_rect_.getSize().y * 0.5f);  // Center the rectangle at the cue ball position
+      charging_rect_.setPosition(sf::Vector2f(ball_pos_in_pix.X, ball_pos_in_pix.Y));
+      // Calculate rotation angle
+      float angle = std::atan2(aim_direction.Y, aim_direction.X) * 180.f / 3.14159265f;
+      // Rotate the rectangle to match the direction
+      charging_rect_.setRotation(angle);
+
+      if (is_mouse_released_)
+      {
+        is_charging = false;
+
+        force_applied_to_ball_ = Metrics::PixelsToMeters(
+            force_percentage_ * max_amplitude_ * aim_direction);
+
+        cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
+        sf::Packet force_applied_packet;
+        force_applied_packet << PacketType::kForceAppliedToBall
+                             << force_applied_to_ball_.X
+                             << force_applied_to_ball_.Y;
+        client_.SendPacket(force_applied_packet);
+
+        std::cout << "Sent: " << force_applied_to_ball_.X << " "
+                  << force_applied_to_ball_.Y << '\n';
+
+        force_percentage_ = 0.f;
+
+        has_played_ = true;
+      }
     }
   }
 }
@@ -153,7 +200,7 @@ void Game::CheckEndTurnCondition() {
       const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
       auto& body = world_.GetBody(body_ref);
 
-       ball_pos_packet << body.Position().X << body.Position().Y;
+      ball_pos_packet << body.Position().X << body.Position().Y << world_.GetCollider(col_ref).Enabled();
     }
     client_.SendPacket(ball_pos_packet);
 
@@ -167,20 +214,23 @@ void Game::CheckEndTurnCondition() {
 
 void Game::Update() noexcept {
   while (window_.isOpen()) {
-    HandleWindowEvents();
-
-    CheckForReceivedPackets();
-
     timer_.Tick();
 
+    HandleWindowEvents();
     is_mouse_just_pressed_ =
         was_mouse_pressed_ == false && is_mouse_pressed_ == true;
 
-    HandlePlayerTurn();
+    CheckForReceivedPackets();
 
-    world_.Update(kFixedTimeStep);
+    if (!is_game_finished_) {
+      HandlePlayerTurn();
 
-    CheckEndTurnCondition();
+      world_.Update(kFixedTimeStep);
+
+      CheckEndTurnCondition();
+
+      UpdateScores();
+    }
 
     Draw();
 
@@ -188,10 +238,42 @@ void Game::Update() noexcept {
   }
 }
 
+void Game::DrawTexts() {
+  sf::FloatRect text_bounds{};
+
+  sf::Text score_txt(std::to_string(score_), font_);
+  score_txt.setPosition(150, 50);
+  text_bounds = score_txt.getLocalBounds();
+  score_txt.setOrigin(text_bounds.width * 0.5f, text_bounds.height * 0.5f);
+  window_.draw(score_txt);
+
+  sf::Text opp_score_txt(std::to_string(opponent_score_), font_);
+  opp_score_txt.setPosition(kWindowWidth_ - 150, 50);
+  text_bounds = opp_score_txt.getLocalBounds();
+  opp_score_txt.setOrigin(text_bounds.width * 0.5f, text_bounds.height * 0.5f);
+  window_.draw(opp_score_txt);
+
+  const auto turn_string = is_player_turn_ ? "Your turn" : "Opponent's turn";
+  sf::Text turn_txt(turn_string, font_);
+  turn_txt.setPosition(kWindowWidth_ * 0.5f, 50.f);
+  text_bounds = turn_txt.getLocalBounds();
+  turn_txt.setOrigin(text_bounds.width * 0.5f, text_bounds.height * 0.5f);
+  window_.draw(turn_txt);
+
+  if (is_game_finished_) {
+    const std::string end_game_str = has_win_ ? "Victory !" : "Defeat !";
+    sf::Text end_game_txt(end_game_str, font_);
+    end_game_txt.setPosition(kWindowWidth_ * 0.5f, kWindowHeight_ * 0.5f);
+    text_bounds = end_game_txt.getLocalBounds();
+    end_game_txt.setOrigin(text_bounds.width * 0.5f, text_bounds.height * 0.5f);
+    window_.draw(end_game_txt);
+  }
+}
+
 void Game::Draw() noexcept {
   // Clear window.
-  const sf::Color clear_color = player_index_ == 0 ? 
-      sf::Color::Blue : sf::Color::Red;
+  const sf::Color clear_color =
+      player_index_ == 0 ? sf::Color::Blue : sf::Color::Red;
   window_.clear(clear_color);
 
   const sf::Vector2f table_size(kWindowWidth_ - 50.f, kWindowHeight_ - 50.f);
@@ -201,11 +283,15 @@ void Game::Draw() noexcept {
   table_rect.setFillColor(sf::Color(76, 153, 0));
   window_.draw(table_rect);
 
-  DrawBalls();
   DrawWalls();
   DrawHoles();
+  if (is_charging) {
+    window_.draw(charging_rect_);
+  }
+  DrawBalls();
 
-  // Display window.
+  DrawTexts();
+
   window_.display();
 }
 
@@ -221,7 +307,8 @@ void Game::CreateBalls() noexcept {
 
   constexpr int maxHeight = 5;
   float height = 0;
-  constexpr Math::Vec2F startPos = Math::Vec2F(window_size_meters.X * 0.5f, window_size_meters.Y * 0.4f);
+  constexpr Math::Vec2F startPos =
+      Math::Vec2F(window_size_meters.X * 0.5f, window_size_meters.Y * 0.4f);
 
   int index = 1;
 
@@ -317,7 +404,7 @@ void Game::CreateHoles() noexcept {
   constexpr auto win_size_meter =
       Metrics::PixelsToMeters(Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
-  float x_pos = win_size_meter.X - 0.875f;
+  float x_pos = win_size_meter.X - 0.725f;
   constexpr float start_y_pos = -0.875f;
   float y_pos = start_y_pos;
 
@@ -329,16 +416,37 @@ void Game::CreateHoles() noexcept {
 
     hole_col_refs_[i] = world_.CreateCollider(hole_body_refs_[i]);
     auto& col_0 = world_.GetCollider(hole_col_refs_[i]);
-    col_0.SetShape(Math::CircleF(Math::Vec2F::Zero(), 0.3f));
+    col_0.SetShape(Math::CircleF(Math::Vec2F::Zero(), 0.15f));
     col_0.SetIsTrigger(true);
 
     y_pos += win_size_meter.Y * 0.5f - start_y_pos;
 
     if (i == 2) {
-      x_pos = 0.875f;
+      x_pos = 0.725f;
       y_pos = start_y_pos;
     }
   }
+}
+
+void Game::UpdateScores() noexcept {
+  if (is_game_finished_) return;
+
+  std::int16_t ball_scored_count = 0;
+  std::int16_t opponent_ball_scored_count = 0;
+
+  for (int i = 2; i < kBallCount_; i++) {
+    if (!world_.GetCollider(ball_collider_refs_[i]).Enabled()) {
+      if (i % 2 == player_index_) {
+        ball_scored_count++;
+      }
+      else {
+        opponent_ball_scored_count++;
+      }
+    }
+  }
+
+  score_ = ball_scored_count;
+  opponent_score_ = opponent_ball_scored_count;
 }
 
 void Game::DrawBalls() {
@@ -360,7 +468,8 @@ void Game::DrawBalls() {
     sf::Color color;
 
     if (i == 0) {
-      color = sf::Color::White;
+      const auto inv_f_percentage = std::abs(force_percentage_ - 1.f);
+      color = sf::Color(255, 255 * inv_f_percentage, 255 * inv_f_percentage);
     } else if (i == 1) {
       color = sf::Color::Yellow;
     } else {
@@ -396,8 +505,8 @@ void Game::DrawWalls() {
 void Game::DrawHoles() {
   for (std::int16_t i = 0; i < 6; i++) {
     auto& col = world_.GetCollider(hole_col_refs_[i]);
-    auto radius =
-        Metrics::MetersToPixels(std::get<Math::CircleF>(col.Shape()).Radius());
+    auto radius = Metrics::MetersToPixels(
+        std::get<Math::CircleF>(col.Shape()).Radius() * 2.f);
 
     sf::CircleShape circle(radius);
     circle.setOrigin(radius, radius);
@@ -413,22 +522,35 @@ void Game::DrawHoles() {
 
 void Game::OnTriggerEnter(PhysicsEngine::ColliderRef colliderRefA,
                           PhysicsEngine::ColliderRef colliderRefB) noexcept {
-  if (colliderRefA.Index == ball_collider_refs_[0].Index) {
-    const auto& col = world_.GetCollider(colliderRefA);
+  if (colliderRefA.Index == ball_collider_refs_[0].Index ||
+      colliderRefB.Index == ball_collider_refs_[0].Index) {
+    const auto& col = world_.GetCollider(
+        colliderRefA.Index == ball_collider_refs_[0].Index ? colliderRefA
+                                                           : colliderRefB);
     auto& body = world_.GetBody(col.GetBodyRef());
-
     body.SetPosition(kCueBallStartPos);
     body.SetVelocity(Math::Vec2F::Zero());
-
+    force_applied_to_ball_ = Math::Vec2F::Zero();
     return;
   }
 
-  if (colliderRefB.Index == ball_collider_refs_[0].Index) {
-    const auto& col = world_.GetCollider(colliderRefB);
-    auto& body = world_.GetBody(col.GetBodyRef());
+  if (colliderRefA.Index == 1 || colliderRefB.Index == 1) {
+    auto& col = world_.GetCollider(
+        colliderRefA.Index == ball_collider_refs_[1].Index ? colliderRefA
+                                                           : colliderRefB);
+    col.SetEnabled(false);
+    is_game_finished_ = true;
 
-    body.SetPosition(kCueBallStartPos);
-    body.SetVelocity(Math::Vec2F::Zero());
+    if (is_player_turn_ && score_ == 7) {
+      score_++;
+      has_win_ = true;
+
+      return;
+    }
+
+    if (!is_player_turn_) {
+      has_win_ = true;
+    }
 
     return;
   }

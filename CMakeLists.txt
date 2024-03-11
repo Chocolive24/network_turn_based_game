@@ -33,6 +33,35 @@ if (USE_TRACY)
     add_library(tracyClient STATIC externals/tracy_profiler/TracyClient.cpp)
 endif()
 
+file(GLOB_RECURSE DATA_FILES
+            "data/*.json"
+            "data/*.png"
+            "data/*.jpg"
+            "data/*.otf"
+            )
+    foreach(DATA ${DATA_FILES})
+        get_filename_component(FILE_NAME ${DATA} NAME)
+        get_filename_component(PATH_NAME ${DATA} DIRECTORY)
+        get_filename_component(EXTENSION ${DATA} EXT)
+        file(RELATIVE_PATH PATH_NAME "${CMAKE_CURRENT_SOURCE_DIR}" ${PATH_NAME})
+        #MESSAGE("Data PATH: ${PATH_NAME} NAME: ${FILE_NAME}")
+        set(DATA_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${PATH_NAME}/${FILE_NAME}")
+        #MESSAGE("Data OUT PATH: ${DATA_OUTPUT}")
+        add_custom_command(
+                OUTPUT ${DATA_OUTPUT}
+                COMMAND ${CMAKE_COMMAND} -E copy
+                ${DATA}
+                ${DATA_OUTPUT}
+                DEPENDS ${DATA})
+        list(APPEND Data_OUTPUT_FILES ${DATA_OUTPUT})
+    endforeach(DATA)
+
+
+    add_custom_target(
+            data_target
+            DEPENDS ${Data_OUTPUT_FILES}
+    )
+
 # Create the Math library
 file(GLOB_RECURSE MATH_SRC_FILES libs/math/include/*.h libs/math/src/*.cpp)
 add_library(math ${MATH_SRC_FILES})
@@ -72,6 +101,7 @@ add_library(main ${MAIN_SRC_FILES})
 set_target_properties(main PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(main PUBLIC main/include/)
 target_link_libraries(main PRIVATE physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
+add_dependencies(main data_target)
 
 add_executable(server main/server_entry_point.cpp)
 target_link_libraries(server PRIVATE main physics common network math sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML)
