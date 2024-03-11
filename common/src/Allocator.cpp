@@ -10,7 +10,7 @@ void* HeapAllocator::Allocate(std::size_t allocationSize, std::size_t alignment)
     // Calculate the correct size based on allocationSize alone
     const std::size_t size = allocationSize;
 
-    auto* ptr = std::malloc(size);
+    auto* ptr = malloc(size);
 
 #ifdef TRACY_ENABLE
         TracyAlloc(ptr, size);
@@ -25,5 +25,5 @@ void HeapAllocator::Deallocate(void* ptr)
         TracyFree(ptr);
 #endif
 
-    std::free(ptr);
+    free(ptr);
 }
