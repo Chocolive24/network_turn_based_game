@@ -46,7 +46,7 @@ namespace PhysicsEngine
         AllocVector<SimplifiedCollider> Colliders{};
 
         explicit QuadNode(Allocator& allocator) noexcept : 
-            Colliders{ StandardAllocator<SimplifiedCollider> {allocator} } {}
+            Colliders{ StandardAllocator<SimplifiedCollider>{allocator} } {}
     };
 
     /**
