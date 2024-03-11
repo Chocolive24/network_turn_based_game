@@ -1,5 +1,7 @@
 #include "Allocator.h"
 
+#include <cstdlib>
+
 void* HeapAllocator::Allocate(std::size_t allocationSize, std::size_t alignment)
 {
     if (allocationSize == 0)
