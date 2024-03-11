@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstddef>
 #include <SFML/Network/Packet.hpp>
 
 enum class PacketType : std::int16_t {
@@ -9,12 +8,7 @@ enum class PacketType : std::int16_t {
   KStartGame,
   kNewTurn,
   kForceAppliedToBall,
-};
-
-struct Packet final : sf::Packet {
-  Packet(PacketType packet_type) noexcept : type(packet_type) {}
-
-  PacketType type = PacketType::kNone;
+  kBallPositionsPacket,
 };
 
 inline sf::Packet& operator<<(sf::Packet& packet, const PacketType& type) {

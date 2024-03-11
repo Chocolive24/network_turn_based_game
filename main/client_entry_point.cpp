@@ -2,7 +2,7 @@
 
 int main() {
   Game game;
-  game.Run();
+  const auto game_status = game.Run();
 
-  return EXIT_SUCCESS;
+  return game_status == ReturnStatus::kSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
 }

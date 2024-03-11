@@ -16,30 +16,25 @@ public:
   Game() noexcept = default;
   ~Game() override = default;
 
-  void Run() noexcept;
-  void CreateWalls();
-
-  void OnTriggerEnter(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
-  void OnTriggerStay(PhysicsEngine::ColliderRef colliderRefA,
-                     PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
-  void OnTriggerExit(PhysicsEngine::ColliderRef colliderRefA,
-                     PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
-  void OnCollisionEnter(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override {
-  }
-  void OnCollisionExit(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override{}
+  [[nodiscard]] ReturnStatus Run() noexcept;
 
  private:
   // Game attributes.
   // ----------------
+  static constexpr int kWindowWidth_ = 750;
+  static constexpr int kWindowHeight_ = 1000;
+  static constexpr int kTriangleHeight_ = 300;
+
+  static constexpr Math::Vec2F kWindowSizeInMeters =
+      Metrics::PixelsToMeters(Math::Vec2F(kWindowWidth_, kWindowHeight_));
   static constexpr std::int16_t kBallCount_ = 16;
   static constexpr float kPixelRadius_ = 17.5f;
   static constexpr float kMeterRadius_ = 0.175f;
+  static constexpr Math::Vec2F kCueBallStartPos =
+      Math::Vec2F(kWindowSizeInMeters.X * 0.5f, kWindowSizeInMeters.Y * 0.66f);
+
+  int player_index_ = -1;
+  std::int16_t score_ = 0;
 
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
 
@@ -54,6 +49,7 @@ public:
   bool is_mouse_pressed_ = false;
   bool was_mouse_pressed_ = false;
   bool is_mouse_released_ = false;
+  bool is_mouse_just_pressed_ = false;
 
   bool is_charging = false;
 
@@ -69,29 +65,49 @@ public:
   // Physics attributes.
   // -------------------
   PhysicsEngine::World world_{};
-  std::array<PhysicsEngine::BodyRef, kBallCount_> ball_body_refs_{};
-  std::array<PhysicsEngine::ColliderRef, kBallCount_> ball_collider_refs_{};
+  //std::vector<PhysicsEngine::BodyRef> ball_body_refs_{};
+  std::vector<PhysicsEngine::ColliderRef> ball_collider_refs_{};
   std::array<PhysicsEngine::BodyRef, 4> wall_body_refs_{};
   std::array<PhysicsEngine::ColliderRef, 4> wall_col_refs_{};
+  std::array<PhysicsEngine::BodyRef, 6> hole_body_refs_{};
+  std::array<PhysicsEngine::ColliderRef, 6> hole_col_refs_{};
 
   // Graphics attributes.
   // --------------------
-  static constexpr int kWindowWidth_ = 750;
-  static constexpr int kWindowHeight_ = 1000;
-
-  static constexpr int kTriangleHeight_ = 300;
-
   sf::RenderWindow window_{};
 
   // Methods.
   // --------
   [[nodiscrad]] ReturnStatus Init() noexcept;
+  void CheckForReceivedPackets() noexcept;
+  void HandlePlayerTurn();
+  void CheckEndTurnCondition();
   void HandleWindowEvents();
   void Update() noexcept;
   void Draw() noexcept;
   void Deinit() noexcept;
 
-  void CalculateStartBallPositions() noexcept;
+  void CreateBalls() noexcept;
+  void CreateWalls();
+  void CreateHoles() noexcept;
 
-  void CheckForReceivedPackets() noexcept;
+  void DrawBalls();
+  void DrawWalls();
+  void DrawHoles();
+
+  void OnTriggerEnter(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override;
+  void OnTriggerStay(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnTriggerExit(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnCollisionEnter(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnCollisionExit(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
 };

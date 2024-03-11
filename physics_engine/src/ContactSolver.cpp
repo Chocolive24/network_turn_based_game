@@ -33,7 +33,11 @@ namespace PhysicsEngine
                 const auto rA = circleA.Radius(), rB = circleB.Radius();
 
                 const auto delta = cA - cB;
-                Normal = delta.Normalized();
+                const float distance = delta.Length();
+                const auto normalizedDelta =
+                    distance > Math::Epsilon ? delta / distance : delta;
+
+                Normal = normalizedDelta;
                 Point = cA + delta * 0.5f;
                 Penetration = rA + rB - delta.Length();
 

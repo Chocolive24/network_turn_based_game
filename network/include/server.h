@@ -11,7 +11,6 @@
 class Server {
 public:
   ReturnStatus Init(unsigned short port) noexcept;
-
   void Run() noexcept;
 
  private:

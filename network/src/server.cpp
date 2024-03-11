@@ -30,12 +30,14 @@ void Server::Run() noexcept {
           AcceptClient();
 
           if (client_index_ == kMaxClientCount_) {
-            sf::Packet start_packet;
-            start_packet << PacketType::KStartGame << true;
-            if (clients_[0].send(start_packet) != sf::Socket::Done) {
+            sf::Packet p1_start_packet;
+            p1_start_packet << PacketType::KStartGame << true << 0;
+            if (clients_[0].send(p1_start_packet) != sf::Socket::Done) {
               std::cerr << "Could not send start game packet to player1.\n";
             }
-            if (clients_[1].send(start_packet) != sf::Socket::Done) {
+            sf::Packet p2_start_packet;
+            p2_start_packet << PacketType::KStartGame << true << 1;
+            if (clients_[1].send(p2_start_packet) != sf::Socket::Done) {
               std::cerr << "Could not send start game packet to player2.\n";
             }
 
