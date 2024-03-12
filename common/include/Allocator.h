@@ -131,6 +131,12 @@
 
         StandardAllocator(Allocator& allocator);
 
+        StandardAllocator(StandardAllocator&& other) noexcept = default;
+        StandardAllocator& operator=(StandardAllocator&& other) noexcept = default;
+        StandardAllocator(const StandardAllocator& other) noexcept = default;
+        StandardAllocator& operator=(const StandardAllocator& other) noexcept = default;
+        ~StandardAllocator() noexcept = default;
+             
         template <class U>
         StandardAllocator(const StandardAllocator<U>& allocator) noexcept : 
             _allocator(allocator.GetAllocator()) {}
