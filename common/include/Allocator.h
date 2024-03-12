@@ -46,7 +46,7 @@
             _size = 0;
             _usedMemory = 0;
             _allocationCount = 0;
-        };
+        }
 
         /**
          * @brief Allocate is a method that allocates a given amount of memory.
@@ -128,6 +128,8 @@
 
     public:
         typedef T value_type;
+
+        StandardAllocator() noexcept { _allocator = HeapAllocator(); }
 
         StandardAllocator(Allocator& allocator);
 
