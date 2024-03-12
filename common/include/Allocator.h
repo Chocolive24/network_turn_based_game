@@ -129,8 +129,6 @@
     public:
         typedef T value_type;
 
-        StandardAllocator() noexcept { _allocator = HeapAllocator(); }
-
         StandardAllocator(Allocator& allocator);
 
         StandardAllocator(StandardAllocator&& other) noexcept = default;

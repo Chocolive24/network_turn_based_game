@@ -43,7 +43,7 @@ namespace PhysicsEngine
 
         Math::RectangleF Boundary{Math::Vec2F::Zero(), Math::Vec2F::Zero()};
         std::array<QuadNode*, BoundaryDivisionCount> Children{ nullptr, nullptr, nullptr, nullptr };
-        AllocVector<SimplifiedCollider> Colliders{};
+        AllocVector<SimplifiedCollider> Colliders;
 
         explicit QuadNode(Allocator& allocator) noexcept : 
             Colliders{ StandardAllocator<SimplifiedCollider>{allocator} } {}
