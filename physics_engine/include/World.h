@@ -163,7 +163,7 @@ namespace PhysicsEngine
          * @brief QuadTree is a method that gives the quad-tree of the world.
          * @return The quad-tree of the world.
          */
-        [[nodiscard]] const QuadTree& QuadTree() const noexcept { return _quadTree; };
+        [[nodiscard]] const QuadTree& GetQuadTree() const noexcept { return _quadTree; }
     };
 }
 
