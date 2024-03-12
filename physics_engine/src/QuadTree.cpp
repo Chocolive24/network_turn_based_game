@@ -31,7 +31,7 @@ namespace PhysicsEngine
 
         const auto quadCount = QuadCount(_maxDepth);
 
-        _nodes.resize(quadCount, QuadNode({ _heapAllocator }));
+        _nodes.resize(quadCount, QuadNode( _heapAllocator ));
 
         for (auto& node : _nodes)
         {
