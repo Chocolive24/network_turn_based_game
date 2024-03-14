@@ -2,6 +2,8 @@
  * @author Olivier
  */
 
+#pragma once
+
 #include "Angle.h"
 #include "Definition.h"
 #include "Exception.h"

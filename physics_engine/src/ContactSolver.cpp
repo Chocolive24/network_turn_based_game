@@ -35,9 +35,9 @@ namespace PhysicsEngine
                 const auto delta = cA - cB;
                 const float distance = delta.Length();
                 const auto normalizedDelta =
-                    distance > Math::Epsilon ? delta / distance : delta;
+                    distance > Math::Epsilon ? delta.Normalized() : delta;
 
-                Normal = normalizedDelta;
+                Normal = delta.Normalized();
                 Point = cA + delta * 0.5f;
                 Penetration = rA + rB - delta.Length();
 
@@ -64,10 +64,14 @@ namespace PhysicsEngine
 
                 auto circleToRect = (circleCenter - closestPoinOnRect);
 
-                if (circleToRect.Length() <= Math::Epsilon)
-                {
-                    circleToRect = Math::Vec2F(0.f, 1.f);
-                }
+                const auto normalizedDelta =
+                    circleToRect.Length() > Math::Epsilon ? circleToRect.Normalized()
+                                                          : circleToRect;
+
+                //if (circleToRect.Length() <= Math::Epsilon)
+                //{
+                //    circleToRect = Math::Vec2F(0.f, 1.f);
+                //}
 
                 Normal = circleToRect.Normalized();
                 Point = closestPoinOnRect;
@@ -75,10 +79,8 @@ namespace PhysicsEngine
 
                 break;
             } // Case rectangle B.
-
+            case Math::ShapeType::Polygon:
             case Math::ShapeType::None:
-                break;
-            default:
                 break;
             } // Switch shape collider B.
 

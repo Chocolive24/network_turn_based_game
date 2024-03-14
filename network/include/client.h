@@ -7,8 +7,6 @@
 
 #include <iostream>
 
-
-
 class Client {
 public:
   ReturnStatus ConnectToServer(const sf::IpAddress& remote_address, 

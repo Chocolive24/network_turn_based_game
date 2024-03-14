@@ -54,13 +54,13 @@ namespace PhysicsEngine
 
                     // a = F / m
                     Math::Vec2F acceleration = body.Forces() * body.InverseMass();
-
+                    
                     // Change velocity according to delta time.
                     body.SetVelocity(body.Velocity() + acceleration * deltaTime);
 
                     // Apply damping to velocity according to delta time.
                     body.SetVelocity(body.Velocity() *
-                                     (1.0f - body.Damping()));
+                                     ((1.0f - body.Damping() * deltaTime)));
 
 
                     // Change position according to velocity and delta time.

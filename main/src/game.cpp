@@ -1,5 +1,7 @@
 #include "game.h"
 
+#include <iomanip> 
+
 ReturnStatus Game::Run() noexcept {
   if (Init() == ReturnStatus::kFailure) {
     return ReturnStatus::kFailure;
@@ -85,9 +87,11 @@ void Game::CheckForReceivedPackets() noexcept {
       break;
     case PacketType::KNotReady:
       break;
-    case PacketType::kForceAppliedToBall: {
+    case PacketType::KBallVelocity: {
       received_packet >> force_applied_to_ball_.X >> force_applied_to_ball_.Y;
-      std::cout << "Received " << force_applied_to_ball_.X << " "
+      
+      std::cout << std::setprecision(200) << "Received "
+                << force_applied_to_ball_.X << " "
                 << force_applied_to_ball_.Y << '\n';
       const auto cue_ball_b_ref =
           world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
@@ -165,12 +169,13 @@ void Game::HandlePlayerTurn() {
 
         cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
         sf::Packet force_applied_packet;
-        force_applied_packet << PacketType::kForceAppliedToBall
+        force_applied_packet << PacketType::KBallVelocity
                              << force_applied_to_ball_.X
                              << force_applied_to_ball_.Y;
         client_.SendPacket(force_applied_packet);
 
-        std::cout << "Sent: " << force_applied_to_ball_.X << " "
+        std::cout << std::setprecision(200) << "Sent: " << force_applied_to_ball_.X
+                  << " "
                   << force_applied_to_ball_.Y << '\n';
 
         force_percentage_ = 0.f;
@@ -193,7 +198,7 @@ void Game::CheckEndTurnCondition() {
     global_ball_velocities += body.Velocity();
   }
 
-  if (has_played_ && global_ball_velocities.Length<float>() <= 0.001f) {
+  if (has_played_ && global_ball_velocities.Length<float>() <= Math::Epsilon) {
     sf::Packet ball_pos_packet;
     ball_pos_packet << PacketType::kBallPositionsPacket;
     for (const auto& col_ref : ball_collider_refs_) {
@@ -332,7 +337,7 @@ void Game::CreateBalls() noexcept {
     body.SetBodyType(PhysicsEngine::BodyType::Dynamic);
     const float f_i = static_cast<float>(i) * 0.5f;
     body.SetPosition(start_ball_pos_[i]);
-    body.SetDamping(0.01f);
+    body.SetDamping(1.f);
 
     ball_collider_refs_.push_back(world_.CreateCollider(body_ref));
     auto& collider = world_.GetCollider(ball_collider_refs_[i]);
@@ -485,7 +490,7 @@ void Game::DrawBalls() {
 void Game::DrawWalls() {
   for (std::int16_t i = 0; i < 4; i++) {
     auto& col = world_.GetCollider(wall_col_refs_[i]);
-    auto rect_col =
+    const auto rect_col =
         Metrics::MetersToPixels(std::get<Math::RectangleF>(col.Shape()).Size());
     sf::RectangleShape rect(sf::Vector2f(rect_col.X, rect_col.Y));
 
@@ -505,7 +510,7 @@ void Game::DrawWalls() {
 void Game::DrawHoles() {
   for (std::int16_t i = 0; i < 6; i++) {
     auto& col = world_.GetCollider(hole_col_refs_[i]);
-    auto radius = Metrics::MetersToPixels(
+    const auto radius = Metrics::MetersToPixels(
         std::get<Math::CircleF>(col.Shape()).Radius() * 2.f);
 
     sf::CircleShape circle(radius);
@@ -548,7 +553,7 @@ void Game::OnTriggerEnter(PhysicsEngine::ColliderRef colliderRefA,
       return;
     }
 
-    if (!is_player_turn_) {
+    if (!is_player_turn_ && opponent_score_ != 7) {
       has_win_ = true;
     }
 

@@ -7,7 +7,7 @@ enum class PacketType : std::int16_t {
   KNotReady,
   KStartGame,
   kNewTurn,
-  kForceAppliedToBall,
+  KBallVelocity,
   kBallPositionsPacket,
 };
 

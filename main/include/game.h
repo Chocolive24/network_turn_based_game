@@ -8,6 +8,7 @@
 
 #include <SFML/Network.hpp>
 #include "SFML/Graphics.hpp"
+#include "SFML/Window.hpp"
 
 #include <iostream>
 
@@ -54,6 +55,7 @@ public:
   bool is_game_finished_ = false;
   bool has_played_ = false;
   bool is_player_turn_ = false;
+  bool can_replay_ = false;
 
   bool is_mouse_pressed_ = false;
   bool was_mouse_pressed_ = false;
