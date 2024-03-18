@@ -1,4 +1,4 @@
-#include "ClientApplication.h"
+#include "client_application.h"
 
 int main() {
   ClientApplication game;
