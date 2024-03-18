@@ -13,7 +13,6 @@
  */
 class DrawInterface {
 public:
-  virtual ~DrawInterface() noexcept = 0;
-  virtual void Init() noexcept = 0;
+  virtual ~DrawInterface() noexcept = default;
   virtual void Draw() noexcept = 0;
 };

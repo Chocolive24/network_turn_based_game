@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game_graphics_manager.h"
+#include "graphics_manager.h"
 
 #include "client.h"
 #include "World.h"
@@ -15,8 +15,7 @@
 class ClientApplication final : public PhysicsEngine::ContactListener {
 public:
   ClientApplication() = default;
-  ClientApplication(DrawInterface* draw_interface, 
-      PacketCommunicationInterface* packet_interface) noexcept;
+  ClientApplication(PacketCommunicationInterface* client) noexcept;
   ~ClientApplication() override = default;
 
   [[nodiscard]] ReturnStatus Run() noexcept;
@@ -24,7 +23,7 @@ public:
  private:
   sf::RenderWindow window_{};
   DrawInterface* draw_interface_ = nullptr;
-  PacketCommunicationInterface* packet_interface_ = nullptr;
+  PacketCommunicationInterface* client_ = nullptr;
 
   // ClientApplication attributes.
   // ----------------
@@ -77,7 +76,7 @@ public:
 
   // Network attributes.
   // -------------------
-  Client client_;
+  //Client client_;
 
   // Physics attributes.
   // -------------------

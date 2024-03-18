@@ -1,13 +1,9 @@
-#include "ClientApplication.h"
-
-
+#include "client_application.h"
 
 #include <iomanip> 
 
-ClientApplication::ClientApplication(DrawInterface* draw_interface,
-  PacketCommunicationInterface* packet_interface) noexcept :
-  draw_interface_(draw_interface),
-  packet_interface_(packet_interface)
+ClientApplication::ClientApplication(PacketCommunicationInterface* client) noexcept :
+  client_(client)
 {}
 
 ReturnStatus ClientApplication::Run() noexcept {
@@ -27,10 +23,10 @@ ReturnStatus ClientApplication::Init() noexcept {
   world_.Init(Math::Vec2F::Zero(), kBallCount_);
   world_.SetContactListener(this);
 
-  if (client_.ConnectToServer(HOST_NAME, PORT, false) 
-      == ReturnStatus::kFailure) {
-    return ReturnStatus::kFailure;
-  }
+  //if (client_.ConnectToServer(HOST_NAME, PORT, false) 
+  //    == ReturnStatus::kFailure) {
+  //  return ReturnStatus::kFailure;
+  //}
 
   CreateBalls();
   CreateWalls();
@@ -89,7 +85,7 @@ void ClientApplication::HandleWindowEvents() {
 void ClientApplication::CheckForReceivedPackets() noexcept {
   sf::Packet received_packet;
 
-  switch (client_.ReceivePacket(received_packet)) {
+  switch (client_->ReceivePacket(received_packet)) {
     case PacketType::kNone:
       std::cerr << "Packed received has no type. \n";
       break;
@@ -119,7 +115,7 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
       break;
     }
     case PacketType::kBallStateCorrections: {
-      /*for (const auto& col_ref : ball_collider_refs_) {
+      for (const auto& col_ref : ball_collider_refs_) {
         const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
         auto& body = world_.GetBody(body_ref);
         Math::Vec2F ball_pos = Math::Vec2F::Zero();
@@ -127,7 +123,7 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
         received_packet >> ball_pos.X >> ball_pos.Y >> enabled;
         body.SetPosition(ball_pos);
         world_.GetCollider(col_ref).SetEnabled(enabled);
-      }*/
+      }
       break;
     }
     default:
@@ -179,7 +175,7 @@ void ClientApplication::HandlePlayerTurn() {
         force_applied_packet << PacketType::KCueBallVelocity
                              << force_applied_to_ball_.X
                              << force_applied_to_ball_.Y;
-        client_.SendPacket(force_applied_packet);
+        client_->SendPacket(force_applied_packet);
 
         std::cout << std::setprecision(200) << "Sent: " << force_applied_to_ball_.X
                   << " "
@@ -206,7 +202,7 @@ void ClientApplication::CheckEndTurnCondition() {
   }
 
   if (has_played_ && global_ball_velocities.Length<float>() <= Math::Epsilon) {
-    /*sf::Packet ball_pos_packet;
+    sf::Packet ball_pos_packet;
     ball_pos_packet << PacketType::kBallStateCorrections;
     for (const auto& col_ref : ball_collider_refs_) {
       const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
@@ -214,11 +210,11 @@ void ClientApplication::CheckEndTurnCondition() {
 
       ball_pos_packet << body.Position().X << body.Position().Y << world_.GetCollider(col_ref).Enabled();
     }
-    client_.SendPacket(ball_pos_packet);*/
+    client_->SendPacket(ball_pos_packet);
 
     sf::Packet new_turn_packet;
     new_turn_packet << PacketType::kNewTurn << true;
-    client_.SendPacket(new_turn_packet);
+    client_->SendPacket(new_turn_packet);
     is_player_turn_ = false;
     has_played_ = false;
   }
@@ -344,7 +340,7 @@ void ClientApplication::CreateBalls() noexcept {
     body.SetBodyType(PhysicsEngine::BodyType::Dynamic);
     const float f_i = static_cast<float>(i) * 0.5f;
     body.SetPosition(start_ball_pos_[i]);
-    body.SetDamping(0.01f);
+    body.SetDamping(0.5f);
 
     ball_collider_refs_.push_back(world_.CreateCollider(body_ref));
     auto& collider = world_.GetCollider(ball_collider_refs_[i]);

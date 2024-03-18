@@ -20,7 +20,9 @@ void Client::SendPacket(sf::Packet& packet) noexcept {
     status = socket_.send(packet);
   } while (status == sf::Socket::Partial);
 
-  //socket_.send(packet);
+  if (status != sf::Socket::Done) {
+    std::cerr << "Could not send packet to client.\n";
+  }
 }
 
 PacketType Client::ReceivePacket(sf::Packet& packet) noexcept {
@@ -29,13 +31,13 @@ PacketType Client::ReceivePacket(sf::Packet& packet) noexcept {
     status = socket_.receive(packet);
   } while (status == sf::Socket::Partial);
 
- /* if (status != sf::Socket::Done) {
-    std::cerr << "CLIENT NO Could not receive packet from client.\n";
-  }*/
+  if (status == sf::Socket::NotReady) {
+    return PacketType::KNotReady;
+  }
 
-  //if (socket_.receive(packet) == sf::Socket::NotReady) {
-  //  return PacketType::KNotReady;
-  //}
+  if (status != sf::Socket::Done) {
+    std::cerr << "Could not receive packet from client.\n";
+  }
 
   PacketType packet_type = PacketType::kNone;
   packet >> packet_type;

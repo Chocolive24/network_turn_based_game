@@ -1,6 +1,6 @@
 /**
- * \headerfile game_graphics_manager.h
- * This header defines the GameGraphicsManager class which draws the
+ * \headerfile graphics_manager.h
+ * This header defines the GraphicsManager class which draws the
  * data given by the game using the DrawInterface methods and SFML.
  * \author Olivier Pachoud
  */
@@ -15,10 +15,9 @@
  * \brief GraphicsManager is a class which draws the
  * data given by the game using the GraphicsInterface methods and SFML
  */
-class GameGraphicsManager : DrawInterface {
+class GraphicsManager : DrawInterface {
 public:
-  ~GameGraphicsManager() noexcept override = default;
-  void Init() noexcept override;
+  ~GraphicsManager() noexcept override = default;
   void Draw() noexcept override;
 
 private:
