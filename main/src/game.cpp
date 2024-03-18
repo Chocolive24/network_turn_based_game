@@ -19,10 +19,10 @@ ReturnStatus Game::Init() noexcept {
   world_.Init(Math::Vec2F::Zero(), kBallCount_);
   world_.SetContactListener(this);
 
-  if (client_.ConnectToServer(HOST_NAME, PORT) == ReturnStatus::kFailure) {
+  if (client_.ConnectToServer(HOST_NAME, PORT, false) 
+      == ReturnStatus::kFailure) {
     return ReturnStatus::kFailure;
   }
-  client_.SetBlocking(false);
 
   CreateBalls();
   CreateWalls();
@@ -87,9 +87,8 @@ void Game::CheckForReceivedPackets() noexcept {
       break;
     case PacketType::KNotReady:
       break;
-    case PacketType::KBallVelocity: {
+    case PacketType::KCueBallVelocity: {
       received_packet >> force_applied_to_ball_.X >> force_applied_to_ball_.Y;
-      
       std::cout << std::setprecision(200) << "Received "
                 << force_applied_to_ball_.X << " "
                 << force_applied_to_ball_.Y << '\n';
@@ -111,8 +110,8 @@ void Game::CheckForReceivedPackets() noexcept {
       cue_ball_body.SetVelocity(Math::Vec2F::Zero());
       break;
     }
-    case PacketType::kBallPositionsPacket: {
-      for (const auto& col_ref : ball_collider_refs_) {
+    case PacketType::kBallStateCorrections: {
+      /*for (const auto& col_ref : ball_collider_refs_) {
         const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
         auto& body = world_.GetBody(body_ref);
         Math::Vec2F ball_pos = Math::Vec2F::Zero();
@@ -120,9 +119,11 @@ void Game::CheckForReceivedPackets() noexcept {
         received_packet >> ball_pos.X >> ball_pos.Y >> enabled;
         body.SetPosition(ball_pos);
         world_.GetCollider(col_ref).SetEnabled(enabled);
-      }
+      }*/
       break;
     }
+    default:
+      break;
   }
 }
 
@@ -153,11 +154,9 @@ void Game::HandlePlayerTurn() {
 
       // Set up rectangle properties
       charging_rect_ = sf::RectangleShape(sf::Vector2f(distance * 0.5f + kPixelRadius_, 10.f));
-      charging_rect_.setOrigin(0.f, charging_rect_.getSize().y * 0.5f);  // Center the rectangle at the cue ball position
+      charging_rect_.setOrigin(0.f, charging_rect_.getSize().y * 0.5f);
       charging_rect_.setPosition(sf::Vector2f(ball_pos_in_pix.X, ball_pos_in_pix.Y));
-      // Calculate rotation angle
-      float angle = std::atan2(aim_direction.Y, aim_direction.X) * 180.f / 3.14159265f;
-      // Rotate the rectangle to match the direction
+      const float angle = std::atan2(aim_direction.Y, aim_direction.X) * 180.f / 3.14159265f;
       charging_rect_.setRotation(angle);
 
       if (is_mouse_released_)
@@ -169,7 +168,7 @@ void Game::HandlePlayerTurn() {
 
         cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
         sf::Packet force_applied_packet;
-        force_applied_packet << PacketType::KBallVelocity
+        force_applied_packet << PacketType::KCueBallVelocity
                              << force_applied_to_ball_.X
                              << force_applied_to_ball_.Y;
         client_.SendPacket(force_applied_packet);
@@ -199,15 +198,15 @@ void Game::CheckEndTurnCondition() {
   }
 
   if (has_played_ && global_ball_velocities.Length<float>() <= Math::Epsilon) {
-    sf::Packet ball_pos_packet;
-    ball_pos_packet << PacketType::kBallPositionsPacket;
+    /*sf::Packet ball_pos_packet;
+    ball_pos_packet << PacketType::kBallStateCorrections;
     for (const auto& col_ref : ball_collider_refs_) {
       const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
       auto& body = world_.GetBody(body_ref);
 
       ball_pos_packet << body.Position().X << body.Position().Y << world_.GetCollider(col_ref).Enabled();
     }
-    client_.SendPacket(ball_pos_packet);
+    client_.SendPacket(ball_pos_packet);*/
 
     sf::Packet new_turn_packet;
     new_turn_packet << PacketType::kNewTurn << true;
@@ -328,7 +327,7 @@ void Game::CreateBalls() noexcept {
       index++;
     }
 
-    height += space * sqrt(3.0) / 2.0;
+    height += space * std::sqrt(3.0f) / 2.0f;
   }
 
   for (int i = 0; i < kBallCount_; i++) {
@@ -337,16 +336,16 @@ void Game::CreateBalls() noexcept {
     body.SetBodyType(PhysicsEngine::BodyType::Dynamic);
     const float f_i = static_cast<float>(i) * 0.5f;
     body.SetPosition(start_ball_pos_[i]);
-    body.SetDamping(1.f);
+    body.SetDamping(0.01f);
 
     ball_collider_refs_.push_back(world_.CreateCollider(body_ref));
     auto& collider = world_.GetCollider(ball_collider_refs_[i]);
     collider.SetShape(Math::CircleF(Math::Vec2F::Zero(), kMeterRadius_));
-    collider.SetRestitution(0.75f);
+    collider.SetRestitution(0.25f);
   }
 }
 
-void Game::CreateWalls() {
+void Game::CreateWalls() noexcept {
   constexpr auto win_size_meter =
       Metrics::PixelsToMeters(Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
@@ -362,7 +361,7 @@ void Game::CreateWalls() {
   auto half_size = size * 0.5f;
   col_0.SetShape(Math::RectangleF(Math::Vec2F::Zero() - half_size,
                                   Math::Vec2F::Zero() + half_size));
-  col_0.SetRestitution(0.75f);
+  col_0.SetRestitution(0.25f);
 
   wall_body_refs_[1] = world_.CreateBody();
   auto& body_1 = world_.GetBody(wall_body_refs_[1]);

@@ -8,7 +8,6 @@
 
 #include <SFML/Network.hpp>
 #include "SFML/Graphics.hpp"
-#include "SFML/Window.hpp"
 
 #include <iostream>
 
@@ -76,7 +75,6 @@ public:
   // Physics attributes.
   // -------------------
   PhysicsEngine::World world_{};
-  //std::vector<PhysicsEngine::BodyRef> ball_body_refs_{};
   std::vector<PhysicsEngine::ColliderRef> ball_collider_refs_{};
   std::array<PhysicsEngine::BodyRef, 4> wall_body_refs_{};
   std::array<PhysicsEngine::ColliderRef, 4> wall_col_refs_{};
@@ -102,7 +100,7 @@ public:
   void Deinit() noexcept;
 
   void CreateBalls() noexcept;
-  void CreateWalls();
+  void CreateWalls() noexcept;
   void CreateHoles() noexcept;
 
   void UpdateScores() noexcept;

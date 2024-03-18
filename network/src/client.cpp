@@ -15,13 +15,27 @@ ReturnStatus Client::ConnectToServer(const sf::IpAddress& remote_address,
 }
 
 void Client::SendPacket(sf::Packet& packet) noexcept {
-  socket_.send(packet);
+  sf::Socket::Status status = sf::Socket::Partial;
+  do {
+    status = socket_.send(packet);
+  } while (status == sf::Socket::Partial);
+
+  //socket_.send(packet);
 }
 
 PacketType Client::ReceivePacket(sf::Packet& packet) noexcept {
-  if (socket_.receive(packet) == sf::Socket::NotReady) {
-    return PacketType::KNotReady;
-  }
+  sf::Socket::Status status = sf::Socket::Partial;
+  do {
+    status = socket_.receive(packet);
+  } while (status == sf::Socket::Partial);
+
+ /* if (status != sf::Socket::Done) {
+    std::cerr << "CLIENT NO Could not receive packet from client.\n";
+  }*/
+
+  //if (socket_.receive(packet) == sf::Socket::NotReady) {
+  //  return PacketType::KNotReady;
+  //}
 
   PacketType packet_type = PacketType::kNone;
   packet >> packet_type;

@@ -7,13 +7,13 @@
 
 #include <iostream>
 
-class Client {
+class Client final : public PacketCommunicationInterface {
 public:
   ReturnStatus ConnectToServer(const sf::IpAddress& remote_address, 
 	                             unsigned short remote_port, bool blocking = true) noexcept;
 
-  void SendPacket(sf::Packet& packet) noexcept;
-  [[nodiscard]] PacketType ReceivePacket(sf::Packet& packet) noexcept;
+  void SendPacket(sf::Packet& packet) noexcept override;
+  [[nodiscard]] PacketType ReceivePacket(sf::Packet& packet) noexcept override;
 
   [[nodiscard]] sf::IpAddress remote_address() const noexcept {
     return socket_.getRemoteAddress();
@@ -21,8 +21,6 @@ public:
   [[nodiscard]] unsigned short remote_port() const noexcept {
     return socket_.getRemotePort();
   }
-
-  void SetBlocking(const bool blocking) noexcept { socket_.setBlocking(blocking); }
 
 private:
  sf::TcpSocket socket_{};

@@ -1,12 +1,11 @@
 #pragma once
 
 #include "constants.h"
+#include "packet.h"
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
 #include <array>
-#include <iostream>
 
 class Server {
 public:

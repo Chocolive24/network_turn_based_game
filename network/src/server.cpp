@@ -1,9 +1,7 @@
 #include "server.h"
 
-#include <iomanip>
 
-#include "packet.h"
-#include "../../libs/math/include/Mat2x2.h"
+#include <iostream>
 
 ReturnStatus Server::Init(const unsigned short port) noexcept {
   if (listener_.listen(port) != sf::Socket::Done) {
@@ -79,25 +77,31 @@ void Server::AcceptClient() noexcept {
 }
 
 void Server::CommunicatePacketBetweenClients() noexcept {
+  // Iterates throw all clients to receive their potential packets.
+  // --------------------------------------------------------------
   for (auto& client : clients_) {
     if (socket_selector_.isReady(client)) {
       sf::Packet packet_received;
-      Math::Vec2F oui;
-      if (client.receive(packet_received) != sf::Socket::Done) {
-        //packet_received >> oui.X >> oui.Y;
-        //std::cout << std::setprecision(20) << "Server received : " << oui.X
-        //          << " " << oui.Y << '\n';
+      sf::Socket::Status status = sf::Socket::Partial;
+      do
+      {
+        status = client.receive(packet_received); 
+      } while (status == sf::Socket::Partial);
+
+      if (status != sf::Socket::Done) {
         std::cerr << "Could not receive packet from client.\n";
       }
 
-      // Send received data to other clients
+      // Send received data to other clients.
+      // ------------------------------------
       for (auto& other_client : clients_) {
         if (&other_client != &client) {
-          sf::Packet send_packet;
-          if (other_client.send(packet_received) != sf::Socket::Done) {
-            //packet_received >> oui.X >> oui.Y;
-            //std::cout << std::setprecision(20) << "Server sent : " << oui.X
-            //          << " " << oui.Y << '\n';
+          status = sf::Socket::Partial;
+          do {
+            status = other_client.send(packet_received);
+          } while (status == sf::Socket::Partial);
+
+          if (status != sf::Socket::Done) {
             std::cerr << "Could not send data to other client.\n";
           }
         }

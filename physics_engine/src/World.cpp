@@ -60,8 +60,7 @@ namespace PhysicsEngine
 
                     // Apply damping to velocity according to delta time.
                     body.SetVelocity(body.Velocity() *
-                                     ((1.0f - body.Damping() * deltaTime)));
-
+                                     (1.0f - body.Damping() * deltaTime));
 
                     // Change position according to velocity and delta time.
                     body.SetPosition(body.Position() + body.Velocity() * deltaTime);
