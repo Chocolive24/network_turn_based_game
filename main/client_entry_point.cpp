@@ -1,7 +1,7 @@
-#include "game.h"
+#include "ClientApplication.h"
 
 int main() {
-  Game game;
+  ClientApplication game;
   const auto game_status = game.Run();
 
   return game_status == ReturnStatus::kSuccess ? EXIT_SUCCESS : EXIT_FAILURE;

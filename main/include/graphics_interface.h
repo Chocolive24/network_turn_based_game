@@ -1,6 +1,6 @@
 /**
  * \headerfile graphics_interface.h
- * This header defines the GraphicsInterface class which is an interface to display
+ * This header defines the DrawInterface class which is an interface to display
  * data on a window.
  * \author Olivier Pachoud
  */
@@ -11,9 +11,9 @@
  * \brief GraphicsInterface is a class which is an interface to display
  * data on a window.
  */
-class GraphicsInterface {
+class DrawInterface {
 public:
-  virtual ~GraphicsInterface() noexcept = 0;
+  virtual ~DrawInterface() noexcept = 0;
   virtual void Init() noexcept = 0;
   virtual void Draw() noexcept = 0;
 };
