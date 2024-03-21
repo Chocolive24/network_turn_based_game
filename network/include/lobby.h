@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "network_interface.h"
 
 using ClientIdx = std::size_t;

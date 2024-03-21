@@ -155,6 +155,8 @@ void Server::CommunicatePacketBetweenClients() noexcept {
         std::cerr << "Could not receive packet from client.\n";
       }
 
+      // Iterates throw all lobbies to find the client's opponent.
+      // ---------------------------------------------------------
       for (const auto& lobby : lobbies_) {
         sf::TcpSocket* other_client = nullptr;
         

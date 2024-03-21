@@ -5,6 +5,7 @@
 enum class PacketType : std::uint8_t {
   kNone = 0,
   KNotReady,
+  kJoinLobby,
   KStartGame,
   kNewTurn,
   KCueBallVelocity,

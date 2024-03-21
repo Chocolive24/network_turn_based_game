@@ -557,7 +557,8 @@ namespace PhysicsEngine
 
     [[nodiscard]] BodyRef World::CreateBody() noexcept
     {
-        auto it = std::find_if(_bodies.begin(), _bodies.end(),[](const Body& body)
+        const auto it = std::find_if(_bodies.begin(), _bodies.end(),
+            [](const Body& body)
         {
             return !body.IsValid();
         });
@@ -565,7 +566,7 @@ namespace PhysicsEngine
         if (it != _bodies.end())
         {
             // Found an invalid body.
-            std::size_t index = std::distance(_bodies.begin(), it);
+            const std::size_t index = std::distance(_bodies.begin(), it);
 
             _bodies[index].SetMass(1.f);
 
@@ -573,8 +574,8 @@ namespace PhysicsEngine
         }
 
         // No body with negative mass found.
-        std::size_t previousSize = _bodies.size();
-        auto newSize = static_cast<std::size_t>(static_cast<float>(previousSize) * _bodyAllocResizeFactor);
+        const std::size_t previousSize = _bodies.size();
+        const auto newSize = static_cast<std::size_t>(static_cast<float>(previousSize) * _bodyAllocResizeFactor);
 
         _bodies.resize(newSize, Body());
         _bodiesGenIndices.resize(newSize, 0);
