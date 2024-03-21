@@ -1,40 +1,49 @@
 #pragma once
 
-#include "client.h"
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include "World.h"
 #include "Timer.h"
 #include "Metrics.h"
-#include "constants.h"
+#include "client.h"
 
-#include <SFML/Network.hpp>
-#include "SFML/Graphics.hpp"
+#include <SFML/Window/Event.hpp>
 
-#include <iostream>
+#include "graphics_interface.h"
 
-class Game final : public PhysicsEngine::ContactListener{
-public:
-  Game() noexcept = default;
-  ~Game() override = default;
+/**
+ * \brief GameManager is a class that update the state of the game.
+ */
+class Game : public PhysicsEngine::ContactListener, public GraphicsInterface {
+ public:
+  void InitGame(NetworkInterface* client,
+            Math::Vec2F window_size) noexcept;
+  void CheckForReceivedPackets() noexcept;
+  void Update(Math::Vec2F mouse_pos) noexcept;
+  void OnEvent(const sf::Event& event) noexcept;
+  void Deinit() noexcept;
 
-  [[nodiscard]] ReturnStatus Run() noexcept;
+  void Init(sf::RenderTarget* render_target) noexcept override;
+  void Draw() noexcept override;
 
- private:
-  // Game attributes.
-  // ----------------
-  static constexpr int kWindowWidth_ = 750;
-  static constexpr int kWindowHeight_ = 1000;
-  static constexpr int kTriangleHeight_ = 300;
-
-  static constexpr Math::Vec2F kWindowSizeInMeters =
-      Metrics::PixelsToMeters(Math::Vec2F(kWindowWidth_, kWindowHeight_));
+  static constexpr int kStartBallTriangleHeight_ = 300;
   static constexpr std::int16_t kBallCount_ = 16;
   static constexpr float kPixelRadius_ = 17.5f;
   static constexpr float kMeterRadius_ = 0.175f;
-  static constexpr Math::Vec2F kCueBallStartPos =
-      Math::Vec2F(kWindowSizeInMeters.X * 0.5f, kWindowSizeInMeters.Y * 0.66f);
-
   static constexpr float max_amplitude_ = 1000.f;
   static constexpr float max_aim_dist = 200.f;
+
+  NetworkInterface* client_ = nullptr;
+  sf::RenderTarget* render_target_ = nullptr;
+
+  sf::Color wall_color_ = sf::Color::Blue;
+  sf::Font font_{};
+
+  Math::Vec2F window_size_ = Math::Vec2F::Zero();
+  Math::Vec2F mouse_pos_ = Math::Vec2F::Zero();
+
+  Math::Vec2F kCueBallStartPos = Math::Vec2F::Zero();
 
   float force_percentage_ = 0.f;
   sf::RectangleShape charging_rect_{};
@@ -45,8 +54,6 @@ public:
   bool has_win_ = false;
 
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
-
-  sf::Color wall_color_ = sf::Color::Blue;
 
   Math::Vec2F force_applied_to_ball_;
 
@@ -65,12 +72,8 @@ public:
 
   // Common attributes.
   // ------------------
-  static constexpr float kFixedTimeStep = 1.f / 60.f;
   Timer timer_{};
-
-  // Network attributes.
-  // -------------------
-  Client client_;
+  static constexpr float kFixedTimeStep = 1.f / 50.f;
 
   // Physics attributes.
   // -------------------
@@ -81,33 +84,14 @@ public:
   std::array<PhysicsEngine::BodyRef, 6> hole_body_refs_{};
   std::array<PhysicsEngine::ColliderRef, 6> hole_col_refs_{};
 
-  // Graphics attributes.
-  // --------------------
-  sf::RenderWindow window_{};
-
-  sf::Font font_{};
-
-  // Methods.
-  // --------
-  [[nodiscrad]] ReturnStatus Init() noexcept;
-  void CheckForReceivedPackets() noexcept;
-  void HandlePlayerTurn();
-  void CheckEndTurnCondition();
-  void HandleWindowEvents();
-  void Update() noexcept;
-  void DrawTexts();
-  void Draw() noexcept;
-  void Deinit() noexcept;
-
+private:
   void CreateBalls() noexcept;
   void CreateWalls() noexcept;
   void CreateHoles() noexcept;
 
+  void HandlePlayerTurn() noexcept;
+  void CheckEndTurnCondition() noexcept;
   void UpdateScores() noexcept;
-
-  void DrawBalls();
-  void DrawWalls();
-  void DrawHoles();
 
   void OnTriggerEnter(
       PhysicsEngine::ColliderRef colliderRefA,
@@ -124,4 +108,12 @@ public:
   void OnCollisionExit(
       PhysicsEngine::ColliderRef colliderRefA,
       PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+
+  void DrawChargingRect() const noexcept;
+  void DrawTable() const noexcept;
+  void DrawBalls() noexcept;
+  void DrawWalls() noexcept;
+  void DrawHoles() noexcept;
+
+  void DrawUi() const noexcept;
 };

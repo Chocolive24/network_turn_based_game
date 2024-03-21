@@ -1,18 +1,26 @@
 /**
  * \headerfile graphics_interface.h
- * This header defines the DrawInterface class which is an interface to display
- * data on a window.
+ * This header defines the GraphicsInterface class which is an interface for drawing
+ * in a render target.
  * \author Olivier Pachoud
  */
 
 #pragma once
 
+#include <SFML/Graphics/RenderTarget.hpp>
+
 /**
- * \brief GraphicsInterface is a class which is an interface to display
- * data on a window.
+ * \brief GraphicsInterface is an interface for drawing in a render target.
  */
-class DrawInterface {
+class GraphicsInterface {
 public:
-  virtual ~DrawInterface() noexcept = default;
+  GraphicsInterface() noexcept = default;
+  GraphicsInterface(GraphicsInterface&& other) noexcept = default;
+  GraphicsInterface& operator=(GraphicsInterface&& other) noexcept = default;
+  GraphicsInterface(const GraphicsInterface& other) noexcept = default;
+  GraphicsInterface& operator=(const GraphicsInterface& other) noexcept = default;
+  virtual ~GraphicsInterface() noexcept = default;
+
+  virtual void Init(sf::RenderTarget* render_target) noexcept = 0;
   virtual void Draw() noexcept = 0;
 };

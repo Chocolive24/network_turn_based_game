@@ -7,8 +7,10 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  ClientApplication game(&client);
-  const auto game_status = game.Run();
+  GameGraphicsManager game_graphics_manager;
 
-  return game_status == ReturnStatus::kSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
+  ClientApplication app(&client, &game_graphics_manager);
+  const auto app_status = app.Run();
+
+  return app_status == ReturnStatus::kSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
 }

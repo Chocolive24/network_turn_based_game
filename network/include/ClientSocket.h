@@ -1,15 +1,18 @@
 #pragma once
 
 #include "constants.h"
-#include "packet.h"
+#include "network_interface.h"
 
 #include <SFML/Network.hpp>
 
 #include <iostream>
 
-class Client final : public PacketCommunicationInterface {
+//TODO: rework parce que cette classe est une socket implémenté comme un client.
+// TODO: le server ne devrait pas utiliser cette class.
+
+class ClientSocket final : public NetworkInterface {
 public:
-  ~Client() noexcept override = default;
+  ~ClientSocket() noexcept override = default;
 
   ReturnStatus ConnectToServer(const sf::IpAddress& remote_address, 
 	                             unsigned short remote_port, bool blocking = true) noexcept;
@@ -23,8 +26,6 @@ public:
   [[nodiscard]] unsigned short remote_port() const noexcept {
     return socket_.getRemotePort();
   }
-
-
 
 private:
  sf::TcpSocket socket_{};

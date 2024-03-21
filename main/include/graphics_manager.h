@@ -1,30 +1,49 @@
-/**
- * \headerfile graphics_manager.h
- * This header defines the GraphicsManager class which draws the
- * data given by the game using the DrawInterface methods and SFML.
- * \author Olivier Pachoud
- */
-
 #pragma once
 
+#include "game.h"
 #include "graphics_interface.h"
 
 #include "SFML/Graphics.hpp"
 
 /**
- * \brief GraphicsManager is a class which draws the
- * data given by the game using the GraphicsInterface methods and SFML
+ * \headerfile graphics_manager.h
+ * This header defines the GameGraphicsManager is a class that draws the game,
+ * inheriting the GraphicsInterface and the Game.
+ * \author Olivier Pachoud
  */
-class GraphicsManager : DrawInterface {
+
+
+
+/**
+ * \brief GameGraphicsManager is a class that draws the game,
+ * inheriting the DrawInterface and the GameManager.
+ */
+class GameGraphicsManager final : public GraphicsInterface {
 public:
-  ~GraphicsManager() noexcept override = default;
+  GameGraphicsManager() noexcept = default;
+  GameGraphicsManager(GameGraphicsManager&& other) noexcept = default;
+  GameGraphicsManager& operator=(GameGraphicsManager&& other) noexcept =
+      default;
+  GameGraphicsManager(const GameGraphicsManager& other) noexcept = default;
+  GameGraphicsManager& operator=(const GameGraphicsManager& other) noexcept =
+      default;
+  ~GameGraphicsManager() noexcept override = default;
+
+  void Init(sf::RenderTarget* render_target) noexcept override;
   void Draw() noexcept override;
 
 private:
-  static constexpr std::string_view kWindowTitle_ = "8-Ball Pool";
-  static constexpr int kWindowWidth_ = 750;
-  static constexpr int kWindowHeight_ = 1000;
+  void DrawChargingRect() const noexcept;
+  void DrawTable() const noexcept;
+  void DrawBalls() noexcept;
+  void DrawWalls() noexcept;
+  void DrawHoles() noexcept;
 
-  sf::RenderWindow window_;
-  sf::Font font_;
+  void DrawUi() const noexcept;
+
+private:
+  sf::RenderTarget* render_target_ = nullptr;
+
+  sf::Color wall_color_ = sf::Color::Blue;
+  sf::Font font_{};
 };
