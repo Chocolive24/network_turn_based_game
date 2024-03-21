@@ -1,14 +1,14 @@
 #include "lobby.h"
 
 bool Lobby::IsComplete() const noexcept {
-  return player_1 != nullptr && player_2 != nullptr; 
+  return client_1_id != -1 && client_2_id != -1; 
 }
 
-void Lobby::AddPlayer(std::unique_ptr<NetworkInterface>&& player) noexcept {
-  if (player_1 == nullptr) {
-    player_1 = std::move(player);
+void Lobby::AddPlayer(const ClientIdx id) noexcept {
+  if (client_1_id == -1) {
+    client_1_id = id;
   }
   else {
-    player_2 = std::move(player);
+    client_2_id = id;
   }
 }

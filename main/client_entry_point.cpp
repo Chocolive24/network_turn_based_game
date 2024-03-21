@@ -1,7 +1,7 @@
 #include "client_application.h"
 
 int main() {
-  Client client;
+  ClientSocket client;
   if (client.ConnectToServer(HOST_NAME, PORT, false)
       == ReturnStatus::kFailure){
     return EXIT_FAILURE;

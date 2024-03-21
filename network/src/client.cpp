@@ -1,4 +1,4 @@
-#include "ClientSocket.h"
+#include "client.h"
 
 ReturnStatus ClientSocket::ConnectToServer(const sf::IpAddress& remote_address,
                                            const unsigned short remote_port, bool blocking) noexcept {

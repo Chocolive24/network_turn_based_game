@@ -7,7 +7,7 @@
 
 #include <array>
 
-#include "ClientSocket.h"
+#include "client.h"
 #include "lobby.h"
 
 class ServerSocket final : public NetworkInterface {
@@ -31,8 +31,9 @@ public:
 
   sf::TcpListener listener_{};
   sf::SocketSelector socket_selector_{};
-
+  std::vector<std::unique_ptr<sf::TcpSocket>> clients_{};
   std::vector<Lobby> lobbies_{};
+
   //std::vector<ClientSocket> clients_{};
   //int client_index_ = 0;
 

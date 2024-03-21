@@ -41,11 +41,12 @@ void Game::CheckForReceivedPackets() noexcept {
       break;
     }
     case PacketType::KStartGame: {
-      received_packet >> has_game_started >>
-          player_index_;
+      received_packet >> has_game_started >> player_index_;
+      std::cout << "GAME STARTED\n";
       break;
     }
     case PacketType::kNewTurn: {
+      std::cout << "NEW TURN\n";
       received_packet >> is_player_turn_;
       const auto cue_ball_b_ref =
           world_.GetCollider(ball_collider_refs_[0])

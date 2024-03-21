@@ -4,14 +4,14 @@
 
 #include "network_interface.h"
 
-using PlayerId = int;
+using ClientIdx = std::size_t;
 
 class Lobby {
 public:
   [[nodiscard]] bool IsComplete() const noexcept;
 
-  void AddPlayer(std::unique_ptr<NetworkInterface>&& player) noexcept;
+  void AddPlayer(ClientIdx id) noexcept;
 
- std::unique_ptr<NetworkInterface> player_1 = nullptr;
- std::unique_ptr<NetworkInterface> player_2 = nullptr;
+  ClientIdx client_1_id = -1;
+  ClientIdx client_2_id = -1;
 };
