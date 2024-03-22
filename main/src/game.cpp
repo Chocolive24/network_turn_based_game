@@ -1,34 +1,32 @@
 #include "game.h"
 
-#include <iomanip>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include <iomanip>
+
 void Game::InitGame(NetworkInterface* client,
+                    sf::RenderTarget* render_target,
                     Math::Vec2F window_size) noexcept {
   client_ = client;
+  render_target_ = render_target;
   window_size_ = window_size;
 
   timer_.Init();
   world_.Init(Math::Vec2F::Zero(), kBallCount_);
   world_.SetContactListener(this);
 
+  font_.loadFromFile("data/Payback.otf");
+
   CreateBalls();
   CreateWalls();
   CreateHoles();
 }
 
-void Game::CheckForReceivedPackets() noexcept {
-  sf::Packet received_packet;
-
-  switch (client_->ReceivePacket(received_packet)) {
-    case PacketType::kNone:
-      std::cerr << "Packed received has no type. \n";
-      break;
-    case PacketType::KNotReady:
-      break;
+void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept {
+  switch (packet_type) {
     case PacketType::KCueBallVelocity: {
-      received_packet >> force_applied_to_ball_.X >>
+      *packet >> force_applied_to_ball_.X >>
           force_applied_to_ball_.Y;
       std::cout << std::setprecision(200) << "Received "
                 << force_applied_to_ball_.X << " "
@@ -41,13 +39,13 @@ void Game::CheckForReceivedPackets() noexcept {
       break;
     }
     case PacketType::KStartGame: {
-      received_packet >> has_game_started >> player_index_;
+      *packet >> has_game_started >> player_index_;
       std::cout << "GAME STARTED\n";
       break;
     }
     case PacketType::kNewTurn: {
       std::cout << "NEW TURN\n";
-      received_packet >> is_player_turn_;
+      *packet >> is_player_turn_;
       const auto cue_ball_b_ref =
           world_.GetCollider(ball_collider_refs_[0])
               .GetBodyRef();
@@ -62,7 +60,7 @@ void Game::CheckForReceivedPackets() noexcept {
         auto& body = world_.GetBody(body_ref);
         Math::Vec2F ball_pos = Math::Vec2F::Zero();
         bool enabled = false;
-        received_packet >> ball_pos.X >> ball_pos.Y >> enabled;
+        *packet >> ball_pos.X >> ball_pos.Y >> enabled;
         body.SetPosition(ball_pos);
         world_.GetCollider(col_ref).SetEnabled(enabled);
       }
@@ -74,7 +72,7 @@ void Game::CheckForReceivedPackets() noexcept {
 }
 
 void Game::Update(Math::Vec2F mouse_pos) noexcept {
-  CheckForReceivedPackets();
+  //OnPacketReceived(TODO);
 
   mouse_pos_ = mouse_pos;
 
@@ -129,19 +127,13 @@ void Game::OnEvent(const sf::Event& event) noexcept {
 
 void Game::Deinit() noexcept { world_.Deinit(); }
 
-void Game::Init(sf::RenderTarget* render_target) noexcept {
-  render_target_ = render_target;
-
-  font_.loadFromFile("data/Payback.otf");
-}
-
 void Game::Draw() noexcept {
   const sf::Color clear_color =
       player_index_ == 0 ? sf::Color::Blue : sf::Color::Red;
   render_target_->clear(clear_color);
 
   // Draw gameplay objects.
-  // -----------------
+  // ----------------------
   DrawTable();
   DrawWalls();
   DrawHoles();

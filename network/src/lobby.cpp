@@ -1,11 +1,12 @@
 #include "lobby.h"
 
 bool Lobby::IsComplete() const noexcept {
-  return client_1_id != -1 && client_2_id != -1; 
+  return static_cast<int>(client_1_id) > -1 &&
+         static_cast<int>(client_2_id) > -1;
 }
 
-void Lobby::AddPlayer(const ClientIdx id) noexcept {
-  if (client_1_id == -1) {
+void Lobby::AddPlayer(const ClientId id) noexcept {
+  if (static_cast<int>(client_1_id) == -1) {
     client_1_id = id;
   }
   else {

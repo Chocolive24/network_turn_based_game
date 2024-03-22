@@ -9,14 +9,10 @@
 class NetworkInterface {
  public:
   NetworkInterface() noexcept = default;
-  NetworkInterface(NetworkInterface&& other) noexcept =
-      default;
-  NetworkInterface& operator=(
-      NetworkInterface&& other) noexcept = default;
-  NetworkInterface(
-      const NetworkInterface& other) noexcept = default;
-  NetworkInterface& operator=(
-      const NetworkInterface& other) noexcept = default;
+  NetworkInterface(NetworkInterface&& other) noexcept = default;
+  NetworkInterface& operator=(NetworkInterface&& other) noexcept = default;
+  NetworkInterface(const NetworkInterface& other) noexcept = default;
+  NetworkInterface& operator=(const NetworkInterface& other) noexcept = default;
   virtual ~NetworkInterface() noexcept = default;
 
   virtual void SendPacket(sf::Packet& packet) noexcept = 0;

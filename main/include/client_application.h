@@ -2,7 +2,6 @@
 
 #include "graphics_manager.h"
 #include "client.h"
-#include "constants.h"
 #include "game.h"
 
 #include <SFML/Graphics.hpp>
@@ -11,8 +10,7 @@
 
 class ClientApplication {
 public:
-  ClientApplication(NetworkInterface* client, 
-	                  GraphicsInterface* graphics_manager) noexcept;
+  ClientApplication(NetworkInterface* client) noexcept;
 
   [[nodiscard]] ReturnStatus Run() noexcept;
 
@@ -23,9 +21,8 @@ public:
   sf::RenderWindow window_{};
 
   NetworkInterface* client_ = nullptr;
-  GraphicsInterface* game_graphics_manager = nullptr;
 
-  Game game_manager_{};
+  Game game_{};
 
   // Methods.
   // --------

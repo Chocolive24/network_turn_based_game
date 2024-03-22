@@ -3,12 +3,11 @@ project(turn_based_game)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# For GCC:
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
-# For Clang:
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
-# For MSVC:
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
+endif()
 
 set(PORT "44444" CACHE STRING "Set the port")
 set(HOST_NAME "localhost" CACHE STRING "Set the host name")
@@ -118,6 +117,16 @@ if (USE_TRACY)
     # Link the TracyClient library
     target_link_libraries(client PRIVATE tracyClient)
 endif()
+
+# Tests network library.
+file(GLOB_RECURSE NETWORK_TEST_FILES network/tests/*.cpp)
+foreach(test_file ${NETWORK_TEST_FILES} )
+    get_filename_component(test_name ${test_file} NAME_WE)
+
+    add_executable(${test_name} ${test_file})
+
+    target_link_libraries(${test_name} PRIVATE network GTest::gtest GTest::gtest_main)
+endforeach()
 
 ## Tests physics library.
 #file(GLOB_RECURSE PHYSICS_TEST_FILES physics_engine/tests/*.cpp)

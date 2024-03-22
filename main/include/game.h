@@ -15,17 +15,16 @@
 /**
  * \brief GameManager is a class that update the state of the game.
  */
-class Game : public PhysicsEngine::ContactListener, public GraphicsInterface {
+class Game : public PhysicsEngine::ContactListener {
  public:
-  void InitGame(NetworkInterface* client,
-            Math::Vec2F window_size) noexcept;
-  void CheckForReceivedPackets() noexcept;
+  void InitGame(NetworkInterface* client, sf::RenderTarget* render_target,
+                Math::Vec2F window_size) noexcept;
+  void OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept;
   void Update(Math::Vec2F mouse_pos) noexcept;
   void OnEvent(const sf::Event& event) noexcept;
   void Deinit() noexcept;
 
-  void Init(sf::RenderTarget* render_target) noexcept override;
-  void Draw() noexcept override;
+  void Draw() noexcept;
 
   static constexpr int kStartBallTriangleHeight_ = 300;
   static constexpr std::int16_t kBallCount_ = 16;
@@ -34,8 +33,9 @@ class Game : public PhysicsEngine::ContactListener, public GraphicsInterface {
   static constexpr float max_amplitude_ = 1000.f;
   static constexpr float max_aim_dist = 200.f;
 
-  NetworkInterface* client_ = nullptr;
   sf::RenderTarget* render_target_ = nullptr;
+
+  NetworkInterface* client_ = nullptr;
 
   sf::Color wall_color_ = sf::Color::Blue;
   sf::Font font_{};

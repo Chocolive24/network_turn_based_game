@@ -1,6 +1,6 @@
 #pragma once
 
-#include "constants.h"
+#include "types.h"
 #include "network_interface.h"
 
 #include <SFML/Network.hpp>
