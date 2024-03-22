@@ -1,16 +1,13 @@
 #pragma once
 
-#include "graphics_manager.h"
-#include "client.h"
+#include "client_network_manager.h"
 #include "game.h"
 
 #include <SFML/Graphics.hpp>
 
-#include <iostream>
-
 class ClientApplication {
 public:
-  ClientApplication(NetworkInterface* client) noexcept;
+  ClientApplication(ClientNetworkInterface* client) noexcept;
 
   [[nodiscard]] ReturnStatus Run() noexcept;
 
@@ -20,7 +17,7 @@ public:
   static constexpr std::uint8_t kFrameRateLimit = 144;
   sf::RenderWindow window_{};
 
-  NetworkInterface* client_ = nullptr;
+  ClientNetworkInterface* client_ = nullptr;
 
   Game game_{};
 

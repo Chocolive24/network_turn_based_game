@@ -1,6 +1,8 @@
 #include "client_application.h"
 
-ClientApplication::ClientApplication(NetworkInterface* client) noexcept :
+#include <iostream>
+
+ClientApplication::ClientApplication(ClientNetworkInterface* client) noexcept :
   client_(client)
 {}
 

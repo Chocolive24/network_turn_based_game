@@ -13,6 +13,8 @@ class Server {
   [[noreturn]] void Run() noexcept;
 
  private:
+  void HandleClientConnection() noexcept;
+  void HandleReceivedPackets() noexcept;
   static constexpr std::uint8_t kStartLobbyCount = 10;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;

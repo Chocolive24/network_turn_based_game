@@ -1,23 +1,21 @@
 #pragma once
 
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-
 #include "World.h"
 #include "Timer.h"
 #include "Metrics.h"
-#include "client.h"
+#include "client_network_interface.h"
 
 #include <SFML/Window/Event.hpp>
-
-#include "graphics_interface.h"
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 /**
  * \brief GameManager is a class that update the state of the game.
  */
 class Game : public PhysicsEngine::ContactListener {
  public:
-  void InitGame(NetworkInterface* client, sf::RenderTarget* render_target,
+  void InitGame(ClientNetworkInterface* client, sf::RenderTarget* render_target,
                 Math::Vec2F window_size) noexcept;
   void OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept;
   void Update(Math::Vec2F mouse_pos) noexcept;
@@ -35,7 +33,7 @@ class Game : public PhysicsEngine::ContactListener {
 
   sf::RenderTarget* render_target_ = nullptr;
 
-  NetworkInterface* client_ = nullptr;
+  ClientNetworkInterface* client_ = nullptr;
 
   sf::Color wall_color_ = sf::Color::Blue;
   sf::Font font_{};

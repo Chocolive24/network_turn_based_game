@@ -4,8 +4,9 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include <iomanip>
+#include <iostream>
 
-void Game::InitGame(NetworkInterface* client,
+void Game::InitGame(ClientNetworkInterface* client,
                     sf::RenderTarget* render_target,
                     Math::Vec2F window_size) noexcept {
   client_ = client;

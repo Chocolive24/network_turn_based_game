@@ -1,7 +1,9 @@
-#include "client.h"
+#include "client_network_manager.h"
 
-ReturnStatus ClientSocket::ConnectToServer(const sf::IpAddress& remote_address,
-                                           const unsigned short remote_port, bool blocking) noexcept {
+#include <iostream>
+
+ReturnStatus ClientNetworkManager::ConnectToServer(const sf::IpAddress& remote_address,
+                                                   const unsigned short remote_port, bool blocking) noexcept {
   const sf::Socket::Status status =
       socket_.connect(remote_address, remote_port);
   if (status != sf::Socket::Done) {
@@ -14,7 +16,7 @@ ReturnStatus ClientSocket::ConnectToServer(const sf::IpAddress& remote_address,
   return ReturnStatus::kSuccess;
 }
 
-void ClientSocket::SendPacket(sf::Packet& packet) noexcept {
+void ClientNetworkManager::SendPacket(sf::Packet& packet) noexcept {
   sf::Socket::Status status = sf::Socket::Partial;
   do {
     status = socket_.send(packet);
@@ -25,7 +27,7 @@ void ClientSocket::SendPacket(sf::Packet& packet) noexcept {
   }
 }
 
-PacketType ClientSocket::ReceivePacket(sf::Packet& packet) noexcept {
+PacketType ClientNetworkManager::ReceivePacket(sf::Packet& packet) noexcept {
   sf::Socket::Status status = sf::Socket::Partial;
   do {
     status = socket_.receive(packet);

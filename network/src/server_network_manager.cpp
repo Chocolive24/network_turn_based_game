@@ -61,11 +61,19 @@ PacketType ServerNetworkManager::ReceivePacket(sf::Packet* packet,
   PacketType packet_type = PacketType::KNotReady;
   const auto client = clients_[client_id].get();
 
+  if (client == nullptr) {
+    return PacketType::KNotReady;
+  }
+
   if (socket_selector_.isReady(*client)) {
     sf::Socket::Status status = sf::Socket::Partial;
     do {
       status = client->receive(*packet);
     } while (status == sf::Socket::Partial);
+
+    if (status == sf::Socket::Disconnected) {
+      clients_[client_id].reset();
+    }
 
     if (status != sf::Socket::Done) {
       std::cerr << "Could not receive packet from client.\n";
