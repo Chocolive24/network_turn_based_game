@@ -29,6 +29,12 @@ class ServerNetworkInterface {
     packet_received_callback_ = callback;
   }
 
+  void RegisterClientDisconnectionCallback(
+      const std::function<void(ClientPort client_port)>& callback) {
+    disconnect_callback_ = callback;
+  }
+
 protected:
   std::function<void(ClientPacket* packet_data)> packet_received_callback_;
+  std::function<void(ClientPort client_port)> disconnect_callback_;
 };

@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-ClientApplication::ClientApplication(ClientNetworkInterface* client) noexcept :
-  client_(client)
+ClientApplication::ClientApplication(ClientNetworkInterface* client_net_interface) noexcept :
+  client_network_interface_(client_net_interface)
 {}
 
 ReturnStatus ClientApplication::Run() noexcept {
@@ -17,7 +17,7 @@ ReturnStatus ClientApplication::Run() noexcept {
 }
 
 void ClientApplication::Init() noexcept {
-  game_.InitGame(client_, &window_, Math::Vec2F(kWindowWidth_, kWindowHeight_));
+  game_.InitGame(client_network_interface_, &window_, Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
   // Create window.
   // --------------
@@ -28,7 +28,7 @@ void ClientApplication::Init() noexcept {
   window_.setVerticalSyncEnabled(true);
 }
 
-void ClientApplication::HandleWindowEvents() {
+void ClientApplication::PollWindowEvents() {
   sf::Event event;
   while (window_.pollEvent(event)) {
     switch (event.type) {
@@ -45,7 +45,7 @@ void ClientApplication::HandleWindowEvents() {
 
 void ClientApplication::CheckForReceivedPackets() noexcept {
   sf::Packet received_packet;
-  switch (const auto packet_type = client_->ReceivePacket(received_packet)) {
+  switch (const auto packet_type = client_network_interface_->ReceivePacket(received_packet)) {
     case PacketType::kNone:
       std::cerr << "Packet received has no type. \n";
       break;
@@ -61,6 +61,8 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
     case PacketType::kNewTurn:
     case PacketType::KCueBallVelocity:
     case PacketType::kBallStateCorrections:
+    case PacketType::kGameWon:
+    case PacketType::kGameLost:
       game_.OnPacketReceived(&received_packet, packet_type);
       break;
     default:
@@ -70,7 +72,7 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
 
 void ClientApplication::LaunchLoop() noexcept {
   while (window_.isOpen()) {
-    HandleWindowEvents();
+    PollWindowEvents();
 
     const auto mouse_pos =
         static_cast<sf::Vector2f>(sf::Mouse::getPosition(window_));
@@ -94,7 +96,7 @@ void ClientApplication::LaunchLoop() noexcept {
         if (is_hover && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
           sf::Packet join_lobby_packet;
           join_lobby_packet << PacketType::kJoinLobby;
-          client_->SendPacket(join_lobby_packet);
+          client_network_interface_->SendPacket(join_lobby_packet);
         }
 
         window_.draw(play_button);

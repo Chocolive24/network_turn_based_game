@@ -67,7 +67,19 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
       }
       break;
     }
-    default:
+  case PacketType::kNone:
+  case PacketType::KNotReady:
+  case PacketType::kJoinLobby:
+    break;
+  case PacketType::kGameWon:
+    has_win_ = true;
+    is_game_finished_ = true;
+    break;
+  case PacketType::kGameLost:
+    has_win_ = false;
+    is_game_finished_ = true;
+    break;
+  default:
       break;
   }
 }
@@ -131,6 +143,7 @@ void Game::Deinit() noexcept { world_.Deinit(); }
 void Game::Draw() noexcept {
   const sf::Color clear_color =
       player_index_ == 0 ? sf::Color::Blue : sf::Color::Red;
+
   render_target_->clear(clear_color);
 
   // Draw gameplay objects.
@@ -282,8 +295,6 @@ void Game::HandlePlayerTurn() noexcept {
   auto& cue_ball_body = world_.GetBody(cue_ball_body_ref);
 
   if (is_player_turn_ && !has_played_) {
-    /*const auto mouse_pos = Math::Vec2F(sf::Mouse::getPosition(window_).x,
-                                       sf::Mouse::getPosition(window_).y);*/
     const auto ball_pos_in_pix = Metrics::MetersToPixels(
         Math::Vec2F(cue_ball_body.Position().X, cue_ball_body.Position().Y));
     const auto ball_to_mouse_vec = mouse_pos_ - ball_pos_in_pix;

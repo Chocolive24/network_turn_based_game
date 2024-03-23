@@ -13,14 +13,14 @@ enum class ClientAppState : std::int8_t {
 
 class ClientApplication {
 public:
-  ClientApplication(ClientNetworkInterface* client) noexcept;
+  ClientApplication(ClientNetworkInterface* client_net_interface) noexcept;
 
   [[nodiscard]] ReturnStatus Run() noexcept;
 
  private:
   void Init() noexcept;
   void CheckForReceivedPackets() noexcept;
-  void HandleWindowEvents();
+  void PollWindowEvents();
   void LaunchLoop() noexcept;
   void Deinit() noexcept;
 
@@ -29,7 +29,7 @@ public:
   static constexpr std::uint8_t kFrameRateLimit = 144;
   sf::RenderWindow window_{};
 
-  ClientNetworkInterface* client_ = nullptr;
+  ClientNetworkInterface* client_network_interface_ = nullptr;
 
   Game game_{};
 

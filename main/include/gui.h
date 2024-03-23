@@ -21,3 +21,11 @@ public:
 protected:
   void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
+
+class EntryPointGui final : public Gui {
+public:
+  ~EntryPointGui() noexcept override = default;
+
+private:
+  void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const noexcept override;
+};

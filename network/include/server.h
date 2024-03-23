@@ -13,6 +13,7 @@ class Server {
  private:
   void AddClientToLobby(ClientPort client_id) noexcept;
   void OnPacketReceived(ClientPacket* client_packet) noexcept;
+  void OnClientDisconnect(ClientPort client_port) noexcept;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;
   std::vector<Lobby> lobbies_{};

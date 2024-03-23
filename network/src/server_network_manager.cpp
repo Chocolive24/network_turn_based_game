@@ -45,18 +45,21 @@ void ServerNetworkManager::PollClientsPacket() noexcept {
     if (socket_selector_.isReady(*client)) {
       sf::Socket::Status status = sf::Socket::Partial;
       do {
-        status = client->receive(client_packet.packet_data);
+        status = client->receive(client_packet.data);
       } while (status == sf::Socket::Partial);
 
       if (status == sf::Socket::Disconnected) {
+        socket_selector_.remove(*client);
+        if (disconnect_callback_) disconnect_callback_(client->getRemotePort());
         client.reset();
+        continue;
       }
 
       if (status != sf::Socket::Done) {
-        std::cerr << "Could not receive packet from client.\n";
+        //std::cerr << "Could not receive packet from client.\n";
       }
 
-      client_packet.client_id = client->getRemotePort();
+      client_packet.client_port = client->getRemotePort();
 
       if (packet_received_callback_) packet_received_callback_(&client_packet);
     }
@@ -78,11 +81,18 @@ void ServerNetworkManager::SendPacket(sf::Packet* packet,
     std::cerr << "There is no client on port : " << client_id << "\n";
   }
 
-  const auto& socket = *it;
+  auto& client = *it;
 
   do {
-    status = socket->send(*packet);
+    status = client->send(*packet);
   } while (status == sf::Socket::Partial);
+
+  if (status == sf::Socket::Disconnected) {
+    socket_selector_.remove(*client);
+    if (disconnect_callback_) disconnect_callback_(client->getRemotePort());
+    client.reset();
+    return;
+  }
 
   if (status != sf::Socket::Done) {
     std::cerr << "Could not send packet to client.\n";
@@ -98,37 +108,7 @@ void ServerNetworkManager::PollEvents() noexcept {
       PollClientsPacket();
     }
   }
-  else
-  {
+  else {
     std::cout << "Waiting for activity...\n";
   }
 }
-
-//PacketType ServerNetworkManager::PollEvents(sf::Packet* packet, 
-//                                                     const ClientPort client_id) noexcept {
-//  PacketType packet_type = PacketType::KNotReady;
-//  const auto client = clients_[client_id].get();
-//
-//  if (client == nullptr) {
-//    return PacketType::KNotReady;
-//  }
-//
-//  if (socket_selector_.isReady(*client)) {
-//    sf::Socket::Status status = sf::Socket::Partial;
-//    do {
-//      status = client->receive(*packet);
-//    } while (status == sf::Socket::Partial);
-//
-//    if (status == sf::Socket::Disconnected) {
-//      clients_[client_id].reset();
-//    }
-//
-//    if (status != sf::Socket::Done) {
-//      std::cerr << "Could not receive packet from client.\n";
-//    }
-//
-//    *packet >> packet_type;
-//  }
-//
-//  return packet_type;
-//}

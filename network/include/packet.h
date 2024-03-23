@@ -12,11 +12,13 @@ enum class PacketType : std::uint8_t {
   kNewTurn,
   KCueBallVelocity,
   kBallStateCorrections,
+  kGameWon,
+  kGameLost,
 };
 
 struct ClientPacket {
-  sf::Packet packet_data{};
-  ClientPort client_id = -1;
+  sf::Packet data{};
+  ClientPort client_port = 0;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PacketType& type);
