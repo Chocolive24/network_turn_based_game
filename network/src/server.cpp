@@ -13,7 +13,8 @@ void Server::Run() noexcept {
     if (server_network_interface_->WaitForNetworkEvent(5.f))
     {
       if (server_network_interface_->AcceptNewConnection()) {
-        HandleClientConnection();
+        //AddClientToLobby();
+        client_count_++;
       }
       else
       {
@@ -27,13 +28,12 @@ void Server::Run() noexcept {
   }
 }
 
-void Server::HandleClientConnection() noexcept {
+void Server::AddClientToLobby() noexcept {
   const auto lobby_it =
       std::find_if(lobbies_.begin(), lobbies_.end(),
                    [](const Lobby& lobby) { return !lobby.IsComplete(); });
 
-  lobby_it->AddPlayer(client_count_);
-  client_count_++;
+  lobby_it->AddPlayer(client_count_ - 1);
 
   if (lobby_it->IsComplete()) {
     std::cout << "Lobby complete !\n";
@@ -57,13 +57,15 @@ void Server::HandleClientConnection() noexcept {
 void Server::HandleReceivedPackets() noexcept {
   for (ClientId id = 0; id < client_count_; id++) {
     sf::Packet received_packet{};
-    switch (server_network_interface_->ReceivePacket(&received_packet, id)) {
+    switch (server_network_interface_->ReceivePackets(&received_packet, id)) {
       case PacketType::kNone:
         std::cerr << "Packet received has no type. \n";
         break;
       case PacketType::KNotReady:
         break;
       case PacketType::kJoinLobby:
+        AddClientToLobby();
+        server_network_interface_->SendPacket(&received_packet, id);
         break;
       case PacketType::KStartGame:
         break;

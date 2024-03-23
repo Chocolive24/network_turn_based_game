@@ -13,7 +13,7 @@ class Server {
   [[noreturn]] void Run() noexcept;
 
  private:
-  void HandleClientConnection() noexcept;
+  void AddClientToLobby() noexcept;
   void HandleReceivedPackets() noexcept;
   static constexpr std::uint8_t kStartLobbyCount = 10;
 

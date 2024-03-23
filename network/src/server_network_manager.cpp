@@ -56,7 +56,7 @@ void ServerNetworkManager::SendPacket(sf::Packet* packet,
   }
 }
 
-PacketType ServerNetworkManager::ReceivePacket(sf::Packet* packet, 
+PacketType ServerNetworkManager::ReceivePackets(sf::Packet* packet, 
     const ClientId client_id) noexcept {
   PacketType packet_type = PacketType::KNotReady;
   const auto client = clients_[client_id].get();

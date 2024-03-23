@@ -2,6 +2,8 @@
 
 #include "packet.h"
 
+#include <functional>
+
 class ServerNetworkInterface {
  public:
   constexpr ServerNetworkInterface() noexcept = default;
@@ -18,6 +20,12 @@ class ServerNetworkInterface {
   [[nodiscard]] virtual bool WaitForNetworkEvent(float timeout) noexcept = 0;
   [[nodiscard]] virtual bool AcceptNewConnection() noexcept = 0;
   virtual void SendPacket(sf::Packet* packet, ClientId client_id) noexcept = 0;
-  [[nodiscard]] virtual PacketType ReceivePacket(
-      sf::Packet* packet, ClientId client_id) noexcept = 0;
+  [[nodiscard]] virtual PacketType ReceivePackets(sf::Packet* packet, ClientId client_id) noexcept = 0;
+
+  void RegisterPacketReceivedCallback(const std::function<void()>& callback) {
+    packet_received_callback_ = callback;
+  }
+
+protected:
+  std::function<void()> packet_received_callback_;
 };
