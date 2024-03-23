@@ -5,26 +5,28 @@
 Server::Server(ServerNetworkInterface* server_net_interface) noexcept {
   server_network_interface_ = server_net_interface;
   server_network_interface_->RegisterPacketReceivedCallback(
-      [this](ClientPacket* client_packet) { OnPacketReceived(client_packet); });
+      [this](ClientPacket* client_packet) { OnPacketReceived(client_packet); }
+  );
 }
 
 void Server::Run() noexcept {
-  lobbies_.resize(kStartLobbyCount);
+  lobbies_.resize(kStartLobbyCount, Lobby());
 
   while (true) {
-    if (server_network_interface_->WaitForNetworkEvent(5.f))
-    {
-      if (server_network_interface_->AcceptNewConnection()) {
-      }
-      else
-      {
-        server_network_interface_->PollClientPackets();
-      }
-    }
-    else {
-      // Handle other server tasks or timeout operations here.
-      std::cout << "Waiting for activity...\n";
-    }
+    server_network_interface_->PollEvents();
+    //if (server_network_interface_->WaitForNetworkEvent(5.f))
+    //{
+    //  if (server_network_interface_->AcceptNewConnection()) {
+    //  }
+    //  else
+    //  {
+    //    server_network_interface_->PollEvents();
+    //  }
+    //}
+    //else {
+    //  // Handle other server tasks or timeout operations here.
+    //  std::cout << "Waiting for activity...\n";
+    //}
   }
 }
 
@@ -61,7 +63,7 @@ void Server::AddClientToLobby(ClientPort client_id) noexcept {
 void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
   PacketType packet_type = PacketType::kNone;
   client_packet->packet_data >> packet_type;
-  std::cout << client_packet->client_id << "'\n";
+
   switch (packet_type) {
     case PacketType::kNone:
       std::cerr << "Packet received has no type. \n";
@@ -77,7 +79,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
     case PacketType::KCueBallVelocity:
     case PacketType::kBallStateCorrections:
       for (const auto& lobby : lobbies_) {
-        ClientPort other_client_id = -1;
+        ClientPort other_client_id = 0;
 
         if (client_packet->client_id == lobby.client_1_id) {
           other_client_id = lobby.client_2_id;
@@ -86,7 +88,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
           other_client_id = lobby.client_1_id;
         }
 
-        if (static_cast<int>(other_client_id) == -1) {
+        if (other_client_id == 0) {
           continue;
         }
 

@@ -3,8 +3,9 @@
 #include "types.h"
 #include "server_network_interface.h"
 
-#include <SFML/Network/SocketSelector.hpp>
+#include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
+#include <SFML/Network/SocketSelector.hpp>
 
 #include <memory>
 
@@ -24,12 +25,12 @@ public:
 
   [[nodiscard]] ReturnStatus ListenToPort(unsigned short port) noexcept;
 
-  [[nodiscard]] bool WaitForNetworkEvent(float timeout) noexcept override;
-  [[nodiscard]] bool AcceptNewConnection() noexcept override;
   void SendPacket(sf::Packet* packet, ClientPort client_id) noexcept override;
-  void PollClientPackets() noexcept override;
+  void PollEvents() noexcept override;
 
 private:
+  void AcceptNewConnection() noexcept;
+  void PollClientsPacket() noexcept;
   std::vector<std::unique_ptr<sf::TcpSocket>> clients_{};
   sf::TcpListener listener_{};
   sf::SocketSelector socket_selector_{};

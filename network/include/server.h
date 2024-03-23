@@ -3,8 +3,6 @@
 #include "lobby.h"
 #include "server_network_manager.h"
 
-#include <SFML/Network.hpp>
-
 #include <vector>
 
 class Server {
@@ -15,10 +13,9 @@ class Server {
  private:
   void AddClientToLobby(ClientPort client_id) noexcept;
   void OnPacketReceived(ClientPacket* client_packet) noexcept;
-  static constexpr std::uint8_t kStartLobbyCount = 10;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;
-
   std::vector<Lobby> lobbies_{};
-  std::size_t client_count_ = 0;
+
+  static constexpr std::uint8_t kStartLobbyCount = 10;
 };

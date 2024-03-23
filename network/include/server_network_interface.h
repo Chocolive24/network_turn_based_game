@@ -4,6 +4,10 @@
 
 #include <functional>
 
+/**
+ * \brief ServerNetworkInterface is an interface to communicates with multiple
+ * clients.
+ */
 class ServerNetworkInterface {
  public:
   ServerNetworkInterface() noexcept = default;
@@ -17,10 +21,8 @@ class ServerNetworkInterface {
       const ServerNetworkInterface& other) = default;
   virtual ~ServerNetworkInterface() noexcept = default;
 
-  [[nodiscard]] virtual bool WaitForNetworkEvent(float timeout) noexcept = 0;
-  [[nodiscard]] virtual bool AcceptNewConnection() noexcept = 0;
   virtual void SendPacket(sf::Packet* packet, ClientPort client_id) noexcept = 0;
-  virtual void PollClientPackets() noexcept = 0;
+  virtual void PollEvents() noexcept = 0;
 
   void RegisterPacketReceivedCallback(
       const std::function<void(ClientPacket* packet_data)>& callback) {

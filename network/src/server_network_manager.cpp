@@ -19,57 +19,24 @@ ReturnStatus ServerNetworkManager::ListenToPort(unsigned short port) noexcept {
   return ReturnStatus::kSuccess;
 }
 
-bool ServerNetworkManager::WaitForNetworkEvent(const float timeout) noexcept {
-  return socket_selector_.wait(sf::seconds(timeout));
-}
 
-bool ServerNetworkManager::AcceptNewConnection() noexcept {
-  if (socket_selector_.isReady(listener_)) {
-    clients_.emplace_back(std::make_unique<sf::TcpSocket>());
-    const auto& client = clients_.back();
-    if (listener_.accept(*client) != sf::Socket::Done) {
-      std::cerr << "Could not accept client.\n";
-    }
+void ServerNetworkManager::AcceptNewConnection() noexcept {
+  clients_.emplace_back(std::make_unique<sf::TcpSocket>());
+  const auto& client = clients_.back();
 
-    client->setBlocking(false);
-    socket_selector_.add(*client);
-
-    std::cout << "Client " << client->getRemoteAddress() << ':'
-              << client->getRemotePort() << " is connected. \n";
-
-    return true;
+  if (listener_.accept(*client) != sf::Socket::Done) {
+    std::cerr << "Could not accept client.\n";
   }
 
-  return false;
+  client->setBlocking(false);
+  socket_selector_.add(*client);
+
+  std::cout << "Client " << client->getRemoteAddress() << ':'
+            << client->getRemotePort() << " is connected. \n";
 }
 
-void ServerNetworkManager::SendPacket(sf::Packet* packet,
-                                      const ClientPort client_id) noexcept {
-  sf::Socket::Status status = sf::Socket::Partial;
-
-  const auto it = std::find_if(
-      clients_.begin(), clients_.end(),
-      [client_id](const std::unique_ptr<sf::TcpSocket>& client) {
-        return client->getRemotePort() == client_id;
-  });
-
-  if (it == clients_.end()) {
-    std::cerr << "There is no client on port : " << client_id << "\n";
-  }
-
-  const auto& socket = *it;
-
-  do {
-    status = socket->send(*packet);
-  } while (status == sf::Socket::Partial);
-
-  if (status != sf::Socket::Done) {
-    std::cerr << "Could not send packet to client.\n";
-  }
-}
-
-void ServerNetworkManager::PollClientPackets() noexcept {
-   ClientPacket client_packet{};
+void ServerNetworkManager::PollClientsPacket() noexcept {
+  ClientPacket client_packet{};
   for (auto& client : clients_) {
     if (client == nullptr) {
       continue;
@@ -96,7 +63,48 @@ void ServerNetworkManager::PollClientPackets() noexcept {
   }
 }
 
-//PacketType ServerNetworkManager::PollClientPackets(sf::Packet* packet, 
+void ServerNetworkManager::SendPacket(sf::Packet* packet,
+                                      const ClientPort client_id) noexcept {
+  sf::Socket::Status status = sf::Socket::Partial;
+
+  const auto it = std::find_if(
+      clients_.begin(), clients_.end(),
+      [client_id](const std::unique_ptr<sf::TcpSocket>& client) {
+        return client->getRemotePort() == client_id;
+    }
+  );
+
+  if (it == clients_.end()) {
+    std::cerr << "There is no client on port : " << client_id << "\n";
+  }
+
+  const auto& socket = *it;
+
+  do {
+    status = socket->send(*packet);
+  } while (status == sf::Socket::Partial);
+
+  if (status != sf::Socket::Done) {
+    std::cerr << "Could not send packet to client.\n";
+  }
+}
+
+void ServerNetworkManager::PollEvents() noexcept {
+  if (socket_selector_.wait(sf::seconds(5.f))) {
+    if (socket_selector_.isReady(listener_)) {
+      AcceptNewConnection();
+    }
+    else {
+      PollClientsPacket();
+    }
+  }
+  else
+  {
+    std::cout << "Waiting for activity...\n";
+  }
+}
+
+//PacketType ServerNetworkManager::PollEvents(sf::Packet* packet, 
 //                                                     const ClientPort client_id) noexcept {
 //  PacketType packet_type = PacketType::KNotReady;
 //  const auto client = clients_[client_id].get();

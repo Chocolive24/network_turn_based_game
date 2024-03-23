@@ -3,8 +3,7 @@
 #include "packet.h"
 
 /**
- * \brief ClientNetworkInterface is an interface to communicates packets
- * to the server.
+ * \brief ClientNetworkInterface is an interface to communicates with a server.
  */
 class ClientNetworkInterface {
  public:

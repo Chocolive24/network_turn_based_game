@@ -7,7 +7,7 @@
 
 /**
  * \brief ClientNetworkManager is the implementation of the ClientNetworkInterface.
- * It manages the communications with the server.
+ * It manages the communications with the server and owns a socket.
  */
 class ClientNetworkManager final : public ClientNetworkInterface {
 public:
