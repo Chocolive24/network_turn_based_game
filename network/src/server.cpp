@@ -2,9 +2,11 @@
 
 #include <iostream>
 
-Server::Server(ServerNetworkInterface* server_net_interface) noexcept :
-  server_network_interface_(server_net_interface)
-{}
+Server::Server(ServerNetworkInterface* server_net_interface) noexcept {
+  server_network_interface_ = server_net_interface;
+  server_network_interface_->RegisterPacketReceivedCallback(
+      [this](ClientPacket* client_packet) { OnPacketReceived(client_packet); });
+}
 
 void Server::Run() noexcept {
   lobbies_.resize(kStartLobbyCount);
@@ -13,12 +15,10 @@ void Server::Run() noexcept {
     if (server_network_interface_->WaitForNetworkEvent(5.f))
     {
       if (server_network_interface_->AcceptNewConnection()) {
-        //AddClientToLobby();
-        client_count_++;
       }
       else
       {
-        HandleReceivedPackets();
+        server_network_interface_->PollClientPackets();
       }
     }
     else {
@@ -28,12 +28,16 @@ void Server::Run() noexcept {
   }
 }
 
-void Server::AddClientToLobby() noexcept {
+void Server::AddClientToLobby(ClientPort client_id) noexcept {
   const auto lobby_it =
       std::find_if(lobbies_.begin(), lobbies_.end(),
                    [](const Lobby& lobby) { return !lobby.IsComplete(); });
 
-  lobby_it->AddPlayer(client_count_ - 1);
+  lobby_it->AddPlayer(client_id);
+
+  sf::Packet joined_lobby_packet{};
+  joined_lobby_packet << PacketType::kJoinLobby;
+  server_network_interface_->SendPacket(&joined_lobby_packet, client_id);
 
   if (lobby_it->IsComplete()) {
     std::cout << "Lobby complete !\n";
@@ -54,43 +58,43 @@ void Server::AddClientToLobby() noexcept {
   }
 }
 
-void Server::HandleReceivedPackets() noexcept {
-  for (ClientId id = 0; id < client_count_; id++) {
-    sf::Packet received_packet{};
-    switch (server_network_interface_->ReceivePackets(&received_packet, id)) {
-      case PacketType::kNone:
-        std::cerr << "Packet received has no type. \n";
-        break;
-      case PacketType::KNotReady:
-        break;
-      case PacketType::kJoinLobby:
-        AddClientToLobby();
-        server_network_interface_->SendPacket(&received_packet, id);
-        break;
-      case PacketType::KStartGame:
-        break;
-      case PacketType::kNewTurn:
-      case PacketType::KCueBallVelocity:
-      case PacketType::kBallStateCorrections:
-        for (const auto& lobby : lobbies_) {
-          ClientId other_client_id = -1;
+void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
+  PacketType packet_type = PacketType::kNone;
+  client_packet->packet_data >> packet_type;
+  std::cout << client_packet->client_id << "'\n";
+  switch (packet_type) {
+    case PacketType::kNone:
+      std::cerr << "Packet received has no type. \n";
+      break;
+    case PacketType::KNotReady:
+      break;
+    case PacketType::kJoinLobby:
+      AddClientToLobby(client_packet->client_id);
+      break;
+    case PacketType::KStartGame:
+      break;
+    case PacketType::kNewTurn:
+    case PacketType::KCueBallVelocity:
+    case PacketType::kBallStateCorrections:
+      for (const auto& lobby : lobbies_) {
+        ClientPort other_client_id = -1;
 
-          if (id == lobby.client_1_id) {
-            other_client_id = lobby.client_2_id;
-          } else if (id == lobby.client_2_id) {
-            other_client_id = lobby.client_1_id;
-          }
-
-          if (static_cast<int>(other_client_id) == -1) {
-            continue;
-          }
-
-          server_network_interface_->SendPacket(&received_packet,
-                                                other_client_id);
+        if (client_packet->client_id == lobby.client_1_id) {
+          other_client_id = lobby.client_2_id;
         }
-        break;
-      default:
-        break;
-    }
+        else if (client_packet->client_id == lobby.client_2_id) {
+          other_client_id = lobby.client_1_id;
+        }
+
+        if (static_cast<int>(other_client_id) == -1) {
+          continue;
+        }
+
+        server_network_interface_->SendPacket(&client_packet->packet_data,
+                                              other_client_id);
+      }
+      break;
+    default:
+      break;
   }
 }

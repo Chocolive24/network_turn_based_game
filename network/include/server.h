@@ -13,8 +13,8 @@ class Server {
   [[noreturn]] void Run() noexcept;
 
  private:
-  void AddClientToLobby() noexcept;
-  void HandleReceivedPackets() noexcept;
+  void AddClientToLobby(ClientPort client_id) noexcept;
+  void OnPacketReceived(ClientPacket* client_packet) noexcept;
   static constexpr std::uint8_t kStartLobbyCount = 10;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;

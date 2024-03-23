@@ -5,7 +5,7 @@ bool Lobby::IsComplete() const noexcept {
          static_cast<int>(client_2_id) > -1;
 }
 
-void Lobby::AddPlayer(const ClientId id) noexcept {
+void Lobby::AddPlayer(const ClientPort id) noexcept {
   if (static_cast<int>(client_1_id) == -1) {
     client_1_id = id;
   }

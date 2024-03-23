@@ -52,8 +52,7 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
     case PacketType::KNotReady:
       break;
     case PacketType::kJoinLobby:
-      if (state_ != ClientAppState::kInGame) 
-          state_ = ClientAppState::kInLobby;
+      state_ = ClientAppState::kInLobby;
       break;
     case PacketType::KStartGame:
       state_ = ClientAppState::kInGame;

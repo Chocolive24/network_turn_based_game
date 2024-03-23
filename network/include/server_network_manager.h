@@ -26,8 +26,8 @@ public:
 
   [[nodiscard]] bool WaitForNetworkEvent(float timeout) noexcept override;
   [[nodiscard]] bool AcceptNewConnection() noexcept override;
-  void SendPacket(sf::Packet* packet, ClientId client_id) noexcept override;
-  [[nodiscard]] PacketType ReceivePackets(sf::Packet* packet, ClientId client_id) noexcept override;
+  void SendPacket(sf::Packet* packet, ClientPort client_id) noexcept override;
+  void PollClientPackets() noexcept override;
 
 private:
   std::vector<std::unique_ptr<sf::TcpSocket>> clients_{};
