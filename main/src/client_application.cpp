@@ -16,6 +16,10 @@ ReturnStatus ClientApplication::Run() noexcept {
   return ReturnStatus::kSuccess;
 }
 
+void ClientApplication::SendPacket(sf::Packet* packet) const noexcept {
+  client_network_interface_->SendPacket(*packet);
+}
+
 void ClientApplication::Init() noexcept {
   game_.InitGame(client_network_interface_, &window_, Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
@@ -26,6 +30,8 @@ void ClientApplication::Init() noexcept {
   window_.create(sf::VideoMode(kWindowWidth_, kWindowHeight_), "8-Ball Pool",
                  sf::Style::Close, window_settings);
   window_.setVerticalSyncEnabled(true);
+
+  current_gui_ = std::make_unique<MainMenuGui>(this);
 }
 
 void ClientApplication::PollWindowEvents() {
@@ -40,6 +46,10 @@ void ClientApplication::PollWindowEvents() {
     }
 
     game_.OnEvent(event);
+
+    if (current_gui_) {
+      current_gui_->OnEvent(event);
+    }
   }
 }
 
@@ -53,6 +63,7 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
       break;
     case PacketType::kJoinLobby:
       state_ = ClientAppState::kInLobby;
+      current_gui_.reset();
       break;
     case PacketType::KStartGame:
       state_ = ClientAppState::kInGame;
@@ -83,23 +94,6 @@ void ClientApplication::LaunchLoop() noexcept {
 
     switch (state_) {
       case ClientAppState::KEntryPoint: {
-        sf::RectangleShape play_button(
-            sf::Vector2f(0.5f * kWindowWidth_, 0.1f * kWindowHeight_));
-        play_button.setOrigin(play_button.getSize() * 0.5f);
-        play_button.setPosition(kWindowWidth_ * 0.5f, kWindowHeight_ * 0.33f);
-
-        const bool is_hover = play_button.getGlobalBounds().contains(mouse_pos);
-
-        const auto color = is_hover ? sf::Color::Green : sf::Color::Blue;
-        play_button.setFillColor(color);
-
-        if (is_hover && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-          sf::Packet join_lobby_packet;
-          join_lobby_packet << PacketType::kJoinLobby;
-          client_network_interface_->SendPacket(join_lobby_packet);
-        }
-
-        window_.draw(play_button);
         break;
       }
 
@@ -124,6 +118,11 @@ void ClientApplication::LaunchLoop() noexcept {
         game_.Draw();
         break;
       }
+    }
+
+    if (current_gui_ != nullptr) {
+      current_gui_->Update(mouse_pos);
+      window_.draw(*current_gui_);
     }
 
     window_.display();

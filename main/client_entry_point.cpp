@@ -10,5 +10,7 @@ int main() {
   ClientApplication app(&client);
   const auto app_status = app.Run();
 
+  client.DisconnectFromServer();
+
   return app_status == ReturnStatus::kSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
 }

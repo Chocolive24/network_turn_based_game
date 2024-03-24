@@ -72,12 +72,16 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
   case PacketType::kJoinLobby:
     break;
   case PacketType::kGameWon:
-    has_win_ = true;
-    is_game_finished_ = true;
+    if (!is_game_finished_) {
+        has_win_ = true;
+        is_game_finished_ = true;
+    }
     break;
   case PacketType::kGameLost:
-    has_win_ = false;
-    is_game_finished_ = true;
+    if (!is_game_finished_) {
+        has_win_ = false;
+        is_game_finished_ = true;
+    }
     break;
   default:
       break;

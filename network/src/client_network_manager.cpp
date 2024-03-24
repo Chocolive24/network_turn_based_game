@@ -16,6 +16,10 @@ ReturnStatus ClientNetworkManager::ConnectToServer(const sf::IpAddress& remote_a
   return ReturnStatus::kSuccess;
 }
 
+void ClientNetworkManager::DisconnectFromServer() noexcept {
+  socket_.disconnect();
+}
+
 void ClientNetworkManager::SendPacket(sf::Packet& packet) noexcept {
   sf::Socket::Status status = sf::Socket::Partial;
   do {

@@ -22,6 +22,8 @@ public:
   ReturnStatus ConnectToServer(const sf::IpAddress& remote_address, 
 	                             unsigned short remote_port, bool blocking = true) noexcept;
 
+  void DisconnectFromServer() noexcept;
+
   [[nodiscard]] sf::IpAddress remote_address() const noexcept {
     return socket_.getRemoteAddress();
   }

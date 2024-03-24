@@ -2,6 +2,7 @@
 
 #include "client_network_manager.h"
 #include "game.h"
+#include "gui.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -17,6 +18,11 @@ public:
 
   [[nodiscard]] ReturnStatus Run() noexcept;
 
+  void SendPacket(sf::Packet* packet) const noexcept;
+
+  static constexpr int kWindowWidth_ = 750;
+  static constexpr int kWindowHeight_ = 1000;
+
  private:
   void Init() noexcept;
   void CheckForReceivedPackets() noexcept;
@@ -24,12 +30,12 @@ public:
   void LaunchLoop() noexcept;
   void Deinit() noexcept;
 
-  static constexpr int kWindowWidth_ = 750;
-  static constexpr int kWindowHeight_ = 1000;
+
   static constexpr std::uint8_t kFrameRateLimit = 144;
   sf::RenderWindow window_{};
 
   ClientNetworkInterface* client_network_interface_ = nullptr;
+  std::unique_ptr<Gui> current_gui_ = nullptr;
 
   Game game_{};
 

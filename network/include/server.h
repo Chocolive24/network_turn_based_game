@@ -11,9 +11,12 @@ class Server {
   [[noreturn]] void Run() noexcept;
 
  private:
-  void AddClientToLobby(ClientPort client_id) noexcept;
+  // Callbacks.
+  // ----------
   void OnPacketReceived(ClientPacket* client_packet) noexcept;
   void OnClientDisconnect(ClientPort client_port) noexcept;
+
+  void AddClientToLobby(ClientPort client_id) noexcept;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;
   std::vector<Lobby> lobbies_{};

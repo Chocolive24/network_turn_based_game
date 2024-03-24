@@ -19,6 +19,17 @@ ReturnStatus ServerNetworkManager::ListenToPort(unsigned short port) noexcept {
   return ReturnStatus::kSuccess;
 }
 
+void ServerNetworkManager::PollEvents() noexcept {
+  if (socket_selector_.wait(sf::seconds(5.f))) {
+    if (socket_selector_.isReady(listener_)) {
+      AcceptNewConnection();
+    } else {
+      PollClientsPacket();
+    }
+  } else {
+    std::cout << "Waiting for activity...\n";
+  }
+}
 
 void ServerNetworkManager::AcceptNewConnection() noexcept {
   clients_.emplace_back(std::make_unique<sf::TcpSocket>());
@@ -61,7 +72,9 @@ void ServerNetworkManager::PollClientsPacket() noexcept {
 
       client_packet.client_port = client->getRemotePort();
 
-      if (packet_received_callback_) packet_received_callback_(&client_packet);
+      if (packet_received_callback_) {
+        packet_received_callback_(&client_packet);
+      }
     }
   }
 }
@@ -73,6 +86,7 @@ void ServerNetworkManager::SendPacket(sf::Packet* packet,
   const auto it = std::find_if(
       clients_.begin(), clients_.end(),
       [client_id](const std::unique_ptr<sf::TcpSocket>& client) {
+        if (client == nullptr) return false;
         return client->getRemotePort() == client_id;
     }
   );
@@ -89,26 +103,14 @@ void ServerNetworkManager::SendPacket(sf::Packet* packet,
 
   if (status == sf::Socket::Disconnected) {
     socket_selector_.remove(*client);
-    if (disconnect_callback_) disconnect_callback_(client->getRemotePort());
+    if (disconnect_callback_) {
+      disconnect_callback_(client->getRemotePort());
+    }
     client.reset();
     return;
   }
 
   if (status != sf::Socket::Done) {
     std::cerr << "Could not send packet to client.\n";
-  }
-}
-
-void ServerNetworkManager::PollEvents() noexcept {
-  if (socket_selector_.wait(sf::seconds(5.f))) {
-    if (socket_selector_.isReady(listener_)) {
-      AcceptNewConnection();
-    }
-    else {
-      PollClientsPacket();
-    }
-  }
-  else {
-    std::cout << "Waiting for activity...\n";
   }
 }

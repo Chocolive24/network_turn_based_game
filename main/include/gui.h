@@ -1,10 +1,13 @@
 #pragma once
 
+#include <functional>
+
 #include "button.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 
 #include <vector>
+#include <SFML/Window/Event.hpp>
 
 class Gui : public sf::Drawable {
 public:
@@ -15,17 +18,31 @@ public:
   Gui& operator=(const Gui& other) noexcept = default;
   ~Gui() noexcept override = default;
 
-  virtual void OnDraw(sf::RenderTarget& target,
-                      sf::RenderStates states) const noexcept = 0;
+  void Update(sf::Vector2f mouse_pos) noexcept;
+
+  virtual void OnEvent(const sf::Event& event) noexcept = 0;
+  void draw(sf::RenderTarget& target, sf::RenderStates states) const override{}
 
 protected:
-  void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+  virtual void OnUpdate() noexcept = 0;
+
+protected:
+  sf::Vector2f mouse_pos_{};
 };
 
-class EntryPointGui final : public Gui {
+class ClientApplication;
+
+class MainMenuGui final : public Gui {
 public:
-  ~EntryPointGui() noexcept override = default;
+  explicit MainMenuGui(ClientApplication* client_app) noexcept;
+  ~MainMenuGui() noexcept override = default;
+  
+  void OnEvent(const sf::Event& event) noexcept override;
+  void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
 
 private:
-  void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const noexcept override;
+  void OnUpdate() noexcept override;
+
+  ClientApplication* client_app_ = nullptr;
 };
