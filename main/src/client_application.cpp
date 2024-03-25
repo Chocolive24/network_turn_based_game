@@ -3,7 +3,6 @@
 #include "lobby_gui.h"
 
 #include <iostream>
-#include <fstream>
 
 ClientApplication::ClientApplication(ClientNetworkInterface* client_net_interface) noexcept :
   client_network_interface_(client_net_interface)
@@ -27,6 +26,12 @@ void ClientApplication::Init() noexcept {
   game_.InitGame(client_network_interface_, &window_, 
       Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
+  client_identifier_.PerformIdentification(
+    [this](const std::string_view username) {
+      OnClientIdentified(username);
+    } 
+  );
+
   // Create window.
   // --------------
   sf::ContextSettings window_settings;
@@ -34,8 +39,6 @@ void ClientApplication::Init() noexcept {
   window_.create(sf::VideoMode(kWindowWidth_, kWindowHeight_), "8-Ball Pool",
                  sf::Style::Close, window_settings);
   window_.setVerticalSyncEnabled(true);
-
-  current_gui_ = std::make_unique<MainMenuGui>(this);
 
   font_.loadFromFile("data/Payback.otf");
 }
@@ -57,7 +60,9 @@ void ClientApplication::PollWindowEvents() noexcept {
         break;
     }
 
-    game_.OnEvent(event);
+    if (state_ == ClientAppState::kInGame) {
+      game_.OnEvent(event);
+    }
 
     if (current_gui_) {
       current_gui_->OnEvent(event);
@@ -138,6 +143,9 @@ void ClientApplication::LaunchLoop() noexcept {
 
 void ClientApplication::OnClientIdentified(const std::string_view username) noexcept {
   username_ = username;
+
+  state_ = ClientAppState::kInMainMenu;
+  current_gui_ = std::make_unique<MainMenuGui>(this);
 
   //TODO: SendPacket to server with username to get the elo of the player in DB.
 }

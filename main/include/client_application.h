@@ -40,15 +40,13 @@ public:
   ClientNetworkInterface* client_network_interface_ = nullptr;
   std::unique_ptr<Gui> current_gui_ = nullptr;
 
-  ClientIdentifier client_identifier_{
-    [this](const std::string_view username) {
-      OnClientIdentified(username);
-  }};
+  ClientIdentifier client_identifier_{};
+  std::string username_{};
 
   Game game_{};
 
   ClientAppState state_ = ClientAppState::kUserIdentification;
-
-  std::string username_{};
+  
+  
   sf::Font font_{};
 };

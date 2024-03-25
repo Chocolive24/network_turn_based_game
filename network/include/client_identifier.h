@@ -10,8 +10,10 @@
  */
 class ClientIdentifier {
 public:
-  explicit ClientIdentifier(const std::function<void(std::string_view username)>&
-                            identification_callback) noexcept;
+  explicit ClientIdentifier() noexcept = default;
+
+  void PerformIdentification(
+      const std::function<void(std::string_view username)>& callback) noexcept;
   void OnTextEntered(const sf::Event::TextEvent& text_event) noexcept;
 
   [[nodiscard]] std::string_view username() const noexcept { return username_; }

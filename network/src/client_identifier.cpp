@@ -4,19 +4,28 @@
 #include <fstream>
 #include <iostream>
 
-ClientIdentifier::ClientIdentifier(
-    const std::function<void(std::string_view username)>&
-        identification_callback) noexcept
-    : identification_callback_(identification_callback) {
+void ClientIdentifier::PerformIdentification(
+    const std::function<void(std::string_view username)>& callback) noexcept {
+  identification_callback_ = callback;
+
   // Open the user_data.txt file to check if the client already have a username.
   // ---------------------------------------------------------------------------
   std::ifstream file("data/user_data.txt");
-  file.getline(username_.data(), 1);
+
+  if (!file.is_open()) {
+    return;
+  }
+
+  std::getline(file, username_);
+
+  if (username_.empty()) {
+    return;
+  }
 
   if (username_ != kNotRegisteredMessage_) {
     if (identification_callback_) {
-      identification_callback_(username_);
       std::cout << username_ << '\n';
+      identification_callback_(username_);
     }
   }
   else {
