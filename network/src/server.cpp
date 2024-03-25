@@ -47,7 +47,8 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
 
         if (client_packet->client_port == lobby.client_1_port) {
           other_client_port = lobby.client_2_port;
-        } else if (client_packet->client_port == lobby.client_2_port) {
+        }
+        else if (client_packet->client_port == lobby.client_2_port) {
           other_client_port = lobby.client_1_port;
         }
 
@@ -86,16 +87,16 @@ void Server::OnClientDisconnect(const ClientPort client_port) noexcept {
   }
 }
 
-void Server::AddClientToLobby(ClientPort client_id) noexcept {
+void Server::AddClientToLobby(ClientPort client_port) noexcept {
   const auto lobby_it =
       std::find_if(lobbies_.begin(), lobbies_.end(),
                    [](const Lobby& lobby) { return !lobby.IsComplete(); });
 
-  lobby_it->AddClient(client_id);
+  lobby_it->AddClient(client_port);
 
   sf::Packet joined_lobby_packet{};
   joined_lobby_packet << PacketType::kJoinLobby;
-  server_network_interface_->SendPacket(&joined_lobby_packet, client_id);
+  server_network_interface_->SendPacket(&joined_lobby_packet, client_port);
 
   if (lobby_it->IsComplete()) {
     sf::Packet p1_start_packet;

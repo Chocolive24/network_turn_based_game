@@ -1,4 +1,6 @@
 #include "client_application.h"
+#include "main_menu_gui.h"
+#include "lobby_gui.h"
 
 #include <iostream>
 
@@ -21,7 +23,8 @@ void ClientApplication::SendPacket(sf::Packet* packet) const noexcept {
 }
 
 void ClientApplication::Init() noexcept {
-  game_.InitGame(client_network_interface_, &window_, Math::Vec2F(kWindowWidth_, kWindowHeight_));
+  game_.InitGame(client_network_interface_, &window_, 
+      Math::Vec2F(kWindowWidth_, kWindowHeight_));
 
   // Create window.
   // --------------
@@ -62,11 +65,11 @@ void ClientApplication::CheckForReceivedPackets() noexcept {
     case PacketType::KNotReady:
       break;
     case PacketType::kJoinLobby:
-      state_ = ClientAppState::kInLobby;
-      current_gui_.reset();
+      current_gui_ = std::make_unique<LobbyGui>();
       break;
     case PacketType::KStartGame:
       state_ = ClientAppState::kInGame;
+      current_gui_.reset();
       game_.OnPacketReceived(&received_packet, packet_type);
       break;
     case PacketType::kNewTurn:
@@ -98,23 +101,22 @@ void ClientApplication::LaunchLoop() noexcept {
       }
 
       case ClientAppState::kInLobby: {
-        sf::RectangleShape play_button(
-            sf::Vector2f(0.5f * kWindowWidth_, 0.1f * kWindowHeight_));
-        play_button.setOrigin(play_button.getSize() * 0.5f);
-        play_button.setPosition(kWindowWidth_ * 0.5f, kWindowHeight_ * 0.33f);
+        //sf::RectangleShape play_button(
+        //    sf::Vector2f(0.5f * kWindowWidth_, 0.1f * kWindowHeight_));
+        //play_button.setOrigin(play_button.getSize() * 0.5f);
+        //play_button.setPosition(kWindowWidth_ * 0.5f, kWindowHeight_ * 0.33f);
 
-        const bool is_hover = play_button.getGlobalBounds().contains(mouse_pos);
+        //const bool is_hover = play_button.getGlobalBounds().contains(mouse_pos);
 
-        const auto color = is_hover ? sf::Color::Red : sf::Color::Yellow;
-        play_button.setFillColor(color);
+        //const auto color = is_hover ? sf::Color::Red : sf::Color::Yellow;
+        //play_button.setFillColor(color);
 
-        window_.draw(play_button);
+        //window_.draw(play_button);
         break;
       }
 
       case ClientAppState::kInGame: {
         game_.Update(Math::Vec2F(mouse_pos.x, mouse_pos.y));
-
         game_.Draw();
         break;
       }
@@ -122,7 +124,7 @@ void ClientApplication::LaunchLoop() noexcept {
 
     if (current_gui_ != nullptr) {
       current_gui_->Update(mouse_pos);
-      window_.draw(*current_gui_);
+      current_gui_->Draw(&window_);
     }
 
     window_.display();

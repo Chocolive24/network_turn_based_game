@@ -24,6 +24,39 @@ class Game : public PhysicsEngine::ContactListener {
 
   void Draw() noexcept;
 
+private:
+  void CreateBalls() noexcept;
+  void CreateWalls() noexcept;
+  void CreateHoles() noexcept;
+
+  void HandlePlayerTurn() noexcept;
+  void CheckEndTurnCondition() noexcept;
+  void UpdateScores() noexcept;
+
+  void OnTriggerEnter(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override;
+  void OnTriggerStay(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnTriggerExit(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnCollisionEnter(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+  void OnCollisionExit(
+      PhysicsEngine::ColliderRef colliderRefA,
+      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
+
+  void DrawChargingRect() const noexcept;
+  void DrawTable() const noexcept;
+  void DrawBalls() noexcept;
+  void DrawWalls() noexcept;
+  void DrawHoles() noexcept;
+
+  void DrawUi() const noexcept;
+
   static constexpr int kStartBallTriangleHeight_ = 300;
   static constexpr std::int16_t kBallCount_ = 16;
   static constexpr float kPixelRadius_ = 17.5f;
@@ -32,7 +65,6 @@ class Game : public PhysicsEngine::ContactListener {
   static constexpr float max_aim_dist = 200.f;
 
   sf::RenderTarget* render_target_ = nullptr;
-
   ClientNetworkInterface* client_ = nullptr;
 
   sf::Color wall_color_ = sf::Color::Blue;
@@ -81,37 +113,4 @@ class Game : public PhysicsEngine::ContactListener {
   std::array<PhysicsEngine::ColliderRef, 4> wall_col_refs_{};
   std::array<PhysicsEngine::BodyRef, 6> hole_body_refs_{};
   std::array<PhysicsEngine::ColliderRef, 6> hole_col_refs_{};
-
-private:
-  void CreateBalls() noexcept;
-  void CreateWalls() noexcept;
-  void CreateHoles() noexcept;
-
-  void HandlePlayerTurn() noexcept;
-  void CheckEndTurnCondition() noexcept;
-  void UpdateScores() noexcept;
-
-  void OnTriggerEnter(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override;
-  void OnTriggerStay(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
-  void OnTriggerExit(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
-  void OnCollisionEnter(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
-  void OnCollisionExit(
-      PhysicsEngine::ColliderRef colliderRefA,
-      PhysicsEngine::ColliderRef colliderRefB) noexcept override {}
-
-  void DrawChargingRect() const noexcept;
-  void DrawTable() const noexcept;
-  void DrawBalls() noexcept;
-  void DrawWalls() noexcept;
-  void DrawHoles() noexcept;
-
-  void DrawUi() const noexcept;
 };

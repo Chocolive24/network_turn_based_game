@@ -25,7 +25,7 @@ class ServerNetworkInterface {
   virtual void PollEvents() noexcept = 0;
 
   void RegisterPacketReceivedCallback(
-      const std::function<void(ClientPacket* packet_data)>& callback) {
+      const std::function<void(ClientPacket* client_packet)>& callback) {
     packet_received_callback_ = callback;
   }
 
