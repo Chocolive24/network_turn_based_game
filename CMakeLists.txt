@@ -37,6 +37,7 @@ file(GLOB_RECURSE DATA_FILES
             "data/*.png"
             "data/*.jpg"
             "data/*.otf"
+            "data/*.txt"
             )
     foreach(DATA ${DATA_FILES})
         get_filename_component(FILE_NAME ${DATA} NAME)

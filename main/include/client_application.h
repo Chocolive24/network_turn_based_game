@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "client_identifier.h"
+
 enum class ClientAppState : std::int8_t {
   kUserIdentification = 0,
   kInMainMenu,
@@ -29,14 +31,19 @@ public:
   void PollWindowEvents() noexcept;
   void PollNetworkEvents() noexcept;
   void LaunchLoop() noexcept;
+  void OnClientIdentified(std::string_view username) noexcept;
   void Deinit() noexcept;
-
 
   static constexpr std::uint8_t kFrameRateLimit_ = 144;
   sf::RenderWindow window_{};
 
   ClientNetworkInterface* client_network_interface_ = nullptr;
   std::unique_ptr<Gui> current_gui_ = nullptr;
+
+  ClientIdentifier client_identifier_{
+    [this](const std::string_view username) {
+      OnClientIdentified(username);
+  }};
 
   Game game_{};
 

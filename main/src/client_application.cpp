@@ -3,6 +3,7 @@
 #include "lobby_gui.h"
 
 #include <iostream>
+#include <fstream>
 
 ClientApplication::ClientApplication(ClientNetworkInterface* client_net_interface) noexcept :
   client_network_interface_(client_net_interface)
@@ -46,8 +47,12 @@ void ClientApplication::PollWindowEvents() noexcept {
       case sf::Event::Closed:
         window_.close();
         break;
-    case sf::Event::TextEntered:
-        username_ += static_cast<char>(event.text.unicode);
+      case sf::Event::TextEntered: {
+        if (state_ == ClientAppState::kUserIdentification) {
+          client_identifier_.OnTextEntered(event.text);
+        }
+        break;
+      }
       default:
         break;
     }
@@ -103,7 +108,7 @@ void ClientApplication::LaunchLoop() noexcept {
     switch (state_) {
       case ClientAppState::kUserIdentification: {
         if (current_gui_) current_gui_.reset();
-        sf::Text username_prompt(username_, font_);
+        sf::Text username_prompt(client_identifier_.username().data(), font_);
         username_prompt.setCharacterSize(30);
         const auto bounds = username_prompt.getGlobalBounds();
         username_prompt.setOrigin(bounds.width * 0.5f, bounds.height * 0.5f);
@@ -129,6 +134,12 @@ void ClientApplication::LaunchLoop() noexcept {
 
     window_.display();
   }
+}
+
+void ClientApplication::OnClientIdentified(const std::string_view username) noexcept {
+  username_ = username;
+
+  //TODO: SendPacket to server with username to get the elo of the player in DB.
 }
 
 void ClientApplication::Deinit() noexcept {

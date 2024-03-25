@@ -45,6 +45,10 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
       break;
     }
     case PacketType::kNewTurn: {
+      while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
+        continue;
+      }
+
       std::cout << "NEW TURN\n";
       *packet >> is_player_turn_;
       const auto cue_ball_b_ref =
@@ -55,9 +59,11 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
       break;
     }
     case PacketType::kBallStateCorrections: {
+      while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
+        continue;
+      }
       for (const auto& col_ref : ball_collider_refs_) {
-        const auto& body_ref =
-            world_.GetCollider(col_ref).GetBodyRef();
+        const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
         auto& body = world_.GetBody(body_ref);
         Math::Vec2F ball_pos = Math::Vec2F::Zero();
         bool enabled = false;
@@ -99,11 +105,14 @@ void Game::Update(Math::Vec2F mouse_pos) noexcept {
       was_mouse_pressed_ == false && is_mouse_pressed_ == true;
 
   if (!is_game_finished_) {
-    HandlePlayerTurn();
 
     world_.Update(kFixedTimeStep);
 
-    CheckEndTurnCondition();
+    if (is_player_turn_)
+    {
+      HandlePlayerTurn();
+      CheckEndTurnCondition();
+    }
 
     UpdateScores();
   }
@@ -209,7 +218,7 @@ void Game::CreateBalls() noexcept {
 }
 
 void Game::CreateWalls() noexcept {
-  auto win_size_meter = Metrics::PixelsToMeters(window_size_);
+  const auto win_size_meter = Metrics::PixelsToMeters(window_size_);
 
   wall_body_refs_[0] = world_.CreateBody();
   auto& body_0 = world_.GetBody(wall_body_refs_[0]);
@@ -267,7 +276,7 @@ void Game::CreateWalls() noexcept {
 }
 
 void Game::CreateHoles() noexcept {
-  auto win_size_meter = Metrics::PixelsToMeters(window_size_);
+  const auto win_size_meter = Metrics::PixelsToMeters(window_size_);
 
   float x_pos = win_size_meter.X - 0.725f;
   constexpr float start_y_pos = -0.875f;
@@ -353,7 +362,7 @@ void Game::HandlePlayerTurn() noexcept {
 }
 
 void Game::CheckEndTurnCondition() noexcept {
-  Math::Vec2F global_ball_velocities = Math::Vec2F::Zero();
+  global_ball_velocities_ = Math::Vec2F::Zero();
 
   for (const auto& col_ref : ball_collider_refs_) {
     const auto& col = world_.GetCollider(col_ref);
@@ -361,10 +370,10 @@ void Game::CheckEndTurnCondition() noexcept {
 
     const auto body_ref = col.GetBodyRef();
     auto& body = world_.GetBody(body_ref);
-    global_ball_velocities += body.Velocity();
+    global_ball_velocities_ += body.Velocity();
   }
 
-  if (has_played_ && global_ball_velocities.Length<float>() <= Math::Epsilon) {
+  if (has_played_ && global_ball_velocities_.Length<float>() <= Math::Epsilon) {
     sf::Packet ball_pos_packet;
     ball_pos_packet << PacketType::kBallStateCorrections;
     for (const auto& col_ref : ball_collider_refs_) {

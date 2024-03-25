@@ -86,6 +86,7 @@ private:
   std::array<Math::Vec2F, kBallCount_> start_ball_pos_{};
 
   Math::Vec2F force_applied_to_ball_;
+  Math::Vec2F global_ball_velocities_;
 
   bool has_game_started = false;
   bool is_game_finished_ = false;
