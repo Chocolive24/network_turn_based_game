@@ -1,4 +1,4 @@
-#include "client_identifier.h"
+#include "client/client_identifier.h"
 
 #include <string>
 #include <fstream>
@@ -24,7 +24,7 @@ void ClientIdentifier::PerformIdentification(
 
   if (username_ != kNotRegisteredMessage_) {
     if (identification_callback_) {
-      std::cout << username_ << '\n';
+      std::cout << "username = " << username_ << '\n';
       identification_callback_(username_);
     }
   }

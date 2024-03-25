@@ -1,4 +1,4 @@
-#include "lobby.h"
+#include "server/lobby.h"
 
 bool Lobby::IsComplete() const noexcept {
   return client_1_port > 0 && client_2_port > 0;

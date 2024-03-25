@@ -93,6 +93,8 @@ file(GLOB_RECURSE NETWORK_SRC_FILES network/include/*.h network/src/*.cpp)
 add_library(network ${NETWORK_SRC_FILES})
 set_target_properties(network PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(network PUBLIC network/include/)
+target_include_directories(network PUBLIC network/include/server)
+target_include_directories(network PUBLIC network/include/client)
 target_link_libraries(network PRIVATE sfml-network)
 
 # Create the main library.
