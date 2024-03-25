@@ -22,7 +22,7 @@ Server::Server(ServerNetworkInterface* server_net_interface,
 void Server::Run() noexcept {
   http_interface_->RegisterHostAndPort("127.0.0.1", 8000);
 
-  constexpr std::string_view body = R"({"name": "Remy"})";
+  constexpr std::string_view body = R"({"name": "Alexis"})";
   http_interface_->Post("/players", sf::Http::Request::Post, body);
 
   const auto& response = http_interface_->Get("/players", 

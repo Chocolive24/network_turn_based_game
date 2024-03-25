@@ -8,6 +8,11 @@ struct JsonRequestBody {
 
 class HttpManager final : public HttpInterface {
 public:
+  constexpr explicit HttpManager() noexcept = default;
+  constexpr HttpManager(HttpManager&& other) noexcept = delete;
+  constexpr HttpManager& operator=(HttpManager&& other) noexcept = delete;
+  constexpr HttpManager(const HttpManager& other) noexcept = delete;
+  constexpr HttpManager& operator=(const HttpManager& other) noexcept = delete;
   ~HttpManager() noexcept override = default;
 
   void RegisterHostAndPort(std::string_view host, unsigned short port) noexcept override;
