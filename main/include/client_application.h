@@ -7,7 +7,8 @@
 #include <SFML/Graphics.hpp>
 
 enum class ClientAppState : std::int8_t {
-  KEntryPoint,
+  kUserIdentification = 0,
+  kInMainMenu,
   kInLobby,
   kInGame,
 };
@@ -25,13 +26,13 @@ public:
 
  private:
   void Init() noexcept;
-  void CheckForReceivedPackets() noexcept;
-  void PollWindowEvents();
+  void PollWindowEvents() noexcept;
+  void PollNetworkEvents() noexcept;
   void LaunchLoop() noexcept;
   void Deinit() noexcept;
 
 
-  static constexpr std::uint8_t kFrameRateLimit = 144;
+  static constexpr std::uint8_t kFrameRateLimit_ = 144;
   sf::RenderWindow window_{};
 
   ClientNetworkInterface* client_network_interface_ = nullptr;
@@ -39,5 +40,8 @@ public:
 
   Game game_{};
 
-  ClientAppState state_ = ClientAppState::KEntryPoint;
+  ClientAppState state_ = ClientAppState::kUserIdentification;
+
+  std::string username_{};
+  sf::Font font_{};
 };

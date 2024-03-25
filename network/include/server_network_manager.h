@@ -28,9 +28,11 @@ public:
   void SendPacket(sf::Packet* packet, ClientPort client_id) noexcept override;
   void PollEvents() noexcept override;
 
+  void RemoveClient(std::unique_ptr<sf::TcpSocket>& client) noexcept;
+
 private:
-  void AcceptNewConnection() noexcept;
-  void PollClientsPacket() noexcept;
+  void PollClientsConnections() noexcept;
+  void PollClientsPackets() noexcept;
   std::vector<std::unique_ptr<sf::TcpSocket>> clients_{};
   sf::TcpListener listener_{};
   sf::SocketSelector socket_selector_{};

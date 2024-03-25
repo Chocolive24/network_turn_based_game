@@ -4,7 +4,7 @@
 
 #include <SFML/Network/Packet.hpp>
 
-enum class PacketType : std::uint8_t {
+enum class PacketType : std::int8_t {
   kNone = 0,
   KNotReady,
   kJoinLobby,
@@ -16,6 +16,10 @@ enum class PacketType : std::uint8_t {
   kGameLost,
 };
 
+/**
+ * \brief ClientPacket is an object containing data that a client wishes to send
+ * to the server and its remote port.
+ */
 struct ClientPacket {
   sf::Packet data{};
   ClientPort client_port = 0;

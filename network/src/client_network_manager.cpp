@@ -2,10 +2,11 @@
 
 #include <iostream>
 
-ReturnStatus ClientNetworkManager::ConnectToServer(const sf::IpAddress& remote_address,
-                                                   const unsigned short remote_port, bool blocking) noexcept {
-  const sf::Socket::Status status =
-      socket_.connect(remote_address, remote_port);
+ReturnStatus ClientNetworkManager::ConnectToServer(
+    const sf::IpAddress& remote_address,
+    const unsigned short remote_port, const bool blocking) noexcept {
+
+  const sf::Socket::Status status = socket_.connect(remote_address, remote_port);
   if (status != sf::Socket::Done) {
     std::cerr << "Could not connect to the server.\n";
     return ReturnStatus::kFailure;

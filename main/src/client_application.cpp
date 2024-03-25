@@ -35,15 +35,19 @@ void ClientApplication::Init() noexcept {
   window_.setVerticalSyncEnabled(true);
 
   current_gui_ = std::make_unique<MainMenuGui>(this);
+
+  font_.loadFromFile("data/Payback.otf");
 }
 
-void ClientApplication::PollWindowEvents() {
+void ClientApplication::PollWindowEvents() noexcept {
   sf::Event event;
   while (window_.pollEvent(event)) {
     switch (event.type) {
       case sf::Event::Closed:
         window_.close();
         break;
+    case sf::Event::TextEntered:
+        username_ += static_cast<char>(event.text.unicode);
       default:
         break;
     }
@@ -56,9 +60,10 @@ void ClientApplication::PollWindowEvents() {
   }
 }
 
-void ClientApplication::CheckForReceivedPackets() noexcept {
+void ClientApplication::PollNetworkEvents() noexcept {
   sf::Packet received_packet;
-  switch (const auto packet_type = client_network_interface_->ReceivePacket(received_packet)) {
+  switch (const auto packet_type = 
+      client_network_interface_->ReceivePacket(received_packet)) {
     case PacketType::kNone:
       std::cerr << "Packet received has no type. \n";
       break;
@@ -91,30 +96,25 @@ void ClientApplication::LaunchLoop() noexcept {
     const auto mouse_pos =
         static_cast<sf::Vector2f>(sf::Mouse::getPosition(window_));
 
-    CheckForReceivedPackets();
+    PollNetworkEvents();
 
     window_.clear(sf::Color::Black);
 
     switch (state_) {
-      case ClientAppState::KEntryPoint: {
+      case ClientAppState::kUserIdentification: {
+        if (current_gui_) current_gui_.reset();
+        sf::Text username_prompt(username_, font_);
+        username_prompt.setCharacterSize(30);
+        const auto bounds = username_prompt.getGlobalBounds();
+        username_prompt.setOrigin(bounds.width * 0.5f, bounds.height * 0.5f);
+        username_prompt.setPosition(kWindowWidth_ * 0.5f,
+                                    kWindowHeight_ * 0.5f);
+        window_.draw(username_prompt);
         break;
       }
-
-      case ClientAppState::kInLobby: {
-        //sf::RectangleShape play_button(
-        //    sf::Vector2f(0.5f * kWindowWidth_, 0.1f * kWindowHeight_));
-        //play_button.setOrigin(play_button.getSize() * 0.5f);
-        //play_button.setPosition(kWindowWidth_ * 0.5f, kWindowHeight_ * 0.33f);
-
-        //const bool is_hover = play_button.getGlobalBounds().contains(mouse_pos);
-
-        //const auto color = is_hover ? sf::Color::Red : sf::Color::Yellow;
-        //play_button.setFillColor(color);
-
-        //window_.draw(play_button);
+      case ClientAppState::kInMainMenu: 
+      case ClientAppState::kInLobby:
         break;
-      }
-
       case ClientAppState::kInGame: {
         game_.Update(Math::Vec2F(mouse_pos.x, mouse_pos.y));
         game_.Draw();

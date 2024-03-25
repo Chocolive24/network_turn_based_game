@@ -11,7 +11,7 @@ Server::Server(ServerNetworkInterface* server_net_interface) noexcept {
   );
   server_network_interface_->RegisterClientDisconnectionCallback(
       [this](const ClientPort client_port) {
-        OnClientDisconnect(client_port);
+        OnClientDisconnection(client_port);
     }
   );
 }
@@ -65,7 +65,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
   }
 }
 
-void Server::OnClientDisconnect(const ClientPort client_port) noexcept {
+void Server::OnClientDisconnection(const ClientPort client_port) noexcept {
   for (auto& lobby : lobbies_) {
     ClientPort other_client_id = 0;
 

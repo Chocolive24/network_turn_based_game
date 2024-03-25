@@ -22,16 +22,25 @@ ReturnStatus ServerNetworkManager::ListenToPort(unsigned short port) noexcept {
 void ServerNetworkManager::PollEvents() noexcept {
   if (socket_selector_.wait(sf::seconds(5.f))) {
     if (socket_selector_.isReady(listener_)) {
-      AcceptNewConnection();
-    } else {
-      PollClientsPacket();
+      PollClientsConnections();
+    }
+    else {
+      PollClientsPackets();
     }
   } else {
     std::cout << "Waiting for activity...\n";
   }
 }
 
-void ServerNetworkManager::AcceptNewConnection() noexcept {
+void ServerNetworkManager::RemoveClient(std::unique_ptr<sf::TcpSocket>& client) noexcept {
+  socket_selector_.remove(*client);
+  if (disconnect_callback_ != nullptr) {
+    disconnect_callback_(client->getRemotePort());
+  }
+  client.reset();
+}
+
+void ServerNetworkManager::PollClientsConnections() noexcept {
   clients_.emplace_back(std::make_unique<sf::TcpSocket>());
   const auto& client = clients_.back();
 
@@ -46,7 +55,7 @@ void ServerNetworkManager::AcceptNewConnection() noexcept {
             << client->getRemotePort() << " is connected. \n";
 }
 
-void ServerNetworkManager::PollClientsPacket() noexcept {
+void ServerNetworkManager::PollClientsPackets() noexcept {
   ClientPacket client_packet{};
   for (auto& client : clients_) {
     if (client == nullptr) {
@@ -60,9 +69,7 @@ void ServerNetworkManager::PollClientsPacket() noexcept {
       } while (status == sf::Socket::Partial);
 
       if (status == sf::Socket::Disconnected) {
-        socket_selector_.remove(*client);
-        if (disconnect_callback_) disconnect_callback_(client->getRemotePort());
-        client.reset();
+        RemoveClient(client);
         continue;
       }
 
@@ -102,11 +109,7 @@ void ServerNetworkManager::SendPacket(sf::Packet* packet,
   } while (status == sf::Socket::Partial);
 
   if (status == sf::Socket::Disconnected) {
-    socket_selector_.remove(*client);
-    if (disconnect_callback_) {
-      disconnect_callback_(client->getRemotePort());
-    }
-    client.reset();
+    RemoveClient(client);
     return;
   }
 

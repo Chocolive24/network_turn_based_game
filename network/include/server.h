@@ -12,7 +12,7 @@ class Server {
 
  private:
   void OnPacketReceived(ClientPacket* client_packet) noexcept;
-  void OnClientDisconnect(ClientPort client_port) noexcept;
+  void OnClientDisconnection(ClientPort client_port) noexcept;
 
   void AddClientToLobby(ClientPort client_port) noexcept;
 
