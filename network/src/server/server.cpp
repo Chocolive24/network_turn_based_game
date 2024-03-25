@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-Server::Server(ServerNetworkInterface* server_net_interface) noexcept {
+Server::Server(ServerNetworkInterface* server_net_interface,
+               HttpInterface* http_interface) noexcept {
   server_network_interface_ = server_net_interface;
   server_network_interface_->RegisterPacketReceivedCallback(
       [this](ClientPacket* client_packet) {
@@ -14,9 +15,20 @@ Server::Server(ServerNetworkInterface* server_net_interface) noexcept {
         OnClientDisconnection(client_port);
     }
   );
+
+  http_interface_ = http_interface;
 }
 
 void Server::Run() noexcept {
+  http_interface_->RegisterHostAndPort("127.0.0.1", 8000);
+
+  constexpr std::string_view body = R"({"name": "Remy"})";
+  http_interface_->Post("/players", sf::Http::Request::Post, body);
+
+  const auto& response = http_interface_->Get("/players", 
+      sf::Http::Request::Get);
+  std::cout << response << '\n';
+
   lobbies_.resize(kStartLobbyCount, Lobby());
 
   while (true) {

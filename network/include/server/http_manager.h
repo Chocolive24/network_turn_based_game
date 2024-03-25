@@ -2,6 +2,10 @@
 
 #include "http_interface.h"
 
+struct JsonRequestBody {
+  //TODO: pour simplifer la création de body json.
+};
+
 class HttpManager final : public HttpInterface {
 public:
   ~HttpManager() noexcept override = default;
