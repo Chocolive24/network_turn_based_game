@@ -94,6 +94,12 @@ void ClientApplication::PollNetworkEvents() noexcept {
     case PacketType::kGameLost:
       game_.OnPacketReceived(&received_packet, packet_type);
       break;
+    case PacketType::kClientIdentification:
+      received_packet >> player_data_.username;
+      received_packet >> player_data_.elo;
+      state_ = ClientAppState::kInMainMenu;
+      current_gui_ = std::make_unique<MainMenuGui>(this);
+      break;
     default:
       break;
   }
@@ -142,12 +148,9 @@ void ClientApplication::LaunchLoop() noexcept {
 }
 
 void ClientApplication::OnClientIdentified(const std::string_view username) noexcept {
-  username_ = username;
-
-  state_ = ClientAppState::kInMainMenu;
-  current_gui_ = std::make_unique<MainMenuGui>(this);
-
-  //TODO: SendPacket to server with username to get the elo of the player in DB.
+  sf::Packet username_packet{};
+  username_packet << PacketType::kClientIdentification << username.data();
+  client_network_interface_->SendPacket(username_packet);
 }
 
 void ClientApplication::Deinit() noexcept {

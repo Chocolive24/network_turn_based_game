@@ -21,7 +21,13 @@ class ServerNetworkInterface {
       const ServerNetworkInterface& other) = default;
   virtual ~ServerNetworkInterface() noexcept = default;
 
-  virtual void SendPacket(sf::Packet* packet, ClientPort client_id) noexcept = 0;
+  virtual void SendPacket(sf::Packet* packet, Port client_id) noexcept = 0;
+
+  /**
+   * \brief PollEvents is a pure virtual method which must poll the network events
+   * such as client connections/disconnections and client packets receiving.
+   * \note This method has to be overriden.
+   */
   virtual void PollEvents() noexcept = 0;
 
   void RegisterPacketReceivedCallback(
@@ -30,11 +36,11 @@ class ServerNetworkInterface {
   }
 
   void RegisterClientDisconnectionCallback(
-      const std::function<void(ClientPort client_port)>& callback) {
+      const std::function<void(Port client_port)>& callback) {
     disconnect_callback_ = callback;
   }
 
 protected:
   std::function<void(ClientPacket* packet_data)> packet_received_callback_;
-  std::function<void(ClientPort client_port)> disconnect_callback_;
+  std::function<void(Port client_port)> disconnect_callback_;
 };

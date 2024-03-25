@@ -4,7 +4,7 @@ bool Lobby::IsComplete() const noexcept {
   return client_1_port > 0 && client_2_port > 0;
 }
 
-void Lobby::AddClient(const ClientPort port) noexcept {
+void Lobby::AddClient(const Port port) noexcept {
   if (client_1_port == 0) {
     client_1_port = port;
   }

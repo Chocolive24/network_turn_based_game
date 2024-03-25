@@ -23,6 +23,10 @@ public:
 
   void SendPacket(sf::Packet* packet) const noexcept;
 
+  [[nodiscard]] const PlayerData& player_data() const noexcept {
+    return player_data_;
+  }
+
   static constexpr int kWindowWidth_ = 750;
   static constexpr int kWindowHeight_ = 1000;
 
@@ -41,7 +45,9 @@ public:
   std::unique_ptr<Gui> current_gui_ = nullptr;
 
   ClientIdentifier client_identifier_{};
-  std::string username_{};
+  PlayerData player_data_{};
+  //std::string username_{};
+  //int elo_ = 0;
 
   Game game_{};
 

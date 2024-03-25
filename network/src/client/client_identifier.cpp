@@ -8,6 +8,8 @@ void ClientIdentifier::PerformIdentification(
     const std::function<void(std::string_view username)>& callback) noexcept {
   identification_callback_ = callback;
 
+  return;
+
   // Open the user_data.txt file to check if the client already have a username.
   // ---------------------------------------------------------------------------
   std::ifstream file("data/user_data.txt");

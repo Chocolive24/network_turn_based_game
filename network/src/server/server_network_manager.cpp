@@ -1,4 +1,4 @@
-#include "server_network_manager.h"
+#include "server/server_network_manager.h"
 
 #include <SFML/Network/TcpSocket.hpp>
 
@@ -87,19 +87,19 @@ void ServerNetworkManager::PollClientsPackets() noexcept {
 }
 
 void ServerNetworkManager::SendPacket(sf::Packet* packet,
-                                      const ClientPort client_id) noexcept {
+                                      const Port client_port) noexcept {
   sf::Socket::Status status = sf::Socket::Partial;
 
   const auto it = std::find_if(
       clients_.begin(), clients_.end(),
-      [client_id](const std::unique_ptr<sf::TcpSocket>& client) {
+      [client_port](const std::unique_ptr<sf::TcpSocket>& client) {
         if (client == nullptr) return false;
-        return client->getRemotePort() == client_id;
+        return client->getRemotePort() == client_port;
     }
   );
 
   if (it == clients_.end()) {
-    std::cerr << "There is no client on port : " << client_id << "\n";
+    std::cerr << "There is no client on port : " << client_port << "\n";
   }
 
   auto& client = *it;

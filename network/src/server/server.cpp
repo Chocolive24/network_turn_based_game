@@ -11,7 +11,7 @@ Server::Server(ServerNetworkInterface* server_net_interface,
     }
   );
   server_network_interface_->RegisterClientDisconnectionCallback(
-      [this](const ClientPort client_port) {
+      [this](const Port client_port) {
         OnClientDisconnection(client_port);
     }
   );
@@ -21,13 +21,6 @@ Server::Server(ServerNetworkInterface* server_net_interface,
 
 void Server::Run() noexcept {
   http_interface_->RegisterHostAndPort("127.0.0.1", 8000);
-
-  constexpr std::string_view body = R"({"name": "Alexis"})";
-  http_interface_->Post("/players", sf::Http::Request::Post, body);
-
-  const auto& response = http_interface_->Get("/players", 
-      sf::Http::Request::Get);
-  std::cout << response << '\n';
 
   lobbies_.resize(kStartLobbyCount, Lobby());
 
@@ -55,7 +48,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
     case PacketType::KCueBallVelocity:
     case PacketType::kBallStateCorrections:
       for (const auto& lobby : lobbies_) {
-        ClientPort other_client_port = 0;
+        Port other_client_port = 0;
 
         if (client_packet->client_port == lobby.client_1_port) {
           other_client_port = lobby.client_2_port;
@@ -72,14 +65,66 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
                                               other_client_port);
       }
       break;
+    case PacketType::kClientIdentification: {
+      std::string username{};
+      client_packet->data >> username;
+      const std::string uri = "/player/" + username;
+      auto response = http_interface_->Get(uri);
+      if (response.empty()) {
+        const std::string json_body = R"({"name": ")" + username + R"(", "elo": 0})";
+        http_interface_->Post("/player", json_body);
+        response = http_interface_->Get(uri);
+      }
+
+      // Find the position of the string field in the JSON response
+      const std::size_t string_field_pos = response.find("\"name\":");
+      if (string_field_pos == std::string::npos) {
+        // Handle error: string field not found in response
+        std::cerr << "Error: String field not found in JSON response\n";
+        return;
+      }
+
+      // Find the position of the integer field in the JSON response
+      const std::size_t int_field_pos = response.find("\"elo\":", string_field_pos);
+      if (int_field_pos == std::string::npos) {
+        // Handle error: integer field not found in response
+        std::cerr << "Error: Integer field not found in JSON response.\n";
+        return;
+      }
+
+      // Find the position of the string value in the JSON response
+      const size_t string_value_start = response.find('"', string_field_pos + 
+          sizeof("\"name\":") - 1) + 1;
+      const std::size_t string_value_end = response.find('"', string_value_start);
+      const std::string string_value = response.substr(string_value_start, 
+          string_value_end - string_value_start);
+
+
+      // Extract the substring containing the integer value
+      const std::size_t int_value_start = response.find(':', int_field_pos) + 1;
+      const std::size_t int_value_end = response.find_first_not_of("0123456789", 
+          int_value_start);
+      const int int_value = std::stoi(response.substr(int_value_start, 
+          int_value_end - int_value_start));
+
+      sf::Packet user_data_packet{};
+      user_data_packet << PacketType::kClientIdentification << string_value
+                       << int_value;
+      server_network_interface_->SendPacket(&user_data_packet,
+                                            client_packet->client_port);
+      break;
+    }
+    case PacketType::kGameWon:
+    case PacketType::kGameLost:
+      break;
     default:
       break;
   }
 }
 
-void Server::OnClientDisconnection(const ClientPort client_port) noexcept {
+void Server::OnClientDisconnection(const Port client_port) noexcept {
   for (auto& lobby : lobbies_) {
-    ClientPort other_client_id = 0;
+    Port other_client_id = 0;
 
     if (client_port == lobby.client_1_port) {
       other_client_id = lobby.client_2_port;
@@ -99,7 +144,7 @@ void Server::OnClientDisconnection(const ClientPort client_port) noexcept {
   }
 }
 
-void Server::AddClientToLobby(ClientPort client_port) noexcept {
+void Server::AddClientToLobby(Port client_port) noexcept {
   const auto lobby_it =
       std::find_if(lobbies_.begin(), lobbies_.end(),
                    [](const Lobby& lobby) { return !lobby.IsComplete(); });

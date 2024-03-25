@@ -7,6 +7,7 @@
 enum class PacketType : std::int8_t {
   kNone = 0,
   KNotReady,
+  kClientIdentification,
   kJoinLobby,
   KStartGame,
   kNewTurn,
@@ -22,7 +23,7 @@ enum class PacketType : std::int8_t {
  */
 struct ClientPacket {
   sf::Packet data{};
-  ClientPort client_port = 0;
+  Port client_port = 0;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PacketType& type);

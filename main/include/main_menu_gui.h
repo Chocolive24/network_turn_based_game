@@ -20,5 +20,6 @@ class MainMenuGui final : public Gui {
 
   ClientApplication* client_app_ = nullptr;
   Button play_button_{};
+  sf::Text player_data_txt_{};
   sf::Font font_{};
 };

@@ -4,13 +4,12 @@
 #include <string_view>
 
 void HttpManager::RegisterHostAndPort(const std::string_view host,
-                                      const unsigned short port) noexcept {
+                                      Port port) noexcept {
   http_.setHost(host.data(), port);
 }
 
-std::string HttpManager::Get(const std::string_view uri,
-                      const sf::Http::Request::Method method) noexcept {
-  const sf::Http::Request request(uri.data(), method);
+std::string HttpManager::Get(const std::string_view uri) noexcept {
+  const sf::Http::Request request(uri.data(), sf::Http::Request::Get);
   const sf::Http::Response response = http_.sendRequest(request);
 
   if (response.getStatus() == sf::Http::Response::Ok) {
@@ -22,9 +21,9 @@ std::string HttpManager::Get(const std::string_view uri,
 }
 
 void HttpManager::Post(const std::string_view uri,
-                       const sf::Http::Request::Method method,
                        const std::string_view json_body) noexcept {
-  sf::Http::Request request(uri.data(), method, json_body.data());
+  sf::Http::Request request(uri.data(), sf::Http::Request::Post, 
+                     json_body.data());
   request.setField("Content-Type", "application/json");
 
   const sf::Http::Response response = http_.sendRequest(request);

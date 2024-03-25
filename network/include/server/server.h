@@ -14,9 +14,9 @@ class Server {
 
  private:
   void OnPacketReceived(ClientPacket* client_packet) noexcept;
-  void OnClientDisconnection(ClientPort client_port) noexcept;
+  void OnClientDisconnection(Port client_port) noexcept;
 
-  void AddClientToLobby(ClientPort client_port) noexcept;
+  void AddClientToLobby(Port client_port) noexcept;
 
   ServerNetworkInterface* server_network_interface_ = nullptr;
   HttpInterface* http_interface_ = nullptr;
