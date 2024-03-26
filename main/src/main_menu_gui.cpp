@@ -40,7 +40,7 @@ void MainMenuGui::OnUpdate() noexcept {}
 void MainMenuGui::Draw(sf::RenderTarget* render_target) noexcept {
   if (play_button_.Draw(mouse_pos_, render_target)) {
     sf::Packet join_lobby_packet;
-    join_lobby_packet << PacketType::kJoinLobby;
+    join_lobby_packet << PacketType::kJoinLobby << client_app_->player_data().username;
     client_app_->SendPacket(&join_lobby_packet);
   }
 

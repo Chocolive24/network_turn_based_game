@@ -23,9 +23,6 @@ void ClientApplication::SendPacket(sf::Packet* packet) const noexcept {
 }
 
 void ClientApplication::Init() noexcept {
-  game_.InitGame(client_network_interface_, &window_, 
-      Math::Vec2F(kWindowWidth_, kWindowHeight_));
-
   client_identifier_.PerformIdentification(
     [this](const std::string_view username) {
       OnClientIdentified(username);
@@ -85,6 +82,9 @@ void ClientApplication::PollNetworkEvents() noexcept {
     case PacketType::KStartGame:
       state_ = ClientAppState::kInGame;
       current_gui_.reset();
+      game_.InitGame(client_network_interface_, &window_,
+                     Math::Vec2F(kWindowWidth_, kWindowHeight_),
+                     player_data_.username);
       game_.OnPacketReceived(&received_packet, packet_type);
       break;
     case PacketType::kNewTurn:
@@ -99,6 +99,9 @@ void ClientApplication::PollNetworkEvents() noexcept {
       received_packet >> player_data_.elo;
       state_ = ClientAppState::kInMainMenu;
       current_gui_ = std::make_unique<MainMenuGui>(this);
+      break;
+    case PacketType::kEloUpdated:
+      received_packet >> player_data_.elo;
       break;
     default:
       break;

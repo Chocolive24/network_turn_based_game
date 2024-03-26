@@ -15,6 +15,7 @@ enum class PacketType : std::int8_t {
   kBallStateCorrections,
   kGameWon,
   kGameLost,
+  kEloUpdated,
 };
 
 /**

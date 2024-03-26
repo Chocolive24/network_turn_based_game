@@ -7,11 +7,12 @@
 #include <iostream>
 
 void Game::InitGame(ClientNetworkInterface* client,
-                    sf::RenderTarget* render_target,
-                    Math::Vec2F window_size) noexcept {
+                    sf::RenderTarget* render_target, Math::Vec2F window_size,
+                    std::string_view username) noexcept {
   client_ = client;
   render_target_ = render_target;
   window_size_ = window_size;
+  username_ = username;
 
   timer_.Init();
   world_.Init(Math::Vec2F::Zero(), kBallCount_);
@@ -135,10 +136,15 @@ void Game::OnEvent(const sf::Event& event) noexcept {
         case sf::Keyboard::W: {
           static int idx = 2 + player_index_;
           if (idx > 15) idx = 1;
-          const auto& b_ref =
-              world_.GetCollider(ball_collider_refs_[idx]).GetBodyRef();
-          auto& b = world_.GetBody(b_ref);
-          b.SetPosition(world_.GetBody(hole_body_refs_[0]).Position());
+          auto& col = world_.GetCollider(ball_collider_refs_[idx]);
+          col.SetEnabled(false);
+          if (idx == 1) {
+            has_win_ = true;
+            is_game_finished_ = true;
+            sf::Packet win_packet{};
+            win_packet << PacketType::kGameWon << username_;
+            client_->SendPacket(win_packet);
+          }
           idx += 2;
           break;
         }
@@ -439,11 +445,17 @@ void Game::OnTriggerEnter(
       score_++;
       has_win_ = true;
 
+      sf::Packet win_packet{};
+      win_packet << PacketType::kGameWon << username_;
+      client_->SendPacket(win_packet);
       return;
     }
 
     if (!is_player_turn_ && opponent_score_ != 7) {
       has_win_ = true;
+      sf::Packet win_packet{};
+      win_packet << PacketType::kGameWon << username_;
+      client_->SendPacket(win_packet);
     }
 
     return;

@@ -16,7 +16,7 @@
 class Game : public PhysicsEngine::ContactListener {
  public:
   void InitGame(ClientNetworkInterface* client, sf::RenderTarget* render_target,
-                Math::Vec2F window_size) noexcept;
+                Math::Vec2F window_size, std::string_view username) noexcept;
   void OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept;
   void Update(Math::Vec2F mouse_pos) noexcept;
   void OnEvent(const sf::Event& event) noexcept;
@@ -56,6 +56,8 @@ private:
   void DrawHoles() noexcept;
 
   void DrawUi() const noexcept;
+
+  std::string username_{};
 
   static constexpr int kStartBallTriangleHeight_ = 300;
   static constexpr std::int16_t kBallCount_ = 16;

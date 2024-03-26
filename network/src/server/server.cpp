@@ -29,9 +29,42 @@ void Server::Run() noexcept {
   }
 }
 
+bool Server::UpdatePlayerElo(std::string username, int elo_gain) {
+  std::string uri = "/player/" + username;
+
+  const std::string json_body = R"({"gain": )" + std::to_string(elo_gain) + "}";
+
+  http_interface_->Post(uri, json_body);
+
+  uri += "/elo";
+  sf::Packet new_elo_packet{};
+  auto elo_response = http_interface_->Get(uri);
+
+  // Find the position of the integer field in the JSON response
+  const std::size_t int_field_pos = elo_response.find("\"elo\":", 0);
+  if (int_field_pos == std::string::npos) {
+    // Handle error: integer field not found in response
+    std::cerr << "Error: Integer field not found in JSON response.\n";
+    return true;
+  }
+
+  // Extract the substring containing the integer value
+  const std::size_t int_value_start =
+    elo_response.find(':', int_field_pos) + 1;
+  const std::size_t int_value_end =
+    elo_response.find_first_not_of("0123456789", int_value_start);
+  const int elo = std::stoi(elo_response.substr(
+    int_value_start, int_value_end - int_value_start));
+
+  new_elo_packet << PacketType::kEloUpdated << elo;
+  return false;
+}
+
 void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
   PacketType packet_type = PacketType::kNone;
+ 
   client_packet->data >> packet_type;
+
 
   switch (packet_type) {
     case PacketType::kNone:
@@ -39,9 +72,12 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
       break;
     case PacketType::KNotReady:
       break;
-    case PacketType::kJoinLobby:
-      AddClientToLobby(client_packet->client_port);
+    case PacketType::kJoinLobby: {
+      std::string username{};
+      client_packet->data >> username;
+      AddClientToLobby(client_packet->client_port, username);
       break;
+    }
     case PacketType::KStartGame:
       break;
     case PacketType::kNewTurn:
@@ -63,6 +99,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
 
         server_network_interface_->SendPacket(&client_packet->data,
                                               other_client_port);
+        break;
       }
       break;
     case PacketType::kClientIdentification: {
@@ -99,7 +136,6 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
       const std::string string_value = response.substr(string_value_start, 
           string_value_end - string_value_start);
 
-
       // Extract the substring containing the integer value
       const std::size_t int_value_start = response.find(':', int_field_pos) + 1;
       const std::size_t int_value_end = response.find_first_not_of("0123456789", 
@@ -114,7 +150,44 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
                                             client_packet->client_port);
       break;
     }
-    case PacketType::kGameWon:
+    case PacketType::kGameWon: {
+      std::string winner_username{};
+      client_packet->data >> winner_username;
+      if (!UpdatePlayerElo(winner_username, 100)) {
+        std::cerr << "Cannot update elo of " << winner_username << '\n';
+      }
+      for (auto& lobby : lobbies_) {
+        Port other_client_port = 0;
+        std::string other_username{};
+
+        if (client_packet->client_port == lobby.client_1_port) {
+          other_client_port = lobby.client_2_port;
+          other_username = lobby.username_2;
+        }
+        else if (client_packet->client_port == lobby.client_2_port) {
+          other_client_port = lobby.client_1_port;
+          other_username = lobby.username_1;
+        }
+
+        if (other_client_port == 0) {
+          continue;
+        }
+
+        if (!UpdatePlayerElo(other_username, -100)) {
+          std::cerr << "Cannot update elo of " << other_username << '\n';
+        }
+
+        sf::Packet lose_packet{};
+        lose_packet << PacketType::kGameLost;
+        server_network_interface_->SendPacket(&lose_packet, other_client_port);
+
+        lobby.Clear();
+
+        break;
+      }
+
+      break;
+    }
     case PacketType::kGameLost:
       break;
     default:
@@ -128,7 +201,8 @@ void Server::OnClientDisconnection(const Port client_port) noexcept {
 
     if (client_port == lobby.client_1_port) {
       other_client_id = lobby.client_2_port;
-    } else if (client_port == lobby.client_2_port) {
+    }
+    else if (client_port == lobby.client_2_port) {
       other_client_id = lobby.client_1_port;
     }
 
@@ -144,12 +218,13 @@ void Server::OnClientDisconnection(const Port client_port) noexcept {
   }
 }
 
-void Server::AddClientToLobby(Port client_port) noexcept {
+void Server::AddClientToLobby(Port client_port,
+                              std::string_view username) noexcept {
   const auto lobby_it =
       std::find_if(lobbies_.begin(), lobbies_.end(),
                    [](const Lobby& lobby) { return !lobby.IsComplete(); });
 
-  lobby_it->AddClient(client_port);
+  lobby_it->AddClient(client_port, username);
 
   sf::Packet joined_lobby_packet{};
   joined_lobby_packet << PacketType::kJoinLobby;
