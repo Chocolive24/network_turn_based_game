@@ -36,4 +36,7 @@ private:
   sf::RectangleShape rect_{};
   ButtonColor color_{};
   sf::Text text_{};
+
+  bool is_mouse_just_pressed_ = false;
+  bool was_mouse_pressed_ = false;
 };

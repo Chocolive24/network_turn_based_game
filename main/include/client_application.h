@@ -23,6 +23,8 @@ public:
 
   void SendPacket(sf::Packet* packet) const noexcept;
 
+  void SetState(ClientAppState state) noexcept { state_ = state; }
+
   [[nodiscard]] const PlayerData& player_data() const noexcept {
     return player_data_;
   }

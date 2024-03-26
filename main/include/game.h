@@ -4,11 +4,14 @@
 #include "Timer.h"
 #include "Metrics.h"
 #include "client_network_interface.h"
+#include "button.h"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+
+class ClientApplication;
 
 /**
  * \brief GameManager is a class that update the state of the game.
@@ -23,6 +26,8 @@ class Game : public PhysicsEngine::ContactListener {
   void Deinit() noexcept;
 
   void Draw() noexcept;
+
+  ClientApplication* client_app = nullptr;
 
 private:
   void CreateBalls() noexcept;
@@ -55,7 +60,7 @@ private:
   void DrawWalls() noexcept;
   void DrawHoles() noexcept;
 
-  void DrawUi() const noexcept;
+  void DrawUi() noexcept;
 
   std::string username_{};
 
@@ -71,6 +76,7 @@ private:
 
   sf::Color wall_color_ = sf::Color::Blue;
   sf::Font font_{};
+  Button main_menu_button_{};
 
   Math::Vec2F window_size_ = Math::Vec2F::Zero();
   Math::Vec2F mouse_pos_ = Math::Vec2F::Zero();

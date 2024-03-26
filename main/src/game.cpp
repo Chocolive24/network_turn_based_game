@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include "client_application.h"
 
 #include <iomanip>
 #include <iostream>
@@ -19,6 +20,17 @@ void Game::InitGame(ClientNetworkInterface* client,
   world_.SetContactListener(this);
 
   font_.loadFromFile("data/Payback.otf");
+
+  const auto pos = sf::Vector2f(window_size_.X * 0.5f, window_size_.Y * 0.6f);
+  const auto size = sf::Vector2f(0.5f * window_size_.X,0.1f * window_size_.Y);
+  const ButtonColor color{sf::Color::Blue, sf::Color::Green};
+  sf::Text txt("Main Menu", font_);
+  txt.setCharacterSize(30);
+  txt.setOrigin(txt.getGlobalBounds().width * 0.5f,
+                txt.getGlobalBounds().height * 0.5f);
+  txt.setPosition(pos);
+
+  main_menu_button_ = Button(pos, size, color, txt);
 
   CreateBalls();
   CreateWalls();
@@ -157,7 +169,11 @@ void Game::OnEvent(const sf::Event& event) noexcept {
   }
 }
 
-void Game::Deinit() noexcept { world_.Deinit(); }
+void Game::Deinit() noexcept {
+  world_.Deinit();
+
+  client_app->SetState(ClientAppState::kInMainMenu);
+}
 
 void Game::Draw() noexcept {
   const sf::Color clear_color =
@@ -564,7 +580,7 @@ void Game::DrawHoles() noexcept {
   }
 }
 
-void Game::DrawUi() const noexcept {
+void Game::DrawUi() noexcept {
   sf::FloatRect text_bounds{};
 
   sf::Text score_txt(std::to_string(score_), font_);
@@ -593,5 +609,10 @@ void Game::DrawUi() const noexcept {
     text_bounds = end_game_txt.getLocalBounds();
     end_game_txt.setOrigin(text_bounds.width * 0.5f, text_bounds.height * 0.5f);
     render_target_->draw(end_game_txt);
+
+    if (main_menu_button_.Draw(sf::Vector2f(mouse_pos_.X, mouse_pos_.Y), 
+        render_target_)) {
+      Deinit();
+    }
   }
 }

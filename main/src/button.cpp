@@ -3,8 +3,8 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-Button::Button(sf::Vector2f pos, sf::Vector2f size, ButtonColor color, 
-               const sf::Text& txt) noexcept {
+Button::Button(const sf::Vector2f pos, const sf::Vector2f size, 
+               const ButtonColor color, const sf::Text& txt) noexcept {
   rect_ = sf::RectangleShape(size);
   rect_.setOrigin(size * 0.5f);
   rect_.setPosition(pos);
@@ -21,8 +21,14 @@ bool Button::Draw(sf::Vector2f mouse_pos, sf::RenderTarget* target,
   const auto color = is_hovered ? color_.hovered : color_.base;
   rect_.setFillColor(color);
 
+  const auto is_mouse_pressed =
+      sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+
+  is_mouse_just_pressed_ = is_mouse_pressed && !was_mouse_pressed_;
+  was_mouse_pressed_ = is_mouse_pressed;
+
   target->draw(rect_, states);
   target->draw(text_, states);
 
-  return is_hovered && sf::Mouse::isButtonPressed(sf::Mouse::Left);
+  return is_hovered && is_mouse_just_pressed_;
 }

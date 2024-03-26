@@ -44,15 +44,13 @@ void MainMenuGui::Draw(sf::RenderTarget* render_target) noexcept {
     client_app_->SendPacket(&join_lobby_packet);
   }
 
-  if (player_data_txt_.getString().isEmpty()) {
-    const auto& player_data = client_app_->player_data();
-    const std::string data_str =
-        player_data.username + "\n elo: " + std::to_string(player_data.elo);
+  const auto& player_data = client_app_->player_data();
+  const std::string data_str =
+      player_data.username + "\n elo: " + std::to_string(player_data.elo);
 
-      player_data_txt_.setOrigin(player_data_txt_.getGlobalBounds().width * 0.5f,
-        player_data_txt_.getGlobalBounds().height * 0.5f);
-    player_data_txt_.setString(data_str);
-  }
+  player_data_txt_.setOrigin(player_data_txt_.getGlobalBounds().width * 0.5f,
+                             player_data_txt_.getGlobalBounds().height * 0.5f);
+  player_data_txt_.setString(data_str);
 
   render_target->draw(player_data_txt_);
 }

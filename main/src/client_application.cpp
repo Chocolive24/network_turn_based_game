@@ -85,6 +85,7 @@ void ClientApplication::PollNetworkEvents() noexcept {
       game_.InitGame(client_network_interface_, &window_,
                      Math::Vec2F(kWindowWidth_, kWindowHeight_),
                      player_data_.username);
+      game_.client_app = this;
       game_.OnPacketReceived(&received_packet, packet_type);
       break;
     case PacketType::kNewTurn:
@@ -121,7 +122,9 @@ void ClientApplication::LaunchLoop() noexcept {
 
     switch (state_) {
       case ClientAppState::kUserIdentification: {
-        if (current_gui_) current_gui_.reset();
+        if (current_gui_) {
+          current_gui_.reset();
+        }
         sf::Text username_prompt(client_identifier_.username().data(), font_);
         username_prompt.setCharacterSize(30);
         const auto bounds = username_prompt.getGlobalBounds();
@@ -131,7 +134,10 @@ void ClientApplication::LaunchLoop() noexcept {
         window_.draw(username_prompt);
         break;
       }
-      case ClientAppState::kInMainMenu: 
+    case ClientAppState::kInMainMenu:
+        if (!current_gui_) {
+          current_gui_ = std::make_unique<MainMenuGui>(this);
+        }
       case ClientAppState::kInLobby:
         break;
       case ClientAppState::kInGame: {

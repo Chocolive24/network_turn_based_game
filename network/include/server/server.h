@@ -11,7 +11,7 @@ class Server {
   Server(ServerNetworkInterface* server_net_interface, 
 	       HttpInterface* http_interface) noexcept;
   [[noreturn]] void Run() noexcept;
-  bool UpdatePlayerElo(std::string username, int elo_gain);
+  bool UpdatePlayerElo(std::string username, Port client_port, int elo_gain);
 
 private:
   void OnPacketReceived(ClientPacket* client_packet) noexcept;

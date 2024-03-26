@@ -29,7 +29,7 @@ void Server::Run() noexcept {
   }
 }
 
-bool Server::UpdatePlayerElo(std::string username, int elo_gain) {
+bool Server::UpdatePlayerElo(std::string username, Port client_port, int elo_gain) {
   std::string uri = "/player/" + username;
 
   const std::string json_body = R"({"gain": )" + std::to_string(elo_gain) + "}";
@@ -57,7 +57,9 @@ bool Server::UpdatePlayerElo(std::string username, int elo_gain) {
     int_value_start, int_value_end - int_value_start));
 
   new_elo_packet << PacketType::kEloUpdated << elo;
-  return false;
+  server_network_interface_->SendPacket(&new_elo_packet, client_port);
+
+  return true;
 }
 
 void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
@@ -153,7 +155,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
     case PacketType::kGameWon: {
       std::string winner_username{};
       client_packet->data >> winner_username;
-      if (!UpdatePlayerElo(winner_username, 100)) {
+      if (!UpdatePlayerElo(winner_username, client_packet->client_port, 100)) {
         std::cerr << "Cannot update elo of " << winner_username << '\n';
       }
       for (auto& lobby : lobbies_) {
@@ -173,7 +175,7 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
           continue;
         }
 
-        if (!UpdatePlayerElo(other_username, -100)) {
+        if (!UpdatePlayerElo(other_username, other_client_port, -100)) {
           std::cerr << "Cannot update elo of " << other_username << '\n';
         }
 

@@ -18,4 +18,5 @@ protected:
   virtual void OnUpdate() noexcept = 0;
 
   sf::Vector2f mouse_pos_{};
+
 };
