@@ -50,6 +50,7 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
               .GetBodyRef();
       auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);
       cue_ball_body.SetVelocity(force_applied_to_ball_);
+      must_update_physics_ = true;
       break;
     }
     case PacketType::KStartGame: {
@@ -58,21 +59,21 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
       break;
     }
     case PacketType::kNewTurn: {
-      while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
+      /*while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
         continue;
-      }
+      }*/
 
       std::cout << "NEW TURN\n";
       *packet >> is_player_turn_;
-      const auto cue_ball_b_ref =
+      /*const auto cue_ball_b_ref =
           world_.GetCollider(ball_collider_refs_[0])
               .GetBodyRef();
-      auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);
-      cue_ball_body.SetVelocity(Math::Vec2F::Zero());
+      auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);*/
+      //cue_ball_body.SetVelocity(Math::Vec2F::Zero());
       break;
     }
     case PacketType::kBallStateCorrections: {
-      while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
+      /*while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
         continue;
       }
       for (const auto& col_ref : ball_collider_refs_) {
@@ -83,7 +84,7 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
         *packet >> ball_pos.X >> ball_pos.Y >> enabled;
         body.SetPosition(ball_pos);
         world_.GetCollider(col_ref).SetEnabled(enabled);
-      }
+      }*/
       break;
     }
   case PacketType::kNone:
@@ -109,6 +110,11 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
 
 void Game::Update(Math::Vec2F mouse_pos) noexcept {
   //OnPacketReceived(TODO);
+  static int physics_frame_count = 0;
+  if (!must_update_physics_)
+  {
+     physics_frame_count = 0;
+  }
 
   mouse_pos_ = mouse_pos;
 
@@ -119,13 +125,21 @@ void Game::Update(Math::Vec2F mouse_pos) noexcept {
 
   if (!is_game_finished_) {
 
-    world_.Update(kFixedTimeStep);
+    if (must_update_physics_) {
+      world_.Update(kFixedTimeStep);
+      physics_frame_count++;
+      //std::cout << physics_frame_count << '\n';
+    }
+    
 
-    if (is_player_turn_)
-    {
+    //TODO: attendre la force du serveur. -> setvelocity dans packet received 
+    //TODO: avant inputs pas de physics
+    //TODO: quand recoit inputs -> physics arreter quand tour fini
+    /*if (is_player_turn_)
+    {*/
       HandlePlayerTurn();
       CheckEndTurnCondition();
-    }
+    //}
 
     UpdateScores();
   }
@@ -364,7 +378,7 @@ void Game::HandlePlayerTurn() noexcept {
         force_applied_to_ball_ = Metrics::PixelsToMeters(
             force_percentage_ * max_amplitude_ * aim_direction);
 
-        cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
+        //cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
         sf::Packet force_applied_packet;
         force_applied_packet << PacketType::KCueBallVelocity
                              << force_applied_to_ball_.X
@@ -395,8 +409,8 @@ void Game::CheckEndTurnCondition() noexcept {
     global_ball_velocities_ += body.Velocity();
   }
 
-  if (has_played_ && global_ball_velocities_.Length<float>() <= Math::Epsilon) {
-    sf::Packet ball_pos_packet;
+  if (must_update_physics_ && global_ball_velocities_.Length() <= Math::Epsilon) {
+    /*sf::Packet ball_pos_packet;
     ball_pos_packet << PacketType::kBallStateCorrections;
     for (const auto& col_ref : ball_collider_refs_) {
       const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
@@ -405,13 +419,16 @@ void Game::CheckEndTurnCondition() noexcept {
       ball_pos_packet << body.Position().X << body.Position().Y
                       << world_.GetCollider(col_ref).Enabled();
     }
-    client_->SendPacket(ball_pos_packet);
+    client_->SendPacket(ball_pos_packet);*/
 
     sf::Packet new_turn_packet;
     new_turn_packet << PacketType::kNewTurn << true;
     client_->SendPacket(new_turn_packet);
     is_player_turn_ = false;
     has_played_ = false;
+
+    must_update_physics_ = false;
+    std::cout << "MUST PHYSICS : " << must_update_physics_ << '\n';
   }
 }
 

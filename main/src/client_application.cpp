@@ -9,7 +9,7 @@ ClientApplication::ClientApplication(ClientNetworkInterface* client_net_interfac
 {}
 
 ReturnStatus ClientApplication::Run() noexcept {
-  Init();
+  Init();   
 
   LaunchLoop();
 

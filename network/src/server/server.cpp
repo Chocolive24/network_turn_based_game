@@ -101,6 +101,13 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
 
         server_network_interface_->SendPacket(&client_packet->data,
                                               other_client_port);
+
+        if (packet_type == PacketType::KCueBallVelocity)
+        {
+          server_network_interface_->SendPacket(&client_packet->data,
+                                                client_packet->client_port);
+        }
+        
         break;
       }
       break;

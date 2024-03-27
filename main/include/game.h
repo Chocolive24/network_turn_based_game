@@ -109,6 +109,8 @@ private:
 
   bool is_charging = false;
 
+  bool must_update_physics_ = false;
+
   // Common attributes.
   // ------------------
   Timer timer_{};
