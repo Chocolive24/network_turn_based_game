@@ -65,6 +65,7 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
 
       std::cout << "NEW TURN\n";
       *packet >> is_player_turn_;
+
       /*const auto cue_ball_b_ref =
           world_.GetCollider(ball_collider_refs_[0])
               .GetBodyRef();
@@ -421,14 +422,18 @@ void Game::CheckEndTurnCondition() noexcept {
     }
     client_->SendPacket(ball_pos_packet);*/
 
-    sf::Packet new_turn_packet;
-    new_turn_packet << PacketType::kNewTurn << true;
-    client_->SendPacket(new_turn_packet);
-    is_player_turn_ = false;
-    has_played_ = false;
+    if (is_player_turn_ && has_played_)
+    {
+      sf::Packet new_turn_packet;
+      new_turn_packet << PacketType::kNewTurn << true;
+      client_->SendPacket(new_turn_packet);
+      is_player_turn_ = false;
+      has_played_ = false;
+      std::cout << "END TURN " << must_update_physics_ << '\n';
+    }
 
     must_update_physics_ = false;
-    std::cout << "MUST PHYSICS : " << must_update_physics_ << '\n';
+    
   }
 }
 

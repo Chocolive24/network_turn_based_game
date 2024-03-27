@@ -67,7 +67,6 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
  
   client_packet->data >> packet_type;
 
-
   switch (packet_type) {
     case PacketType::kNone:
       std::cerr << "Packet received has no type. \n";
@@ -127,7 +126,6 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
       if (string_field_pos == std::string::npos) {
         // Handle error: string field not found in response
         std::cerr << "Error: String field not found in JSON response\n";
-        return;
       }
 
       // Find the position of the integer field in the JSON response
@@ -135,7 +133,6 @@ void Server::OnPacketReceived(ClientPacket* client_packet) noexcept {
       if (int_field_pos == std::string::npos) {
         // Handle error: integer field not found in response
         std::cerr << "Error: Integer field not found in JSON response.\n";
-        return;
       }
 
       // Find the position of the string value in the JSON response
