@@ -39,6 +39,8 @@ void ClientIdentifier::OnTextEntered(const sf::Event::TextEvent& text_event) noe
   switch (text_event.unicode) {
     case kEnterKeyCode_:
       WriteUsernameInFile();
+      if (identification_callback_ != nullptr)
+        identification_callback_(username_);
       break;
     case kBackspaceKeyCode_: 
       if (!username_.empty()) {
@@ -65,9 +67,6 @@ void ClientIdentifier::WriteUsernameInFile() const noexcept {
 
     outputFile.close();
     std::cout << "Successfully wrote " << username_ << " in the file.\n";
-
-    if (identification_callback_ != nullptr) 
-      identification_callback_(username_);
   }
   else {
     std::cout << "Unable to open file for writing.\n";

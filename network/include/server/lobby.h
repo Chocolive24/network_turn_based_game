@@ -2,15 +2,17 @@
 
 #include "types.h"
 
+struct ClientData {
+  std::string username{};
+  Port port = 0;
+};
+
 class Lobby {
 public:
   [[nodiscard]] bool IsComplete() const noexcept;
-  void AddClient(Port port, std::string_view username) noexcept;
+  void AddClient(const ClientData& client_data) noexcept;
   void Clear() noexcept;
 
-  //TODO: Struct PlayerData.
-  Port client_1_port = 0;
-  Port client_2_port = 0;
-  std::string username_1{};
-  std::string username_2{};
+  ClientData client_data_1;
+  ClientData client_data_2;
 };

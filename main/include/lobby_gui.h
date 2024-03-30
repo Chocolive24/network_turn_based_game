@@ -1,5 +1,8 @@
 #pragma once
 
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
+
 #include "gui.h"
 
 class LobbyGui final : public Gui {

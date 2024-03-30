@@ -69,8 +69,9 @@ void ClientApplication::PollWindowEvents() noexcept {
 
 void ClientApplication::PollNetworkEvents() noexcept {
   sf::Packet received_packet;
-  switch (const auto packet_type = 
-      client_network_interface_->ReceivePacket(received_packet)) {
+  const auto packet_type =
+      client_network_interface_->ReceivePacket(received_packet);
+  switch (packet_type) {
     case PacketType::kNone:
       std::cerr << "Packet received has no type. \n";
       break;
@@ -78,22 +79,6 @@ void ClientApplication::PollNetworkEvents() noexcept {
       break;
     case PacketType::kJoinLobby:
       current_gui_ = std::make_unique<LobbyGui>();
-      break;
-    case PacketType::KStartGame:
-      state_ = ClientAppState::kInGame;
-      current_gui_.reset();
-      game_.InitGame(client_network_interface_, &window_,
-                     Math::Vec2F(kWindowWidth_, kWindowHeight_),
-                     player_data_.username);
-      game_.client_app = this;
-      game_.OnPacketReceived(&received_packet, packet_type);
-      break;
-    case PacketType::kNewTurn:
-    case PacketType::KCueBallVelocity:
-    case PacketType::kBallStateCorrections:
-    case PacketType::kGameWon:
-    case PacketType::kGameLost:
-      game_.OnPacketReceived(&received_packet, packet_type);
       break;
     case PacketType::kClientIdentification:
       received_packet >> player_data_.username;
@@ -104,8 +89,24 @@ void ClientApplication::PollNetworkEvents() noexcept {
     case PacketType::kEloUpdated:
       received_packet >> player_data_.elo;
       break;
+    case PacketType::KStartGame:
+      state_ = ClientAppState::kInGame;
+      current_gui_.reset();
+      game_.InitGame(client_network_interface_, &window_,
+                     Math::Vec2F(kWindowWidth_, kWindowHeight_),
+                     player_data_.username);
+      game_.client_app = this;
+      break;
+    case PacketType::kNewTurn:
+    case PacketType::KCueBallVelocity:
+    case PacketType::kEndGame:
+      break;
     default:
       break;
+  }
+
+  if (state_ == ClientAppState::kInGame) {
+    game_.OnPacketReceived(&received_packet, packet_type);
   }
 }
 
@@ -134,10 +135,11 @@ void ClientApplication::LaunchLoop() noexcept {
         window_.draw(username_prompt);
         break;
       }
-    case ClientAppState::kInMainMenu:
+      case ClientAppState::kInMainMenu:
         if (!current_gui_) {
           current_gui_ = std::make_unique<MainMenuGui>(this);
         }
+        break;
       case ClientAppState::kInLobby:
         break;
       case ClientAppState::kInGame: {

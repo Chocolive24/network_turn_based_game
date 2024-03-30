@@ -39,15 +39,16 @@ void Game::InitGame(ClientNetworkInterface* client,
 
 void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept {
   switch (packet_type) {
+    case PacketType::kNone:
+    case PacketType::KNotReady:
+    case PacketType::kJoinLobby:
+    case PacketType::kClientIdentification:
+    case PacketType::kEloUpdated:
+      break;
     case PacketType::KCueBallVelocity: {
-      *packet >> force_applied_to_ball_.X >>
-          force_applied_to_ball_.Y;
-      std::cout << std::setprecision(200) << "Received "
-                << force_applied_to_ball_.X << " "
-                << force_applied_to_ball_.Y << '\n';
+      *packet >> force_applied_to_ball_.X >> force_applied_to_ball_.Y;
       const auto cue_ball_b_ref =
-          world_.GetCollider(ball_collider_refs_[0])
-              .GetBodyRef();
+          world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
       auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);
       cue_ball_body.SetVelocity(force_applied_to_ball_);
       must_update_physics_ = true;
@@ -55,53 +56,16 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
     }
     case PacketType::KStartGame: {
       *packet >> has_game_started >> player_index_;
-      std::cout << "GAME STARTED\n";
       break;
     }
     case PacketType::kNewTurn: {
-      /*while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
-        continue;
-      }*/
-
-      std::cout << "NEW TURN\n";
       *packet >> is_player_turn_;
-
-      /*const auto cue_ball_b_ref =
-          world_.GetCollider(ball_collider_refs_[0])
-              .GetBodyRef();
-      auto& cue_ball_body = world_.GetBody(cue_ball_b_ref);*/
-      //cue_ball_body.SetVelocity(Math::Vec2F::Zero());
       break;
     }
-    case PacketType::kBallStateCorrections: {
-      /*while (global_ball_velocities_.Length<float>() > Math::Epsilon) {
-        continue;
-      }
-      for (const auto& col_ref : ball_collider_refs_) {
-        const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
-        auto& body = world_.GetBody(body_ref);
-        Math::Vec2F ball_pos = Math::Vec2F::Zero();
-        bool enabled = false;
-        *packet >> ball_pos.X >> ball_pos.Y >> enabled;
-        body.SetPosition(ball_pos);
-        world_.GetCollider(col_ref).SetEnabled(enabled);
-      }*/
-      break;
-    }
-  case PacketType::kNone:
-  case PacketType::KNotReady:
-  case PacketType::kJoinLobby:
-    break;
-  case PacketType::kGameWon:
+  case PacketType::kEndGame:
     if (!is_game_finished_) {
-        has_win_ = true;
-        is_game_finished_ = true;
-    }
-    break;
-  case PacketType::kGameLost:
-    if (!is_game_finished_) {
-        has_win_ = false;
-        is_game_finished_ = true;
+      *packet >> has_win_;
+      is_game_finished_ = true;
     }
     break;
   default:
@@ -110,13 +74,6 @@ void Game::OnPacketReceived(sf::Packet* packet, PacketType packet_type) noexcept
 }
 
 void Game::Update(Math::Vec2F mouse_pos) noexcept {
-  //OnPacketReceived(TODO);
-  static int physics_frame_count = 0;
-  if (!must_update_physics_)
-  {
-     physics_frame_count = 0;
-  }
-
   mouse_pos_ = mouse_pos;
 
   timer_.Tick();
@@ -128,19 +85,10 @@ void Game::Update(Math::Vec2F mouse_pos) noexcept {
 
     if (must_update_physics_) {
       world_.Update(kFixedTimeStep);
-      physics_frame_count++;
-      //std::cout << physics_frame_count << '\n';
     }
-    
 
-    //TODO: attendre la force du serveur. -> setvelocity dans packet received 
-    //TODO: avant inputs pas de physics
-    //TODO: quand recoit inputs -> physics arreter quand tour fini
-    /*if (is_player_turn_)
-    {*/
-      HandlePlayerTurn();
-      CheckEndTurnCondition();
-    //}
+    HandlePlayerTurn();
+    CheckEndTurnCondition();
 
     UpdateScores();
   }
@@ -169,7 +117,7 @@ void Game::OnEvent(const sf::Event& event) noexcept {
             has_win_ = true;
             is_game_finished_ = true;
             sf::Packet win_packet{};
-            win_packet << PacketType::kGameWon << username_;
+            win_packet << PacketType::kEndGame << true;
             client_->SendPacket(win_packet);
           }
           idx += 2;
@@ -186,6 +134,13 @@ void Game::OnEvent(const sf::Event& event) noexcept {
 
 void Game::Deinit() noexcept {
   world_.Deinit();
+
+  ball_collider_refs_.clear();
+
+  is_player_turn_ = false;
+  has_played_ = false;
+  has_win_ = false;
+  is_game_finished_ = false;
 
   client_app->SetState(ClientAppState::kInMainMenu);
 }
@@ -484,7 +439,7 @@ void Game::OnTriggerEnter(
       has_win_ = true;
 
       sf::Packet win_packet{};
-      win_packet << PacketType::kGameWon << username_;
+      win_packet << PacketType::kEndGame << true;
       client_->SendPacket(win_packet);
       return;
     }
@@ -492,7 +447,7 @@ void Game::OnTriggerEnter(
     if (!is_player_turn_ && opponent_score_ != 7) {
       has_win_ = true;
       sf::Packet win_packet{};
-      win_packet << PacketType::kGameWon << username_;
+      win_packet << PacketType::kEndGame << true;
       client_->SendPacket(win_packet);
     }
 

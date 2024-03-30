@@ -16,9 +16,7 @@ public:
   ~HttpManager() noexcept override = default;
 
   void RegisterHostAndPort(std::string_view host, Port port) noexcept override;
-
   [[nodiscard]] std::string Get(std::string_view uri) noexcept override;
-
   void Post(std::string_view uri, std::string_view json_body) noexcept override;
 
 private:

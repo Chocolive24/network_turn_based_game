@@ -12,15 +12,14 @@ enum class PacketType : std::int8_t {
   KStartGame,
   kNewTurn,
   KCueBallVelocity,
-  kBallStateCorrections,
-  kGameWon,
-  kGameLost,
+  kEndGame,
   kEloUpdated,
 };
 
 /**
  * \brief ClientPacket is an object containing data that a client wishes to send
  * to the server and its remote port.
+ * This struct must be used in the server side only.
  */
 struct ClientPacket {
   sf::Packet data{};
