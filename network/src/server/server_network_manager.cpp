@@ -73,10 +73,6 @@ void ServerNetworkManager::PollClientsPackets() noexcept {
         continue;
       }
 
-      if (status != sf::Socket::Done) {
-        //std::cerr << "Could not receive packet from client.\n";
-      }
-
       client_packet.client_port = client->getRemotePort();
 
       if (packet_received_callback_) {

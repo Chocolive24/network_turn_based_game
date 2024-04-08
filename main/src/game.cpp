@@ -4,9 +4,6 @@
 #include <SFML/Graphics/Text.hpp>
 #include "client_application.h"
 
-#include <iomanip>
-#include <iostream>
-
 void Game::InitGame(ClientNetworkInterface* client,
                     sf::RenderTarget* render_target, Math::Vec2F window_size,
                     std::string_view username) noexcept {
@@ -142,7 +139,8 @@ void Game::Deinit() noexcept {
   has_win_ = false;
   is_game_finished_ = false;
 
-  client_app->SetState(ClientAppState::kInMainMenu);
+  if (client_app != nullptr)
+    client_app->SetState(ClientAppState::kInMainMenu);
 }
 
 void Game::Draw() noexcept {
@@ -297,7 +295,7 @@ void Game::CreateHoles() noexcept {
 void Game::HandlePlayerTurn() noexcept {
   const auto cue_ball_body_ref =
       world_.GetCollider(ball_collider_refs_[0]).GetBodyRef();
-  auto& cue_ball_body = world_.GetBody(cue_ball_body_ref);
+  const auto& cue_ball_body = world_.GetBody(cue_ball_body_ref);
 
   if (is_player_turn_ && !has_played_) {
     const auto ball_pos_in_pix = Metrics::MetersToPixels(
@@ -334,16 +332,11 @@ void Game::HandlePlayerTurn() noexcept {
         force_applied_to_ball_ = Metrics::PixelsToMeters(
             force_percentage_ * max_amplitude_ * aim_direction);
 
-        //cue_ball_body.SetVelocity(Math::Vec2F(force_applied_to_ball_));
         sf::Packet force_applied_packet;
         force_applied_packet << PacketType::KCueBallVelocity
                              << force_applied_to_ball_.X
                              << force_applied_to_ball_.Y;
         client_->SendPacket(force_applied_packet);
-
-        std::cout << std::setprecision(200)
-                  << "Sent: " << force_applied_to_ball_.X << " "
-                  << force_applied_to_ball_.Y << '\n';
 
         force_percentage_ = 0.f;
 
@@ -366,16 +359,6 @@ void Game::CheckEndTurnCondition() noexcept {
   }
 
   if (must_update_physics_ && global_ball_velocities_.Length() <= Math::Epsilon) {
-    /*sf::Packet ball_pos_packet;
-    ball_pos_packet << PacketType::kBallStateCorrections;
-    for (const auto& col_ref : ball_collider_refs_) {
-      const auto& body_ref = world_.GetCollider(col_ref).GetBodyRef();
-      auto& body = world_.GetBody(body_ref);
-
-      ball_pos_packet << body.Position().X << body.Position().Y
-                      << world_.GetCollider(col_ref).Enabled();
-    }
-    client_->SendPacket(ball_pos_packet);*/
 
     if (is_player_turn_ && has_played_)
     {
@@ -384,11 +367,9 @@ void Game::CheckEndTurnCondition() noexcept {
       client_->SendPacket(new_turn_packet);
       is_player_turn_ = false;
       has_played_ = false;
-      std::cout << "END TURN " << must_update_physics_ << '\n';
     }
 
     must_update_physics_ = false;
-    
   }
 }
 

@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "identification_gui.h"
+
 ClientApplication::ClientApplication(ClientNetworkInterface* client_net_interface) noexcept :
   client_network_interface_(client_net_interface)
 {}
@@ -23,7 +25,7 @@ void ClientApplication::SendPacket(sf::Packet* packet) const noexcept {
 }
 
 void ClientApplication::Init() noexcept {
-  client_identifier_.PerformIdentification(
+  client_identifier_.RegisterIdentificationCallback(
     [this](const std::string_view username) {
       OnClientIdentified(username);
     } 
@@ -38,6 +40,8 @@ void ClientApplication::Init() noexcept {
   window_.setVerticalSyncEnabled(true);
 
   font_.loadFromFile("data/Payback.otf");
+
+  current_gui_ = std::make_unique<IdentificationGui>();
 }
 
 void ClientApplication::PollWindowEvents() noexcept {
@@ -123,10 +127,11 @@ void ClientApplication::LaunchLoop() noexcept {
 
     switch (state_) {
       case ClientAppState::kUserIdentification: {
-        if (current_gui_) {
+        /*if (current_gui_) {
           current_gui_.reset();
-        }
-        sf::Text username_prompt(client_identifier_.username().data(), font_);
+        }*/
+        const std::string name_str = client_identifier_.username().data();
+        sf::Text username_prompt("username: " + name_str, font_);
         username_prompt.setCharacterSize(30);
         const auto bounds = username_prompt.getGlobalBounds();
         username_prompt.setOrigin(bounds.width * 0.5f, bounds.height * 0.5f);
@@ -158,7 +163,7 @@ void ClientApplication::LaunchLoop() noexcept {
   }
 }
 
-void ClientApplication::OnClientIdentified(const std::string_view username) noexcept {
+void ClientApplication::OnClientIdentified(const std::string_view username) const noexcept {
   sf::Packet username_packet{};
   username_packet << PacketType::kClientIdentification << username.data();
   client_network_interface_->SendPacket(username_packet);

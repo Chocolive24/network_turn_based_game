@@ -37,7 +37,7 @@ public:
   void PollWindowEvents() noexcept;
   void PollNetworkEvents() noexcept;
   void LaunchLoop() noexcept;
-  void OnClientIdentified(std::string_view username) noexcept;
+  void OnClientIdentified(std::string_view username) const noexcept;
   void Deinit() noexcept;
 
   static constexpr std::uint8_t kFrameRateLimit_ = 144;
