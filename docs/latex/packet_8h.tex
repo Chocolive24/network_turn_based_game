@@ -1,0 +1,95 @@
+\doxysection{network/include/packet.h File Reference}
+\hypertarget{packet_8h}{}\label{packet_8h}\index{network/include/packet.h@{network/include/packet.h}}
+{\ttfamily \#include "{}types.\+h"{}}\newline
+{\ttfamily \#include $<$SFML/\+Network/\+Packet.\+hpp$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_client_packet}{Client\+Packet}}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_client_packet}{Client\+Packet} is an object containing data that a client wishes to send to the server and its remote port. This struct must be used in the server side only. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \+: std\+::int8\+\_\+t \{ \newline
+\mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{k\+None}} = 0
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cab475a89f229c49cb5d492b3c11f825b5}{KNot\+Ready}}
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}{k\+Client\+Identification}}
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{k\+Join\+Lobby}}
+, \newline
+\mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}{KStart\+Game}}
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}{k\+New\+Turn}}
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}{KCue\+Ball\+Velocity}}
+, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}{k\+End\+Game}}
+, \newline
+\mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}{k\+Elo\+Updated}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+sf\+::\+Packet \& \mbox{\hyperlink{packet_8h_a28b8d499087acbee907e09d13dc48b05}{operator$<$$<$}} (sf\+::\+Packet \&packet, const \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \&type)
+\item 
+sf\+::\+Packet \& \mbox{\hyperlink{packet_8h_a4e0e72ee1f80a2e1397c37696a46a998}{operator$>$$>$}} (sf\+::\+Packet \&packet, \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \&type)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23c}\label{packet_8h_a8d045dc610cece93c3e138a11435d23c} 
+\index{packet.h@{packet.h}!PacketType@{PacketType}}
+\index{PacketType@{PacketType}!packet.h@{packet.h}}
+\doxysubsubsection{\texorpdfstring{PacketType}{PacketType}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \+: std\+::int8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kNone@{kNone}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kNone@{kNone}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}\label{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13} 
+k\+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KNotReady@{KNotReady}!packet.h@{packet.h}}\index{packet.h@{packet.h}!KNotReady@{KNotReady}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23cab475a89f229c49cb5d492b3c11f825b5}\label{packet_8h_a8d045dc610cece93c3e138a11435d23cab475a89f229c49cb5d492b3c11f825b5} 
+KNot\+Ready&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kClientIdentification@{kClientIdentification}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kClientIdentification@{kClientIdentification}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}\label{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22} 
+k\+Client\+Identification&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kJoinLobby@{kJoinLobby}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kJoinLobby@{kJoinLobby}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}\label{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8} 
+k\+Join\+Lobby&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KStartGame@{KStartGame}!packet.h@{packet.h}}\index{packet.h@{packet.h}!KStartGame@{KStartGame}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}\label{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db} 
+KStart\+Game&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kNewTurn@{kNewTurn}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kNewTurn@{kNewTurn}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}\label{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042} 
+k\+New\+Turn&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KCueBallVelocity@{KCueBallVelocity}!packet.h@{packet.h}}\index{packet.h@{packet.h}!KCueBallVelocity@{KCueBallVelocity}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}\label{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4} 
+KCue\+Ball\+Velocity&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kEndGame@{kEndGame}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kEndGame@{kEndGame}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}\label{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98} 
+k\+End\+Game&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{kEloUpdated@{kEloUpdated}!packet.h@{packet.h}}\index{packet.h@{packet.h}!kEloUpdated@{kEloUpdated}}}\Hypertarget{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}\label{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f} 
+k\+Elo\+Updated&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{packet_8h_a28b8d499087acbee907e09d13dc48b05}\label{packet_8h_a28b8d499087acbee907e09d13dc48b05} 
+\index{packet.h@{packet.h}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!packet.h@{packet.h}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}}
+{\footnotesize\ttfamily sf\+::\+Packet \& operator$<$$<$ (\begin{DoxyParamCaption}\item[{sf\+::\+Packet \&}]{packet,  }\item[{const \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \&}]{type }\end{DoxyParamCaption})}
+
+\Hypertarget{packet_8h_a4e0e72ee1f80a2e1397c37696a46a998}\label{packet_8h_a4e0e72ee1f80a2e1397c37696a46a998} 
+\index{packet.h@{packet.h}!operator$>$$>$@{operator$>$$>$}}
+\index{operator$>$$>$@{operator$>$$>$}!packet.h@{packet.h}}
+\doxysubsubsection{\texorpdfstring{operator$>$$>$()}{operator>>()}}
+{\footnotesize\ttfamily sf\+::\+Packet \& operator$>$$>$ (\begin{DoxyParamCaption}\item[{sf\+::\+Packet \&}]{packet,  }\item[{\mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{Packet\+Type}} \&}]{type }\end{DoxyParamCaption})}
+

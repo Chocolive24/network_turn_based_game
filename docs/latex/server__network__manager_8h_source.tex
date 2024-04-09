@@ -1,0 +1,41 @@
+\doxysection{server\+\_\+network\+\_\+manager.\+h}
+\hypertarget{server__network__manager_8h_source}{}\label{server__network__manager_8h_source}\index{network/include/server/server\_network\_manager.h@{network/include/server/server\_network\_manager.h}}
+\mbox{\hyperlink{server__network__manager_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{types_8h}{types.h}}"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{server__network__interface_8h}{server\_network\_interface.h}}"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <SFML/Network/TcpSocket.hpp>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <SFML/Network/TcpListener.hpp>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <SFML/Network/SocketSelector.hpp>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\ final\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\ \{}
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_server_network_manager_a685dfe6a43812bc5d585ef7e1920eea2}{ServerNetworkManager}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00019\ \ \ constexpr\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}(\mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00020\ \ \ constexpr\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\ operator=(\mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\&\ other)}
+\DoxyCodeLine{00021\ \ \ \ \ noexcept\ =\ delete;}
+\DoxyCodeLine{00022\ \ \ constexpr\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}(const\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00023\ \ \ constexpr\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\ operator=(const\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\&\ other)}
+\DoxyCodeLine{00024\ \ \ \ \ noexcept\ =\ delete;}
+\DoxyCodeLine{00025\ \ \ \string~\mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}()\ noexcept\ override\ =\ default;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ [[nodiscard]]\ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54}{ReturnStatus}}\ \mbox{\hyperlink{class_server_network_manager_aab0f6bf5ecb6e5fdf4959f28ad3f99c0}{ListenToPort}}(\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ port)\ noexcept;}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_manager_a07d726b38ae75db62734dc1ea75838eb}{SendPacket}}(sf::Packet*\ packet,\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)\ noexcept\ override;}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_manager_a6f8934d6aeebd48f0e1f6881abea2992}{PollEvents}}()\ noexcept\ override;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ private:}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{void}\ PollClientsConnections()\ noexcept;}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ PollClientsPackets()\ noexcept;}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{void}\ RemoveClient(std::unique\_ptr<sf::TcpSocket>\&\ client)\ noexcept;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ std::vector<std::unique\_ptr<sf::TcpSocket>>\ clients\_\{\};}
+\DoxyCodeLine{00037\ \ \ sf::SocketSelector\ socket\_selector\_\{\};}
+\DoxyCodeLine{00038\ \ \ sf::TcpListener\ listener\_\{\};}
+\DoxyCodeLine{00039\ \};}
+
+\end{DoxyCode}

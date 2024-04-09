@@ -1,0 +1,291 @@
+\chapter{Welcome !}
+\hypertarget{index}{}\label{index}\index{Welcome "!@{Welcome "!}}
+\hypertarget{index_autotoc_md0}{}\doxysubsection{\texorpdfstring{Presentation}{Presentation}}\label{index_autotoc_md0}
+Welcome to the documentation of my network code for my turn-\/based game. ~\newline
+ This project was carried out as part of an exercise for SAE Institute Geneva during the Computer Network module of the Game Programming course.
+
+I\textquotesingle{}ve created this little API based on TCP sockets from the SFML-\/\+Network library.~\newline
+ My API provides two network managers, one for the client and one for the server (\doxylink{class_client_network_manager}{Client\+Network\+Manager} \& \doxylink{class_server_network_manager}{Server\+Network\+Manager}), inheriting interfaces so they can be easily mocked. ~\newline
+ The same principle applies to the \doxylink{class_http_manager}{Http\+Manager} class, which enables HTTP GET and POST requests.
+
+This page contains examples and explanations of the various API classes. Feel free to have a look before downloading my project.\hypertarget{index_autotoc_md1}{}\doxysubsection{\texorpdfstring{Installation}{Installation}}\label{index_autotoc_md1}
+To start using my network code, I encourage you to build my game project to see how it\textquotesingle{}s implemented and used in the game code, and also to see the CMake environment variables\+: Here the steps to build my project\+:
+
+Requierements \+:
+\begin{DoxyItemize}
+\item Git installed
+\item CMake installed
+\item Vcpkg installed
+\item Visual Studio 17 2022 installed
+\end{DoxyItemize}
+
+Build steps\+:
+\begin{DoxyEnumerate}
+\item Git clone my turn-\/based game repository\+: \href{https://github.com/Chocolive24/network_turn_based_game.git}{\texttt{ https\+://github.\+com/\+Chocolive24/network\+\_\+turn\+\_\+based\+\_\+game.\+git}}
+\item Go to the project root and run this cmake command (or use CMake GUI)\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ <build\_directory\_name>\ -\/DCMAKE\_BUILD\_TYPE=Release\ -\/DPORT="{}<a\ port\ number\ greater\ than\ 1024>"{}-\/DHOST\_NAME="{}<an\ IP\ adress>"{}}
+\DoxyCodeLine{}
+\DoxyCodeLine{-\/DCMAKE\_TOOLCHAIN\_FILE=<path\_to\_your\_vcpkg\_directory>/scripts/buildsystems/vcpkg.cmake\ -\/G\ "{}Visual\ Studio\ 17\ 2022"{}}
+
+\end{DoxyCode}
+
+\item Then run this command\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/-\/build\ <build\_directory\_name>}
+
+\end{DoxyCode}
+
+\item Go to the build directory and open the turn\+\_\+based\+\_\+game.\+sln solution file.
+\end{DoxyEnumerate}
+
+If you want to reuse my network classes, just copy the network directoy and link it to your project.\hypertarget{index_autotoc_md2}{}\doxysubsection{\texorpdfstring{Packet types}{Packet types}}\label{index_autotoc_md2}
+The basis of my network code is an enum called Packet\+Type, which differentiates the different packets and allows correct interaction with each of them.
+
+Packet\+Type\+:
+
+
+\begin{DoxyItemize}
+\item k\+None
+\item k\+Client\+Identification,
+\item k\+Join\+Lobby,
+\item KStart\+Game,
+\item k\+New\+Turn,
+\item KCue\+Ball\+Velocity,
+\item k\+End\+Game,
+\item k\+Elo\+Updated,
+\end{DoxyItemize}
+
+You can create any type of packet you like for your application.~\newline
+ The first piece of data contained in a packet is always a Packet\+Type so that the way in which the rest of the packet\textquotesingle{}s data is read can be adapted. ~\newline
+ Here is a small example in pseudo-\/code for sending a packet\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sf::Packet\ my\_packet\{\};}
+\DoxyCodeLine{my\_packet\ <<\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\ <<\ any\_type\_of\_data;}
+\DoxyCodeLine{client\_network\_interface\_-\/>SendPacket(my\_packet);}
+
+\end{DoxyCode}
+
+
+And here is a small example in pseudo-\/code for receiving and decoding a packet\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sf::Packet\ received\_packet;}
+\DoxyCodeLine{\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ packet\_type\ =\ client\_network\_interface\_-\/>ReceivePacket(received\_packet);}
+\DoxyCodeLine{\textcolor{keywordflow}{switch}\ (packet\_type)\ \{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{PacketType::kNone}}:}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Packet\ received\ has\ no\ type.\ \(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{PacketType::kJoinLobby}}:}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}{PacketType::kClientIdentification}}:\ }
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}{PacketType::kEloUpdated}}:}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}{PacketType::KStartGame}}:}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}{PacketType::kNewTurn}}:}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}{PacketType::KCueBallVelocity}}:}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}{PacketType::kEndGame}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Do\ what\ whatever\ you\ need\ to\ do}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ These examples don\textquotesingle{}t use the \doxylink{class_client_network_manager}{Client\+Network\+Manager} class directly but rather a pointer to a \doxylink{class_client_network_interface}{Client\+Network\+Interface} for more flexibility and to have the ability to mock up the interface (to test your app withotu network for example). ~\newline
+ Of course, you can also use the \doxylink{class_client_network_manager}{Client\+Network\+Manager} class directly.\hypertarget{index_autotoc_md3}{}\doxysubsection{\texorpdfstring{Client\+Packet}{Client\+Packet}}\label{index_autotoc_md3}
+\doxylink{struct_client_packet}{Client\+Packet} is an object containing data that a client wishes to send to the server and its remote port. This struct must be used in the server side only to be able to know which client has sent a packet.\hypertarget{index_autotoc_md4}{}\doxysubsection{\texorpdfstring{Types}{Types}}\label{index_autotoc_md4}
+Here\textquotesingle{}s a collection of useful types and typedefs used by the API.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54}{ReturnStatus}}\ :\ std::int8\_t\ \{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54a8c632159fa131f09d04f94e3cbcd8782}{kSuccess}}\ =\ 0,}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54a45d5f642bcbee805302334d856c54259}{kFailure}}\ =\ 1}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_player_data}{PlayerData}}\ \{}
+\DoxyCodeLine{\ \ std::string\ \mbox{\hyperlink{struct_player_data_a86d067207bfc7797a9d8eee0ff711422}{username}};}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_player_data_ace3e6f83be4f7f140de12af7f6ef6024}{elo}};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using\ }\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ =\ std::uint16\_t;}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md5}{}\doxysubsection{\texorpdfstring{Client\+Network\+Manager}{Client\+Network\+Manager}}\label{index_autotoc_md5}
+\doxylink{class_client_network_manager}{Client\+Network\+Manager} is an implementation of the \doxylink{class_client_network_interface}{Client\+Network\+Interface} using a sf\+::\+Tcp\+Socket to communicates to the server on the network. Here\textquotesingle{}s a short example of how to use this class\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{client__network__manager_8h}{client\_network\_manager.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\ client;}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}\ (client.\mbox{\hyperlink{class_client_network_manager_a907df42edd7082958c22931b479cb003}{ConnectToServer}}(HOST\_NAME,\ PORT,\ \textcolor{keyword}{false})}
+\DoxyCodeLine{\ \ \ \ \ \ ==\ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54a45d5f642bcbee805302334d856c54259}{ReturnStatus::kFailure}})\{}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Could\ not\ connect\ to\ server.\(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ EXIT\_FAILURE;}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Connected\ to\ the\ server.\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ Create\ a\ join\ lobby\ packet\ and\ send\ it\ to\ the\ server.}}
+\DoxyCodeLine{\ \ sf::Packet\ join\_lobby\_packet;}
+\DoxyCodeLine{\ \ join\_lobby\_packet\ <<\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{PacketType::kJoinLobby}}\ <<\ any\_data\_you\_want\_to\_send;}
+\DoxyCodeLine{\ \ client.\mbox{\hyperlink{class_client_network_manager_a9477e1b07ec494e54b377bb44d00be54}{SendPacket}}(join\_lobby\_packet);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ is\_running\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{while}(is\_running)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Check\ for\ received\ packets.}}
+\DoxyCodeLine{\ \ \ \ sf::Packet\ received\_packet;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ packet\_type\ =\ client.\mbox{\hyperlink{class_client_network_manager_a3bad3bb03869baa797458dcd3ed04347}{ReceivePacket}}(received\_packet);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{switch}\ (packet\_type)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{PacketType::kNone}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Packet\ received\ has\ no\ type.\ \(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{PacketType::kJoinLobby}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Client\ successfuly\ joinded\ a\ lobby.\(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}{PacketType::kClientIdentification}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}{PacketType::kEloUpdated}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}{PacketType::KStartGame}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}{PacketType::kNewTurn}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}{PacketType::KCueBallVelocity}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ Handle\ packet\ receive\ as\ you\ wish.}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}{PacketType::kEndGame}}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ is\_running\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};\ \ }
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ client.\mbox{\hyperlink{class_client_network_manager_a8f19871c5a6781656c59a2154dd90b5e}{DisconnectFromServer}}();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{return}\ EXIT\_SUCCESS;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md6}{}\doxysubsection{\texorpdfstring{Server\+Network\+Manager}{Server\+Network\+Manager}}\label{index_autotoc_md6}
+\doxylink{class_server_network_manager}{Server\+Network\+Manager} is an implementation of the \doxylink{class_server_network_interface}{Server\+Network\+Interface} using a sf\+::\+Tcp\+Socket per client with a sf\+::\+Socket\+Selector and a sf\+::\+Tcp\+Listener to handle communications between all clients connected to the server. The client\textquotesingle{}s socket are stored in an array of unique\+\_\+ptr of sf\+::\+Tcp\+Socket. ~\newline
+ To receive network events from customers, you need to create two functions and give them as callbacks to the \doxylink{class_server_network_manager}{Server\+Network\+Manager}. The first callback occurs when a client has sent a packet. ~\newline
+ The second callback occurs when a client disconnects from the server.~\newline
+ The Poll\+Events() method handle the client connections and detects which client send a packet based on its port number.~\newline
+ Here\textquotesingle{}s a short example of how to use this class\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{server__network__manager_8h}{server\_network\_manager.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Function\ callbacks\ declaration.}}
+\DoxyCodeLine{\textcolor{comment}{//\ ===============================}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ OnPacketReceived(\mbox{\hyperlink{struct_client_packet}{ClientPacket}}*\ client\_packet)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ OnClientDisconnection(\textcolor{keyword}{const}\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \mbox{\hyperlink{class_server_network_manager}{ServerNetworkManager}}\ server\_network\_manager\{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (server\_network\_manager.ListenToPort(PORT)\ ==\ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54a45d5f642bcbee805302334d856c54259}{ReturnStatus::kFailure}})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Could\ not\ listen\ to\ port:\ "{}}\ <<\ PORT\ <<\ \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ EXIT\_FAILURE;}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Server\ is\ listening\ to\ port:\ "{}}\ <<\ PORT\ <<\ \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Register\ callbacks\ using\ lambdas.}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ===================}}
+\DoxyCodeLine{\ \ \ \ server\_network\_manager.\mbox{\hyperlink{class_server_network_interface_a7faace0a69e995fb47c8cf2ec2ef3bb7}{RegisterPacketReceivedCallback}}(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ [](\mbox{\hyperlink{struct_client_packet}{ClientPacket}}*\ client\_packet)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OnPacketReceived(client\_packet);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ );}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ server\_network\_manager.RegisterClientDisconnectionCallback(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OnClientDisconnection(client\_port);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ );}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{true})\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ server\_network\_manager.PollEvents();}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ EXIT\_SUCCES;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ OnPacketReceived(\mbox{\hyperlink{struct_client_packet}{ClientPacket}}*\ client\_packet)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\ packet\_type\ =\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{PacketType::kNone}};}
+\DoxyCodeLine{\ \ client\_packet-\/>\mbox{\hyperlink{struct_client_packet_a4d50e5667c39ff939df803d3fae02e3c}{data}}\ >>\ packet\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{switch}\ (packet\_type)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{PacketType::kNone}}:}
+\DoxyCodeLine{\ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Packet\ received\ has\ no\ type.\ \(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cab475a89f229c49cb5d492b3c11f825b5}{PacketType::KNotReady}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}{PacketType::KStartGame}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}{PacketType::kEloUpdated}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{PacketType::kJoinLobby}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}{PacketType::kNewTurn}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}{PacketType::KCueBallVelocity}}:\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}{PacketType::kClientIdentification}}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}{PacketType::kEndGame}}:\ }
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ Handle\ packet\ receive\ as\ you\ wish.\ }}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{comment}{//\ Here\ we\ simply\ send\ back\ the\ packet\ to\ the\ client\ like\ an\ echo\ server.}}
+\DoxyCodeLine{\ \ \ \ \ \ server\_network\_manager.SendPacket(client\_packet-\/>\mbox{\hyperlink{struct_client_packet_a4d50e5667c39ff939df803d3fae02e3c}{data}},\ client\_packet-\/>\mbox{\hyperlink{struct_client_packet_abd432e02c2d102ead04aaadb69ecea60}{client\_port}})}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ OnClientDisconnection(\textcolor{keyword}{const}\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Client\ on\ port:\ "{}}\ <<\ client\_port\ <<\ \textcolor{stringliteral}{"{}\ has\ disconnected\ from\ server.\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md7}{}\doxysubsection{\texorpdfstring{Http\+Manager}{Http\+Manager}}\label{index_autotoc_md7}
+\doxylink{class_http_manager}{Http\+Manager} is an implementation of the \doxylink{class_http_interface}{Http\+Interface} which enable to send Http GET and POST requests with a string that can be a json body using a sf\+::\+Http object. Here\textquotesingle{}s a short example of how to use this class\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__manager_8h}{http\_manager.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{class_http_manager}{HttpManager}}\ http\_manager\{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Bind\ http\_manager\ to\ localhost.}}
+\DoxyCodeLine{\ \ \ \ http\_manager.\mbox{\hyperlink{class_http_manager_a34e95756dc5be9e636b5ae948130f861}{RegisterHostAndPort}}(\textcolor{stringliteral}{"{}127.0.0.1"{}},\ 8000);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Replace\ the\ uri\ by\ the\ one\ of\ your\ HTTP\ page.}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ std::string\ uri\ =\ \textcolor{stringliteral}{"{}/hello"{}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ std::string\ response\ =\ http\_manager.Get(uri);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (response.empty())\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Could\ not\ Get\ an\ answer.\(\backslash\)n"{}};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ std::cout\ <<\ response\ <<\ \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ std::string\ uri\ =\ \textcolor{stringliteral}{"{}/hello/message\_place"{}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ std::string\ message\_body\ =\ \textcolor{stringliteral}{"{}My\ message"{}};}
+\DoxyCodeLine{\ \ \ \ http\_manager.Post(uri,\ message\_body);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ EXIT\_SUCCES;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md8}{}\doxysubsection{\texorpdfstring{Lobby}{Lobby}}\label{index_autotoc_md8}
+The \doxylink{class_lobby}{Lobby} class provides a simple, naive way of differentiating between the different clients connected to the server.~\newline
+ It uses a struct called \doxylink{struct_client_data}{Client\+Data} containing a client\textquotesingle{}s username and port number to simplify packet communications between two players in a game. ~\newline
+
+
+The class provides three methods\+:
+\begin{DoxyItemize}
+\item Is\+Complete() Returns true if the lobby is complete.
+\item Add\+Client(const Client\+Data\& client\+\_\+data) Adds a client to the lobby via the \doxylink{struct_client_data}{Client\+Data} type.
+\item Clear() Removes all clients from the lobby. The lobby is now ready to be reused. 
+\end{DoxyItemize}

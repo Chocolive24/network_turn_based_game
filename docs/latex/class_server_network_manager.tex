@@ -1,0 +1,148 @@
+\doxysection{Server\+Network\+Manager Class Reference}
+\hypertarget{class_server_network_manager}{}\label{class_server_network_manager}\index{ServerNetworkManager@{ServerNetworkManager}}
+
+
+\doxylink{class_server_network_manager}{Server\+Network\+Manager} is an implementation of the Network\+Interface which manages network communications between the server and the clients.  
+
+
+
+
+{\ttfamily \#include $<$server\+\_\+network\+\_\+manager.\+h$>$}
+
+Inheritance diagram for Server\+Network\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_server_network_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+constexpr \mbox{\hyperlink{class_server_network_manager_a685dfe6a43812bc5d585ef7e1920eea2}{Server\+Network\+Manager}} () noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_server_network_manager_ab5ed1f34b1852c750ecc707207d19394}{Server\+Network\+Manager}} (\mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&\&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \& \mbox{\hyperlink{class_server_network_manager_ad7eeb25a587a586c44c77dbc13b8cda5}{operator=}} (\mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&\&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_server_network_manager_a31e4eb08e709a1b76875d50238411236}{Server\+Network\+Manager}} (const \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \& \mbox{\hyperlink{class_server_network_manager_a867fc4202eace60072d5a7d32f2c7870}{operator=}} (const \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&other) noexcept=delete
+\item 
+\mbox{\hyperlink{class_server_network_manager_a975ca53d97bac3a5e756401e5beb4889}{\texorpdfstring{$\sim$}{\string~}\+Server\+Network\+Manager}} () noexcept override=default
+\item 
+\mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54}{Return\+Status}} \mbox{\hyperlink{class_server_network_manager_aab0f6bf5ecb6e5fdf4959f28ad3f99c0}{Listen\+To\+Port}} (\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} port) noexcept
+\item 
+void \mbox{\hyperlink{class_server_network_manager_a07d726b38ae75db62734dc1ea75838eb}{Send\+Packet}} (sf\+::\+Packet \texorpdfstring{$\ast$}{*}packet, \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} client\+\_\+port) noexcept override
+\item 
+void \mbox{\hyperlink{class_server_network_manager_a6f8934d6aeebd48f0e1f6881abea2992}{Poll\+Events}} () noexcept override
+\begin{DoxyCompactList}\small\item\em Poll\+Events is a pure virtual method which must poll the network events such as client connections/disconnections and client packets receiving. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_server_network_interface_abc36a8f09d058c9ebe8bb725ae4587c4}{Server\+Network\+Interface}} () noexcept=default
+\item 
+\mbox{\hyperlink{class_server_network_interface_a233b5059bb32b41ef73e3d1f4bdf3b4f}{Server\+Network\+Interface}} (\mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \&\&other) noexcept=default
+\item 
+\mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \& \mbox{\hyperlink{class_server_network_interface_a56a7e9d75016306e2f552475ff085b81}{operator=}} (\mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \&\&other) noexcept=default
+\item 
+\mbox{\hyperlink{class_server_network_interface_a6ffa8acd558234450c089feb31eb592e}{Server\+Network\+Interface}} (const \mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \&other) noexcept=default
+\item 
+\mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \& \mbox{\hyperlink{class_server_network_interface_a03a5322b5ad2ff9dd82b8cca2d2fc6c7}{operator=}} (const \mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}} \&other)=default
+\item 
+virtual \mbox{\hyperlink{class_server_network_interface_a582bb729bbb178af5c5d37c3a0bfad8f}{\texorpdfstring{$\sim$}{\string~}\+Server\+Network\+Interface}} () noexcept=default
+\item 
+void \mbox{\hyperlink{class_server_network_interface_a7faace0a69e995fb47c8cf2ec2ef3bb7}{Register\+Packet\+Received\+Callback}} (const std\+::function$<$ void(\mbox{\hyperlink{struct_client_packet}{Client\+Packet}} \texorpdfstring{$\ast$}{*}client\+\_\+packet)$>$ \&callback)
+\item 
+void \mbox{\hyperlink{class_server_network_interface_a7e20912b4dbfc7326dfe1f5e1201deb3}{Register\+Client\+Disconnection\+Callback}} (const std\+::function$<$ void(\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} client\+\_\+port)$>$ \&callback)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_server_network_interface}{Server\+Network\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::function$<$ void(\mbox{\hyperlink{struct_client_packet}{Client\+Packet}} \texorpdfstring{$\ast$}{*}packet\+\_\+data) \mbox{\hyperlink{class_server_network_interface_ab542eb0a7f5ea0785463fb08a94fcbcd}{packet\+\_\+received\+\_\+callback\+\_\+}} )
+\item 
+std\+::function$<$ void(\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} client\+\_\+port)$>$ \mbox{\hyperlink{class_server_network_interface_a24f964d5a5a0552244f8a4dcacf78231}{disconnect\+\_\+callback\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_server_network_manager}{Server\+Network\+Manager} is an implementation of the Network\+Interface which manages network communications between the server and the clients. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_server_network_manager_a685dfe6a43812bc5d585ef7e1920eea2}\label{class_server_network_manager_a685dfe6a43812bc5d585ef7e1920eea2} 
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{ServerNetworkManager()}{ServerNetworkManager()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily constexpr Server\+Network\+Manager\+::\+Server\+Network\+Manager (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_ab5ed1f34b1852c750ecc707207d19394}\label{class_server_network_manager_ab5ed1f34b1852c750ecc707207d19394} 
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{ServerNetworkManager()}{ServerNetworkManager()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily constexpr Server\+Network\+Manager\+::\+Server\+Network\+Manager (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_a31e4eb08e709a1b76875d50238411236}\label{class_server_network_manager_a31e4eb08e709a1b76875d50238411236} 
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\index{ServerNetworkManager@{ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{ServerNetworkManager()}{ServerNetworkManager()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily constexpr Server\+Network\+Manager\+::\+Server\+Network\+Manager (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_a975ca53d97bac3a5e756401e5beb4889}\label{class_server_network_manager_a975ca53d97bac3a5e756401e5beb4889} 
+\index{ServerNetworkManager@{ServerNetworkManager}!````~ServerNetworkManager@{\texorpdfstring{$\sim$}{\string~}ServerNetworkManager}}
+\index{````~ServerNetworkManager@{\texorpdfstring{$\sim$}{\string~}ServerNetworkManager}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}ServerNetworkManager()}{\string~ServerNetworkManager()}}
+{\footnotesize\ttfamily Server\+Network\+Manager\+::\texorpdfstring{$\sim$}{\string~}\+Server\+Network\+Manager (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_server_network_manager_aab0f6bf5ecb6e5fdf4959f28ad3f99c0}\label{class_server_network_manager_aab0f6bf5ecb6e5fdf4959f28ad3f99c0} 
+\index{ServerNetworkManager@{ServerNetworkManager}!ListenToPort@{ListenToPort}}
+\index{ListenToPort@{ListenToPort}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{ListenToPort()}{ListenToPort()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54}{Return\+Status}} Server\+Network\+Manager\+::\+Listen\+To\+Port (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_a867fc4202eace60072d5a7d32f2c7870}\label{class_server_network_manager_a867fc4202eace60072d5a7d32f2c7870} 
+\index{ServerNetworkManager@{ServerNetworkManager}!operator=@{operator=}}
+\index{operator=@{operator=}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \& Server\+Network\+Manager\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_ad7eeb25a587a586c44c77dbc13b8cda5}\label{class_server_network_manager_ad7eeb25a587a586c44c77dbc13b8cda5} 
+\index{ServerNetworkManager@{ServerNetworkManager}!operator=@{operator=}}
+\index{operator=@{operator=}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \& Server\+Network\+Manager\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_server_network_manager}{Server\+Network\+Manager}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_server_network_manager_a6f8934d6aeebd48f0e1f6881abea2992}\label{class_server_network_manager_a6f8934d6aeebd48f0e1f6881abea2992} 
+\index{ServerNetworkManager@{ServerNetworkManager}!PollEvents@{PollEvents}}
+\index{PollEvents@{PollEvents}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{PollEvents()}{PollEvents()}}
+{\footnotesize\ttfamily void Server\+Network\+Manager\+::\+Poll\+Events (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Poll\+Events is a pure virtual method which must poll the network events such as client connections/disconnections and client packets receiving. 
+
+\begin{DoxyNote}{Note}
+This method has to be overriden. 
+\end{DoxyNote}
+
+
+Implements \mbox{\hyperlink{class_server_network_interface_ae82f43cd15dfd4d9827292ed7cdf2fc0}{Server\+Network\+Interface}}.
+
+\Hypertarget{class_server_network_manager_a07d726b38ae75db62734dc1ea75838eb}\label{class_server_network_manager_a07d726b38ae75db62734dc1ea75838eb} 
+\index{ServerNetworkManager@{ServerNetworkManager}!SendPacket@{SendPacket}}
+\index{SendPacket@{SendPacket}!ServerNetworkManager@{ServerNetworkManager}}
+\doxysubsubsection{\texorpdfstring{SendPacket()}{SendPacket()}}
+{\footnotesize\ttfamily void Server\+Network\+Manager\+::\+Send\+Packet (\begin{DoxyParamCaption}\item[{sf\+::\+Packet \texorpdfstring{$\ast$}{*}}]{packet,  }\item[{\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}}]{client\+\_\+port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \mbox{\hyperlink{class_server_network_interface_ad70b688520173057d026a7ae093d7d1c}{Server\+Network\+Interface}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+network/include/server/\mbox{\hyperlink{server__network__manager_8h}{server\+\_\+network\+\_\+manager.\+h}}\end{DoxyCompactItemize}

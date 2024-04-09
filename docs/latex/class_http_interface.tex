@@ -1,0 +1,118 @@
+\doxysection{Http\+Interface Class Reference}
+\hypertarget{class_http_interface}{}\label{class_http_interface}\index{HttpInterface@{HttpInterface}}
+
+
+\doxylink{class_http_interface}{Http\+Interface} is an interface to perform GET and POST requests via the HTTP protocol. All requests must have a json body.  
+
+
+
+
+{\ttfamily \#include $<$http\+\_\+interface.\+h$>$}
+
+Inheritance diagram for Http\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_http_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_af4bcd6223db05e87322e4b1a35257ea5}{Http\+Interface}} () noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_a72a53a4ac7c8cc344a1b5769a6f7ec85}{Http\+Interface}} (\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& \mbox{\hyperlink{class_http_interface_abf8bd865a756433ad9616366ecfdb4a4}{operator=}} (\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_a072a85924ad439b557c7b8aa93eadc0d}{Http\+Interface}} (const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& \mbox{\hyperlink{class_http_interface_aacdabb5bb7217bb04ad57f773b5b73cb}{operator=}} (const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&other) noexcept=default
+\item 
+virtual \mbox{\hyperlink{class_http_interface_a9a2236099893fd1d25508ad7d8000a20}{\texorpdfstring{$\sim$}{\string~}\+Http\+Interface}} () noexcept=default
+\item 
+virtual void \mbox{\hyperlink{class_http_interface_add4ea874bcf6c764b0be871fd059b125}{Register\+Host\+And\+Port}} (std\+::string\+\_\+view host, \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} port) noexcept=0
+\item 
+virtual std\+::string \mbox{\hyperlink{class_http_interface_ad5757639be6ff037bec67931612cb2db}{Get}} (std\+::string\+\_\+view uri) noexcept=0
+\item 
+virtual void \mbox{\hyperlink{class_http_interface_adc77e7489815d7e6589b0a069a262309}{Post}} (std\+::string\+\_\+view uri, std\+::string\+\_\+view json\+\_\+body) noexcept=0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_http_interface}{Http\+Interface} is an interface to perform GET and POST requests via the HTTP protocol. All requests must have a json body. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_http_interface_af4bcd6223db05e87322e4b1a35257ea5}\label{class_http_interface_af4bcd6223db05e87322e4b1a35257ea5} 
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{HttpInterface()}{HttpInterface()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily constexpr Http\+Interface\+::\+Http\+Interface (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_interface_a72a53a4ac7c8cc344a1b5769a6f7ec85}\label{class_http_interface_a72a53a4ac7c8cc344a1b5769a6f7ec85} 
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{HttpInterface()}{HttpInterface()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily constexpr Http\+Interface\+::\+Http\+Interface (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_interface_a072a85924ad439b557c7b8aa93eadc0d}\label{class_http_interface_a072a85924ad439b557c7b8aa93eadc0d} 
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\index{HttpInterface@{HttpInterface}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{HttpInterface()}{HttpInterface()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily constexpr Http\+Interface\+::\+Http\+Interface (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_interface_a9a2236099893fd1d25508ad7d8000a20}\label{class_http_interface_a9a2236099893fd1d25508ad7d8000a20} 
+\index{HttpInterface@{HttpInterface}!````~HttpInterface@{\texorpdfstring{$\sim$}{\string~}HttpInterface}}
+\index{````~HttpInterface@{\texorpdfstring{$\sim$}{\string~}HttpInterface}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}HttpInterface()}{\string~HttpInterface()}}
+{\footnotesize\ttfamily virtual Http\+Interface\+::\texorpdfstring{$\sim$}{\string~}\+Http\+Interface (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_http_interface_ad5757639be6ff037bec67931612cb2db}\label{class_http_interface_ad5757639be6ff037bec67931612cb2db} 
+\index{HttpInterface@{HttpInterface}!Get@{Get}}
+\index{Get@{Get}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily virtual std\+::string Http\+Interface\+::\+Get (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{uri }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_http_manager_a1c2ea327605a431295afae8643348c97}{Http\+Manager}}.
+
+\Hypertarget{class_http_interface_aacdabb5bb7217bb04ad57f773b5b73cb}\label{class_http_interface_aacdabb5bb7217bb04ad57f773b5b73cb} 
+\index{HttpInterface@{HttpInterface}!operator=@{operator=}}
+\index{operator=@{operator=}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& Http\+Interface\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_interface_abf8bd865a756433ad9616366ecfdb4a4}\label{class_http_interface_abf8bd865a756433ad9616366ecfdb4a4} 
+\index{HttpInterface@{HttpInterface}!operator=@{operator=}}
+\index{operator=@{operator=}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& Http\+Interface\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_interface_adc77e7489815d7e6589b0a069a262309}\label{class_http_interface_adc77e7489815d7e6589b0a069a262309} 
+\index{HttpInterface@{HttpInterface}!Post@{Post}}
+\index{Post@{Post}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{Post()}{Post()}}
+{\footnotesize\ttfamily virtual void Http\+Interface\+::\+Post (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{uri,  }\item[{std\+::string\+\_\+view}]{json\+\_\+body }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_http_manager_a791759e02eafef554edccc82c35253c8}{Http\+Manager}}.
+
+\Hypertarget{class_http_interface_add4ea874bcf6c764b0be871fd059b125}\label{class_http_interface_add4ea874bcf6c764b0be871fd059b125} 
+\index{HttpInterface@{HttpInterface}!RegisterHostAndPort@{RegisterHostAndPort}}
+\index{RegisterHostAndPort@{RegisterHostAndPort}!HttpInterface@{HttpInterface}}
+\doxysubsubsection{\texorpdfstring{RegisterHostAndPort()}{RegisterHostAndPort()}}
+{\footnotesize\ttfamily virtual void Http\+Interface\+::\+Register\+Host\+And\+Port (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{host,  }\item[{\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_http_manager_a34e95756dc5be9e636b5ae948130f861}{Http\+Manager}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+network/include/server/\mbox{\hyperlink{http__interface_8h}{http\+\_\+interface.\+h}}\end{DoxyCompactItemize}

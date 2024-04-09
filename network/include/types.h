@@ -8,6 +8,9 @@ enum class ReturnStatus : std::int8_t {
   kFailure = 1
 };
 
+/**
+ * \brief PlayerData is a struct containing the username of a player and its elo.
+ */
 struct PlayerData {
   std::string username;
   int elo;

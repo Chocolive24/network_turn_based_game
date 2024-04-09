@@ -1,0 +1,22 @@
+\doxysection{client\+\_\+network\+\_\+interface.\+h}
+\hypertarget{client__network__interface_8h_source}{}\label{client__network__interface_8h_source}\index{network/include/client/client\_network\_interface.h@{network/include/client/client\_network\_interface.h}}
+\mbox{\hyperlink{client__network__interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{packet_8h}{packet.h}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\ \{}
+\DoxyCodeLine{00009\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00010\ \ \ \mbox{\hyperlink{class_client_network_interface_a2c1db06b012a933207d8f8d6419252ff}{ClientNetworkInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00011\ \ \ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}(\mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00012\ \ \ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\ operator=(\mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00013\ \ \ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}(const\ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00014\ \ \ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\ operator=(const\ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00015\ \ \ virtual\ \string~\mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_network_interface_a59874f6092d02334ce255cb902c0eba7}{SendPacket}}(sf::Packet\&\ packet)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00018\ \ \ [[nodiscard]]\ virtual\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\ \mbox{\hyperlink{class_client_network_interface_aaf20777a098b958a8b1de0d7df1c08ee}{ReceivePacket}}(sf::Packet\&\ packet)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00019\ \};}
+
+\end{DoxyCode}

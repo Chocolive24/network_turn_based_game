@@ -1,0 +1,31 @@
+\doxysection{packet.\+h}
+\hypertarget{packet_8h_source}{}\label{packet_8h_source}\index{network/include/packet.h@{network/include/packet.h}}
+\mbox{\hyperlink{packet_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{types_8h}{types.h}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SFML/Network/Packet.hpp>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\ :\ std::int8\_t\ \{}
+\DoxyCodeLine{00008\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca35c3ace1970663a16e5c65baa5941b13}{kNone}}\ =\ 0,}
+\DoxyCodeLine{00009\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cab475a89f229c49cb5d492b3c11f825b5}{KNotReady}},}
+\DoxyCodeLine{00010\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca56429d2ac912e93dcddd7034259f0d22}{kClientIdentification}},}
+\DoxyCodeLine{00011\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cac5cd9a9b89ab0783db7a297d3f9dfff8}{kJoinLobby}},}
+\DoxyCodeLine{00012\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca9a88da4d70e1fdf7a3ad9cee2fd808db}{KStartGame}},}
+\DoxyCodeLine{00013\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cafd506f933960a0db870ce1e136233042}{kNewTurn}},}
+\DoxyCodeLine{00014\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23cad76fd330bb2961e616d7bcfec09031e4}{KCueBallVelocity}},}
+\DoxyCodeLine{00015\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca84e433ab4609f1c798e455b2523c2a98}{kEndGame}},}
+\DoxyCodeLine{00016\ \ \ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23ca26c042498f6ecfd9c8cf16226f71392f}{kEloUpdated}},}
+\DoxyCodeLine{00017\ \};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_client_packet}{ClientPacket}}\ \{}
+\DoxyCodeLine{00025\ \ \ sf::Packet\ \mbox{\hyperlink{struct_client_packet_a4d50e5667c39ff939df803d3fae02e3c}{data}}\{\};}
+\DoxyCodeLine{00026\ \ \ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ \mbox{\hyperlink{struct_client_packet_abd432e02c2d102ead04aaadb69ecea60}{client\_port}}\ =\ 0;}
+\DoxyCodeLine{00027\ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ sf::Packet\&\ \mbox{\hyperlink{packet_8h_a28b8d499087acbee907e09d13dc48b05}{operator<<}}(sf::Packet\&\ packet,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\&\ type);}
+\DoxyCodeLine{00030\ sf::Packet\&\ \mbox{\hyperlink{packet_8h_a4e0e72ee1f80a2e1397c37696a46a998}{operator>>}}(sf::Packet\&\ packet,\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\&\ type);}
+
+\end{DoxyCode}

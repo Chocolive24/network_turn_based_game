@@ -27,4 +27,6 @@ private:
 
   std::vector<Lobby> lobbies_{};
   static constexpr std::uint8_t kStartLobbyCount = 10;
+
+  bool is_database_connected_ = true;
 };

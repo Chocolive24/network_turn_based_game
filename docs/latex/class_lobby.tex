@@ -1,0 +1,71 @@
+\doxysection{Lobby Class Reference}
+\hypertarget{class_lobby}{}\label{class_lobby}\index{Lobby@{Lobby}}
+
+
+\doxylink{class_lobby}{Lobby} is a class which provides a simple, naive way of differentiating between the different clients connected to the server. It uses the \doxylink{struct_client_data}{Client\+Data} struct to simplify packet communications between two players in a game.  
+
+
+
+
+{\ttfamily \#include $<$lobby.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_lobby_a7a779f5428ca8581ee2b98b24418eb41}{Is\+Complete}} () const noexcept
+\item 
+void \mbox{\hyperlink{class_lobby_a569ea10015b21c30403bc78451fa2ff3}{Add\+Client}} (const \mbox{\hyperlink{struct_client_data}{Client\+Data}} \&client\+\_\+data) noexcept
+\item 
+void \mbox{\hyperlink{class_lobby_af7d0559eb64f21c9e43c7e03d6ed571d}{Clear}} () noexcept
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_client_data}{Client\+Data}} \mbox{\hyperlink{class_lobby_a1158ed5aec764f0588598343e9670f52}{client\+\_\+data\+\_\+1}}
+\item 
+\mbox{\hyperlink{struct_client_data}{Client\+Data}} \mbox{\hyperlink{class_lobby_aef667eeb7272db81481cca7ede4f6dbe}{client\+\_\+data\+\_\+2}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_lobby}{Lobby} is a class which provides a simple, naive way of differentiating between the different clients connected to the server. It uses the \doxylink{struct_client_data}{Client\+Data} struct to simplify packet communications between two players in a game. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_lobby_a569ea10015b21c30403bc78451fa2ff3}\label{class_lobby_a569ea10015b21c30403bc78451fa2ff3} 
+\index{Lobby@{Lobby}!AddClient@{AddClient}}
+\index{AddClient@{AddClient}!Lobby@{Lobby}}
+\doxysubsubsection{\texorpdfstring{AddClient()}{AddClient()}}
+{\footnotesize\ttfamily void Lobby\+::\+Add\+Client (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_client_data}{Client\+Data}} \&}]{client\+\_\+data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\Hypertarget{class_lobby_af7d0559eb64f21c9e43c7e03d6ed571d}\label{class_lobby_af7d0559eb64f21c9e43c7e03d6ed571d} 
+\index{Lobby@{Lobby}!Clear@{Clear}}
+\index{Clear@{Clear}!Lobby@{Lobby}}
+\doxysubsubsection{\texorpdfstring{Clear()}{Clear()}}
+{\footnotesize\ttfamily void Lobby\+::\+Clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\Hypertarget{class_lobby_a7a779f5428ca8581ee2b98b24418eb41}\label{class_lobby_a7a779f5428ca8581ee2b98b24418eb41} 
+\index{Lobby@{Lobby}!IsComplete@{IsComplete}}
+\index{IsComplete@{IsComplete}!Lobby@{Lobby}}
+\doxysubsubsection{\texorpdfstring{IsComplete()}{IsComplete()}}
+{\footnotesize\ttfamily bool Lobby\+::\+Is\+Complete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_lobby_a1158ed5aec764f0588598343e9670f52}\label{class_lobby_a1158ed5aec764f0588598343e9670f52} 
+\index{Lobby@{Lobby}!client\_data\_1@{client\_data\_1}}
+\index{client\_data\_1@{client\_data\_1}!Lobby@{Lobby}}
+\doxysubsubsection{\texorpdfstring{client\_data\_1}{client\_data\_1}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_client_data}{Client\+Data}} Lobby\+::client\+\_\+data\+\_\+1}
+
+\Hypertarget{class_lobby_aef667eeb7272db81481cca7ede4f6dbe}\label{class_lobby_aef667eeb7272db81481cca7ede4f6dbe} 
+\index{Lobby@{Lobby}!client\_data\_2@{client\_data\_2}}
+\index{client\_data\_2@{client\_data\_2}!Lobby@{Lobby}}
+\doxysubsubsection{\texorpdfstring{client\_data\_2}{client\_data\_2}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_client_data}{Client\+Data}} Lobby\+::client\+\_\+data\+\_\+2}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+network/include/server/\mbox{\hyperlink{lobby_8h}{lobby.\+h}}\end{DoxyCompactItemize}

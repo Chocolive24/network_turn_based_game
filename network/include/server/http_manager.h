@@ -2,10 +2,10 @@
 
 #include "http_interface.h"
 
-struct JsonRequestBody {
-  //TODO: pour simplifer la création de body json.
-};
-
+/**
+ * \brief HttpManager is an implementation of the HttpInterface which enable to
+ * send Http GET and POST requests with a json body using a sf::Http object.
+ */
 class HttpManager final : public HttpInterface {
 public:
   constexpr explicit HttpManager() noexcept = default;
@@ -18,6 +18,8 @@ public:
   void RegisterHostAndPort(std::string_view host, Port port) noexcept override;
   [[nodiscard]] std::string Get(std::string_view uri) noexcept override;
   void Post(std::string_view uri, std::string_view json_body) noexcept override;
+
+  static constexpr char kOfflineMessage[8] = "offline";
 
 private:
   sf::Http http_{};

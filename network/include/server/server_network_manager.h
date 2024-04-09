@@ -27,11 +27,12 @@ public:
   [[nodiscard]] ReturnStatus ListenToPort(Port port) noexcept;
   void SendPacket(sf::Packet* packet, Port client_port) noexcept override;
   void PollEvents() noexcept override;
-  void RemoveClient(std::unique_ptr<sf::TcpSocket>& client) noexcept;
 
 private:
   void PollClientsConnections() noexcept;
   void PollClientsPackets() noexcept;
+  void RemoveClient(std::unique_ptr<sf::TcpSocket>& client) noexcept;
+
   std::vector<std::unique_ptr<sf::TcpSocket>> clients_{};
   sf::SocketSelector socket_selector_{};
   sf::TcpListener listener_{};

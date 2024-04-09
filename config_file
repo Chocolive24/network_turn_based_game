@@ -1,0 +1,119 @@
+# Doxyfile for MyNetwork API
+
+# Set the project name and version
+PROJECT_NAME           = "turn-based game network API"
+PROJECT_NUMBER         = "1.0"
+
+# Set directories for input and output files
+INPUT                  = network/include network/src
+FILE_PATTERNS          = *.h *.cpp
+RECURSIVE              = YES
+OUTPUT_DIRECTORY       = docs
+
+# Specify directories containing source code
+INPUT_FILTER           = network/src/*.cpp
+
+# Specify encoding
+OUTPUT_LANGUAGE        = English
+INPUT_ENCODING         = UTF-8
+
+# Specify if you want to use HTML output
+GENERATE_HTML          = YES
+
+# Specify if you want to generate LaTeX output
+GENERATE_LATEX         = YES
+
+# Specify if you want to generate RTF output
+GENERATE_RTF           = YES
+
+# Specify if you want to generate XML output
+GENERATE_XML           = YES
+
+# Specify if you want to generate DOCBOOK output
+GENERATE_DOCBOOK       = YES
+
+# Specify if you want to generate man pages output
+GENERATE_MAN           = YES
+
+# Specify if you want to generate QHelpCollection output
+GENERATE_QHP           = YES
+
+# Specify if you want to generate QHelpGenerator output
+GENERATE_QHP_NAMESPACE = ""
+
+# Specify if you want to generate an RTF index
+GENERATE_RTF_INDEX     = YES
+
+# Specify if RTF output should generate colored text
+RTF_HYPERLINKS         = YES
+
+# Specify if the RTF output should include fonts
+RTF_STYLESHEET_FILE    = ""
+
+# Specify if the RTF output should include source code
+RTF_SOURCE_CODE        = YES
+
+# Specify if bookmarks should be included in the PDF
+GENERATE_PDF           = YES
+
+# Specify if the PDF should contain internal links
+USE_PDFLATEX           = YES
+
+# Specify if compact PDF files should be generated
+COMPACT_PDF            = YES
+
+# Specify if HTML links should be generated with relative paths
+HTML_FILE_EXTENSION    = .html
+
+# Specify if class documentation should be included in the HTML
+RECURSIVE             = YES
+
+# Specify the title of the HTML documentation
+HTML_TITLE            = "MyNetwork API Documentation"
+
+# Specify additional HTML stylesheets
+HTML_EXTRA_STYLESHEET = 
+
+# Specify additional HTML headers
+HTML_EXTRA_FILES      = 
+
+# Specify if you want to include the graph in the documentation
+HAVE_DOT              = YES
+
+# Specify the file format of the graph (PNG, SVG, etc.)
+DOT_IMAGE_FORMAT      = png
+
+# Specify if you want to include dot graphs in the documentation
+CALL_GRAPH            = YES
+CALLER_GRAPH          = YES
+GRAPHICAL_HIERARCHY   = YES
+
+# Specify if you want to include the source code in the documentation
+SOURCE_BROWSER        = YES
+
+# Specify if you want to enable search engine indexing
+GENERATE_SEARCH       = YES
+
+# Specify the ordered list of HTML header files
+HTML_HEADER           = 
+HTML_FOOTER           = 
+
+# Specify the directories to igYESre when searching for input files
+EXCLUDE               = 
+
+# Specify the namespaces to be included in the documentation
+EXCLUDE_SYMBOLS       = 
+
+# Specify the directories to be excluded from the input
+EXCLUDE_PATTERNS      = 
+
+# Specify the namespaces to be excluded from the input
+EXCLUDE_SYMBOLS       = 
+
+# Specify the files to be excluded from the input
+EXCLUDE_SYMLINKS      = 
+
+# Specify the files to be excluded from the input
+EXTRACT_ALL           = YES
+
+GENERATE_TREEVIEW   = YES

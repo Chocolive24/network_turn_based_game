@@ -1,0 +1,10 @@
+\doxysection{network/include/server/lobby.h File Reference}
+\hypertarget{lobby_8h}{}\label{lobby_8h}\index{network/include/server/lobby.h@{network/include/server/lobby.h}}
+{\ttfamily \#include "{}types.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_client_data}{Client\+Data}}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_client_data}{Client\+Data} is a struct which contains the username of a client and its port number. It is used by the \doxylink{class_lobby}{Lobby} class to provide an easy way to differentiate the clients in a game and facilitate the packet communications between them. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_lobby}{Lobby}}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_lobby}{Lobby} is a class which provides a simple, naive way of differentiating between the different clients connected to the server. It uses the \doxylink{struct_client_data}{Client\+Data} struct to simplify packet communications between two players in a game. \end{DoxyCompactList}\end{DoxyCompactItemize}

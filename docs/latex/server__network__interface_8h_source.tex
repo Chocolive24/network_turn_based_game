@@ -1,0 +1,43 @@
+\doxysection{server\+\_\+network\+\_\+interface.\+h}
+\hypertarget{server__network__interface_8h_source}{}\label{server__network__interface_8h_source}\index{network/include/server/server\_network\_interface.h@{network/include/server/server\_network\_interface.h}}
+\mbox{\hyperlink{server__network__interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{packet_8h}{packet.h}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\ \{}
+\DoxyCodeLine{00012\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00013\ \ \ \mbox{\hyperlink{class_server_network_interface_abc36a8f09d058c9ebe8bb725ae4587c4}{ServerNetworkInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00014\ \ \ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}(\mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\&\ other)\ noexcept\ =}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ default;}
+\DoxyCodeLine{00016\ \ \ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\ operator=(}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00018\ \ \ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}(}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ const\ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00020\ \ \ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\ operator=(}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ const\ \mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}\&\ other)\ =\ default;}
+\DoxyCodeLine{00022\ \ \ virtual\ \string~\mbox{\hyperlink{class_server_network_interface}{ServerNetworkInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_interface_ad70b688520173057d026a7ae093d7d1c}{SendPacket}}(sf::Packet*\ packet,\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_id)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00031\ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_interface_ae82f43cd15dfd4d9827292ed7cdf2fc0}{PollEvents}}()\ noexcept\ =\ 0;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_interface_a7faace0a69e995fb47c8cf2ec2ef3bb7}{RegisterPacketReceivedCallback}}(}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ const\ std::function<\textcolor{keywordtype}{void}(\mbox{\hyperlink{struct_client_packet}{ClientPacket}}*\ client\_packet)>\&\ callback)\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{class_server_network_interface_ab542eb0a7f5ea0785463fb08a94fcbcd}{packet\_received\_callback\_}}\ =\ callback;}
+\DoxyCodeLine{00036\ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_network_interface_a7e20912b4dbfc7326dfe1f5e1201deb3}{RegisterClientDisconnectionCallback}}(}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::function<\textcolor{keywordtype}{void}(\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)>\&\ callback)\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{class_server_network_interface_a24f964d5a5a0552244f8a4dcacf78231}{disconnect\_callback\_}}\ =\ callback;}
+\DoxyCodeLine{00041\ \ \ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00044\ \ \ std::function<void(\mbox{\hyperlink{struct_client_packet}{ClientPacket}}*\ packet\_data)>\ \mbox{\hyperlink{class_server_network_interface_ab542eb0a7f5ea0785463fb08a94fcbcd}{packet\_received\_callback\_}};}
+\DoxyCodeLine{00045\ \ \ std::function<void(\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ client\_port)>\ \mbox{\hyperlink{class_server_network_interface_a24f964d5a5a0552244f8a4dcacf78231}{disconnect\_callback\_}};}
+\DoxyCodeLine{00046\ \};}
+
+\end{DoxyCode}

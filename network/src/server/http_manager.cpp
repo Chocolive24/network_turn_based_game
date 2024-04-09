@@ -16,6 +16,10 @@ std::string HttpManager::Get(const std::string_view uri) noexcept {
     return response.getBody();
   }
 
+  if (response.getStatus() == sf::Http::Response::ConnectionFailed) {
+    return "offline";
+  }
+
   std::cerr << "request failed" << '\n';
   return "";
 }

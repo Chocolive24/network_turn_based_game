@@ -1,0 +1,133 @@
+\doxysection{Http\+Manager Class Reference}
+\hypertarget{class_http_manager}{}\label{class_http_manager}\index{HttpManager@{HttpManager}}
+
+
+\doxylink{class_http_manager}{Http\+Manager} is an implementation of the \doxylink{class_http_interface}{Http\+Interface} which enable to send Http GET and POST requests with a json body using a sf\+::\+Http object.  
+
+
+
+
+{\ttfamily \#include $<$http\+\_\+manager.\+h$>$}
+
+Inheritance diagram for Http\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_http_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+constexpr \mbox{\hyperlink{class_http_manager_a713b1cffda7c23e5028aa7e8acfc1148}{Http\+Manager}} () noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_manager_a17ae121bce63efc8c1628202f87f3592}{Http\+Manager}} (\mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&\&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \& \mbox{\hyperlink{class_http_manager_a141099133be6df38afbcf43ede1a2458}{operator=}} (\mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&\&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_http_manager_a1c89429310b2962c02d4be337561e26a}{Http\+Manager}} (const \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&other) noexcept=delete
+\item 
+constexpr \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \& \mbox{\hyperlink{class_http_manager_a55154bdfba209529986b7d9561851141}{operator=}} (const \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&other) noexcept=delete
+\item 
+\mbox{\hyperlink{class_http_manager_a1cb5f6a6073dd6011ac413c03763d5de}{\texorpdfstring{$\sim$}{\string~}\+Http\+Manager}} () noexcept override=default
+\item 
+void \mbox{\hyperlink{class_http_manager_a34e95756dc5be9e636b5ae948130f861}{Register\+Host\+And\+Port}} (std\+::string\+\_\+view host, \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}} port) noexcept override
+\item 
+std\+::string \mbox{\hyperlink{class_http_manager_a1c2ea327605a431295afae8643348c97}{Get}} (std\+::string\+\_\+view uri) noexcept override
+\item 
+void \mbox{\hyperlink{class_http_manager_a791759e02eafef554edccc82c35253c8}{Post}} (std\+::string\+\_\+view uri, std\+::string\+\_\+view json\+\_\+body) noexcept override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_http_interface}{Http\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_af4bcd6223db05e87322e4b1a35257ea5}{Http\+Interface}} () noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_a72a53a4ac7c8cc344a1b5769a6f7ec85}{Http\+Interface}} (\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& \mbox{\hyperlink{class_http_interface_abf8bd865a756433ad9616366ecfdb4a4}{operator=}} (\mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&\&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface_a072a85924ad439b557c7b8aa93eadc0d}{Http\+Interface}} (const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&other) noexcept=default
+\item 
+constexpr \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \& \mbox{\hyperlink{class_http_interface_aacdabb5bb7217bb04ad57f773b5b73cb}{operator=}} (const \mbox{\hyperlink{class_http_interface}{Http\+Interface}} \&other) noexcept=default
+\item 
+virtual \mbox{\hyperlink{class_http_interface_a9a2236099893fd1d25508ad7d8000a20}{\texorpdfstring{$\sim$}{\string~}\+Http\+Interface}} () noexcept=default
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_http_manager}{Http\+Manager} is an implementation of the \doxylink{class_http_interface}{Http\+Interface} which enable to send Http GET and POST requests with a json body using a sf\+::\+Http object. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_http_manager_a713b1cffda7c23e5028aa7e8acfc1148}\label{class_http_manager_a713b1cffda7c23e5028aa7e8acfc1148} 
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{HttpManager()}{HttpManager()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily constexpr Http\+Manager\+::\+Http\+Manager (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [constexpr]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_manager_a17ae121bce63efc8c1628202f87f3592}\label{class_http_manager_a17ae121bce63efc8c1628202f87f3592} 
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{HttpManager()}{HttpManager()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily constexpr Http\+Manager\+::\+Http\+Manager (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_manager_a1c89429310b2962c02d4be337561e26a}\label{class_http_manager_a1c89429310b2962c02d4be337561e26a} 
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\index{HttpManager@{HttpManager}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{HttpManager()}{HttpManager()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily constexpr Http\+Manager\+::\+Http\+Manager (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_manager_a1cb5f6a6073dd6011ac413c03763d5de}\label{class_http_manager_a1cb5f6a6073dd6011ac413c03763d5de} 
+\index{HttpManager@{HttpManager}!````~HttpManager@{\texorpdfstring{$\sim$}{\string~}HttpManager}}
+\index{````~HttpManager@{\texorpdfstring{$\sim$}{\string~}HttpManager}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}HttpManager()}{\string~HttpManager()}}
+{\footnotesize\ttfamily Http\+Manager\+::\texorpdfstring{$\sim$}{\string~}\+Http\+Manager (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [default]}, {\ttfamily [noexcept]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_http_manager_a1c2ea327605a431295afae8643348c97}\label{class_http_manager_a1c2ea327605a431295afae8643348c97} 
+\index{HttpManager@{HttpManager}!Get@{Get}}
+\index{Get@{Get}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily std\+::string Http\+Manager\+::\+Get (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{uri }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \mbox{\hyperlink{class_http_interface_ad5757639be6ff037bec67931612cb2db}{Http\+Interface}}.
+
+\Hypertarget{class_http_manager_a55154bdfba209529986b7d9561851141}\label{class_http_manager_a55154bdfba209529986b7d9561851141} 
+\index{HttpManager@{HttpManager}!operator=@{operator=}}
+\index{operator=@{operator=}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \& Http\+Manager\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_manager_a141099133be6df38afbcf43ede1a2458}\label{class_http_manager_a141099133be6df38afbcf43ede1a2458} 
+\index{HttpManager@{HttpManager}!operator=@{operator=}}
+\index{operator=@{operator=}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily constexpr \mbox{\hyperlink{class_http_manager}{Http\+Manager}} \& Http\+Manager\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_http_manager}{Http\+Manager}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [delete]}, {\ttfamily [noexcept]}}
+
+\Hypertarget{class_http_manager_a791759e02eafef554edccc82c35253c8}\label{class_http_manager_a791759e02eafef554edccc82c35253c8} 
+\index{HttpManager@{HttpManager}!Post@{Post}}
+\index{Post@{Post}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{Post()}{Post()}}
+{\footnotesize\ttfamily void Http\+Manager\+::\+Post (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{uri,  }\item[{std\+::string\+\_\+view}]{json\+\_\+body }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \mbox{\hyperlink{class_http_interface_adc77e7489815d7e6589b0a069a262309}{Http\+Interface}}.
+
+\Hypertarget{class_http_manager_a34e95756dc5be9e636b5ae948130f861}\label{class_http_manager_a34e95756dc5be9e636b5ae948130f861} 
+\index{HttpManager@{HttpManager}!RegisterHostAndPort@{RegisterHostAndPort}}
+\index{RegisterHostAndPort@{RegisterHostAndPort}!HttpManager@{HttpManager}}
+\doxysubsubsection{\texorpdfstring{RegisterHostAndPort()}{RegisterHostAndPort()}}
+{\footnotesize\ttfamily void Http\+Manager\+::\+Register\+Host\+And\+Port (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{host,  }\item[{\mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \mbox{\hyperlink{class_http_interface_add4ea874bcf6c764b0be871fd059b125}{Http\+Interface}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+network/include/server/\mbox{\hyperlink{http__manager_8h}{http\+\_\+manager.\+h}}\end{DoxyCompactItemize}

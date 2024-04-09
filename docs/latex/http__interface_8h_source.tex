@@ -1,0 +1,25 @@
+\doxysection{http\+\_\+interface.\+h}
+\hypertarget{http__interface_8h_source}{}\label{http__interface_8h_source}\index{network/include/server/http\_interface.h@{network/include/server/http\_interface.h}}
+\mbox{\hyperlink{http__interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{types_8h}{types.h}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SFML/Network/Http.hpp>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_http_interface}{HttpInterface}}\ \{}
+\DoxyCodeLine{00012\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00013\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_http_interface_af4bcd6223db05e87322e4b1a35257ea5}{HttpInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00014\ \ \ constexpr\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}(\mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00015\ \ \ constexpr\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\ operator=(\mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00016\ \ \ constexpr\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}(const\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00017\ \ \ constexpr\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\ operator=(const\ \mbox{\hyperlink{class_http_interface}{HttpInterface}}\&\ other)\ noexcept\ =\ default;}
+\DoxyCodeLine{00018\ \ \ virtual\ \string~\mbox{\hyperlink{class_http_interface}{HttpInterface}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_http_interface_add4ea874bcf6c764b0be871fd059b125}{RegisterHostAndPort}}(std::string\_view\ host,\ \mbox{\hyperlink{types_8h_a7ae0c52260bc98d5cb0dde88976e1cac}{Port}}\ port)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00021\ \ \ [[nodiscard]]\ virtual\ std::\textcolor{keywordtype}{string}\ \mbox{\hyperlink{class_http_interface_ad5757639be6ff037bec67931612cb2db}{Get}}(std::string\_view\ uri)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00022\ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_http_interface_adc77e7489815d7e6589b0a069a262309}{Post}}(std::string\_view\ uri,\ std::string\_view\ json\_body)\ noexcept\ =\ 0;}
+\DoxyCodeLine{00023\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,42 @@
+\doxysection{client\+\_\+network\+\_\+manager.\+h}
+\hypertarget{client__network__manager_8h_source}{}\label{client__network__manager_8h_source}\index{network/include/client/client\_network\_manager.h@{network/include/client/client\_network\_manager.h}}
+\mbox{\hyperlink{client__network__manager_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{types_8h}{types.h}}"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{client__network__interface_8h}{client\_network\_interface.h}}"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <SFML/Network.hpp>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\ final\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_client_network_interface}{ClientNetworkInterface}}\ \{}
+\DoxyCodeLine{00013\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \mbox{\hyperlink{class_client_network_manager_a3c6972e8bad4769502f61641223154a5}{ClientNetworkManager}}()\ noexcept\ =\ default;}
+\DoxyCodeLine{00015\ \ \ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}(\mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00016\ \ \ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\ operator=(\mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00017\ \ \ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}(const\ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00018\ \ \ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\ operator=(}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ const\ \mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}\&\ other)\ noexcept\ =\ delete;}
+\DoxyCodeLine{00020\ \ \ \string~\mbox{\hyperlink{class_client_network_manager}{ClientNetworkManager}}()\ noexcept\ override\ =\ default;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_network_manager_a9477e1b07ec494e54b377bb44d00be54}{SendPacket}}(sf::Packet\&\ packet)\ noexcept\ override;}
+\DoxyCodeLine{00023\ \ \ [[nodiscard]]\ \mbox{\hyperlink{packet_8h_a8d045dc610cece93c3e138a11435d23c}{PacketType}}\ \mbox{\hyperlink{class_client_network_manager_a3bad3bb03869baa797458dcd3ed04347}{ReceivePacket}}(sf::Packet\&\ packet)\ noexcept\ override;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \mbox{\hyperlink{types_8h_aa56ffd40edd0386c8b69e8b453cd6c54}{ReturnStatus}}\ \mbox{\hyperlink{class_client_network_manager_a907df42edd7082958c22931b479cb003}{ConnectToServer}}(const\ sf::IpAddress\&\ \mbox{\hyperlink{class_client_network_manager_a86e2d72304117f8442a2b2b827a2d45f}{remote\_address}},}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \mbox{\hyperlink{class_client_network_manager_a1d33209ea311e5c0ee806535a1744177}{remote\_port}},}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ blocking\ =\ true)\ noexcept;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_network_manager_a8f19871c5a6781656c59a2154dd90b5e}{DisconnectFromServer}}()\ noexcept;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ [[nodiscard]]\ sf::IpAddress\ \mbox{\hyperlink{class_client_network_manager_a86e2d72304117f8442a2b2b827a2d45f}{remote\_address}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{return}\ socket\_.getRemoteAddress();}
+\DoxyCodeLine{00033\ \ \ \}}
+\DoxyCodeLine{00034\ \ \ [[nodiscard]]\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \mbox{\hyperlink{class_client_network_manager_a1d33209ea311e5c0ee806535a1744177}{remote\_port}}()\ const\ noexcept\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{return}\ socket\_.getRemotePort();}
+\DoxyCodeLine{00036\ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00039\ \ sf::TcpSocket\ socket\_\{\};}
+\DoxyCodeLine{00040\ \};}
+
+\end{DoxyCode}

@@ -1,23 +1,26 @@
-#include "server/server.h"
+#include "server.h"
 
 #include <iostream>
+
+#include "http_manager.h"
 
 Server::Server(ServerNetworkInterface* server_net_interface,
                HttpInterface* http_interface) noexcept {
   server_network_interface_ = server_net_interface;
   server_network_interface_->RegisterPacketReceivedCallback(
-      [this](ClientPacket* client_packet) {
-        OnPacketReceived(client_packet);
-    }
-  );
+      [this](ClientPacket* client_packet) { OnPacketReceived(client_packet); });
 
   server_network_interface_->RegisterClientDisconnectionCallback(
-      [this](const Port client_port) {
-        OnClientDisconnection(client_port);
-    }
-  );
+      [this](const Port client_port) { OnClientDisconnection(client_port); });
 
   http_interface_ = http_interface;
+
+  const std::string uri = "/";
+  const auto response = http_interface_->Get(uri);
+
+  if (response == HttpManager::kOfflineMessage) {
+    is_database_connected_ = false;
+  }
 }
 
 void Server::Run() noexcept {
@@ -214,6 +217,14 @@ Port Server::FindClientOpponentInLobbies(const Port client_port) const noexcept 
 
 bool Server::UpdatePlayerElo(const ClientData& client_data,
                              int elo_gain) const {
+  sf::Packet new_elo_packet{};
+
+  if (!is_database_connected_) {
+    new_elo_packet << PacketType::kEloUpdated << 0;
+    server_network_interface_->SendPacket(&new_elo_packet, client_data.port);
+    return false;
+  }
+
   std::string uri = "/player/" + client_data.username;
 
   const std::string json_body = R"({"gain": )" + std::to_string(elo_gain) + "}";
@@ -221,7 +232,6 @@ bool Server::UpdatePlayerElo(const ClientData& client_data,
   http_interface_->Post(uri, json_body);
 
   uri += "/elo";
-  sf::Packet new_elo_packet{};
   auto elo_response = http_interface_->Get(uri);
 
   // Find the position of the integer field in the JSON response
@@ -246,8 +256,17 @@ bool Server::UpdatePlayerElo(const ClientData& client_data,
 }
 
 void Server::IdentifyClient(const ClientData& client_data) const noexcept {
+  if (!is_database_connected_) {
+    const std::string username = "offline: " + client_data.username;
+    sf::Packet user_data_packet{};
+    user_data_packet << PacketType::kClientIdentification << username << 0;
+    server_network_interface_->SendPacket(&user_data_packet, client_data.port);
+    return;
+  }
+
   const std::string uri = "/player/" + client_data.username;
   auto response = http_interface_->Get(uri);
+
   if (response.empty()) {
     const std::string json_body =
         R"({"name": ")" + client_data.username + R"(", "elo": 1000})";
